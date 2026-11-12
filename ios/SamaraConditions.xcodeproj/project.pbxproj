@@ -250,7 +250,7 @@
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SamaraConditions/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -277,7 +277,7 @@
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SamaraConditions/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara";
 				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
