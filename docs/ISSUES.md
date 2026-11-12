@@ -172,3 +172,23 @@ The morning file must carry shore and offshore energy every 5 minutes from 6:00a
 **Day and Week.** A 7-day strip picks the day. A Week row opens that day. The Heat / Tide / Rain / Sources row is gone. Chips, and the Low-tide toggle on Beach, are the bottom of the screen.
 
 **Check.** SamaraCore tests cover the Wednesday labels, option B, °F not moving a window, pill placement on the 402/393/375 sweep, and calm through 9p. Screenshots match the round-9 list.
+
+## Build 6, Pepper's review of build 5 (a49f991), not signed off
+
+Grade C+. These are fixes against the approved spec, not new UX. Pepper decided item 15. Do not upload until she signs off.
+
+1. Put the 6a 9a 12p 3p 6p 9p ticks back under Day Heat. First tick leading, last trailing.
+2. Put a white window bar on the axis for each window, with its label under the bar. "All day" is a full-width ribbon.
+3. Rebuild Rain, Cloud, Heat and Sea as full-width rows: day name, value, ›, a sunset hairline, and one 6a–9p axis. Rain adds "· X overnight" only when 40% or more falls outside 6a–9p. Cloud bars after sunset are `#5A5E66`, and the head line says the percent is the daylight average. Heat pills capitalise Until and From, and days 4–7 are muted. "no window" sits on the label line.
+4. Week Sea uses the same 6a–9p sea series as Day, so Wednesday shows "From 7:40p" and Thursday "From 7:50p".
+5. Day Sea draws the 4 pt lagoon calm bars under the band, and "offshore" where the gap is widest between 1p and 4:30p if it is over 16 pt.
+6. Heat labels "Sun" and "Shade" at 1:30p, and now dots on both lines.
+7. While dragging, dots mark the cloud bar, the rain bar when it is raining, and the shore-energy crest.
+8. When the sun and shade degrees match, the readout is a solid swatch, the degrees, and "sun = shade".
+9. The time pill is pinned to the trailing edge of the readout row.
+10. xxxLarge is about 1.53×. The Sea lane grows, Sea pills stack when they do not fit, and the readout, date strip, headers and chips scale too.
+11. The now line uses Costa Rica time, is drawn through Clouds, Sea and Heat, and is omitted when now is outside 6a–9p on the day being shown.
+12. Heat has no dark panel after sunset. Only the hairline marks it.
+13. The Wednesday Sea header is 12 pt semibold. Dropping "· Waves normal" is acceptable if the full line does not fit.
+14. "No window" is 15 pt semibold, muted, and leading-aligned.
+15. While dragging, the "calm line" and "offshore" labels fade. They return when the drag ends.

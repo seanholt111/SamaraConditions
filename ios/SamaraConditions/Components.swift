@@ -15,7 +15,7 @@ struct ActivityChips: View {
                         if kind != .beach { model.lowTideOnly = false }
                     } label: {
                         Text(kind.title)
-                            .font(SamaraFont.chip())
+                            .font(.system(size: 13 * model.typeScale, weight: .semibold))
                             .multilineTextAlignment(.center)
                             .foregroundStyle(model.activity == kind ? Palette.text : Palette.muted)
                             .padding(.horizontal, 12)
@@ -147,12 +147,12 @@ struct WindowRibbon: View {
     var body: some View {
         GeometryReader { geo in
             let width = geo.size.width
-            ZStack {
+            ZStack(alignment: .topLeading) {
                 if spans.isEmpty {
                     Text(emptyText)
-                        .font(.system(size: largeSize, weight: .bold))
-                        .foregroundStyle(.white)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(Palette.muted)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                         .accessibilityIdentifier("no-window")
                 } else {
                     ForEach(Array(spans.enumerated()), id: \.offset) { _, span in
@@ -161,7 +161,7 @@ struct WindowRibbon: View {
                 }
             }
         }
-        .frame(height: height)
+        .frame(height: spans.isEmpty ? 22 : height)
     }
 
     private func ribbon(_ span: TimeSpan, width: CGFloat) -> some View {
@@ -171,29 +171,26 @@ struct WindowRibbon: View {
         let coversDay = words != nil && (label == "All day" || label == "all day")
         let short = !coversDay && (alwaysRange || span.duration < 3 * 3600 || (x1 - x0) < 130 || words != nil)
         let needed = CGFloat(label.count) * labelSize * 0.62 + 14
-        let pill = coversDay ? width - 4 : (short ? min(width - 4, max(x1 - x0, needed)) : max(8, x1 - x0))
+        let bar = coversDay ? width : max(8, x1 - x0)
+        let barX = coversDay ? 0 : x0
+        let pill = coversDay ? width - 4 : min(width - 4, max(x1 - x0, needed))
         var origin = (x0 + x1) / 2 - pill / 2
         origin = min(max(2, origin), max(2, width - pill - 2))
-        return ZStack {
-            if coversDay || short {
-                Text(coversDay ? label : label)
-                    .font(.system(size: coversDay ? largeSize : labelSize, weight: .heavy))
-                    .foregroundStyle(ink)
-                    .lineLimit(1)
-            } else {
-                HStack {
-                    Text(CostaRica.clock(span.start))
-                    Spacer(minLength: 4)
-                    Text(CostaRica.clock(span.end))
-                }
-                .font(.system(size: largeSize, weight: .bold))
+        let textSize: CGFloat = coversDay || !short ? largeSize : 18
+        return ZStack(alignment: .topLeading) {
+            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                .fill(fill)
+                .frame(width: bar, height: 6)
+                .offset(x: barX, y: 0)
+            Text(label)
+                .font(.system(size: textSize, weight: .bold))
                 .foregroundStyle(ink)
-                .padding(.horizontal, 8)
-            }
+                .lineLimit(1)
+                .frame(width: pill, height: height - 10)
+                .background(fill, in: RoundedRectangle(cornerRadius: 6, style: .continuous))
+                .offset(x: coversDay ? 2 : origin, y: 8)
         }
-        .frame(width: pill, height: height - 4)
-        .background(fill, in: RoundedRectangle(cornerRadius: min(6, height / 2), style: .continuous))
-        .position(x: origin + pill / 2, y: height / 2)
+        .frame(width: width, height: height, alignment: .topLeading)
     }
 }
 

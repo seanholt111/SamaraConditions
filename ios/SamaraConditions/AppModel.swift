@@ -189,7 +189,7 @@ final class AppModel: ObservableObject {
         if let raw = value("-day-offset"), let offset = Int(raw) { dayOffset = offset }
         if value("-unit") == "C" { useFahrenheit = false }
         if value("-unit") == "F" { useFahrenheit = true }
-        if value("-dynamic-type") == "xxxLarge" { typeScale = 1.35 }
+        if value("-dynamic-type") == "xxxLarge" { typeScale = 1.53 }
         if let raw = value("-scrub"), let date = ISO8601DateFormatter.internet.date(from: raw) {
             scrub = date
         }

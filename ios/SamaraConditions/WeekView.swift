@@ -13,30 +13,7 @@ struct WeekView: View {
             ScrollView {
                 if let file = model.file {
                     let rows = model.orderedDays(file)
-                    switch model.weekTab {
-                    case .heat:
-                        VStack(spacing: 10) {
-                            WeekHeat(days: rows, activity: model.activity, lowTideOnly: model.lowTideOnly) { offset in
-                                model.dayOffset = offset
-                                model.section = .today
-                            }
-                            MinutesKey(showStop: rows.contains { item in
-                                guard let day = item.day else { return false }
-                                return day.hours.contains {
-                                    let value = model.activity.heatUsesShade ? $0.wbgtShadeC : $0.wbgtSunC
-                                    return HeatScale.isStopHour(wbgt: value, on: day.sunrise)
-                                }
-                            })
-                            ActivityChips()
-                            LowTideToggle()
-                        }
-                    case .rain:
-                        WeekBars(days: rows, rain: true)
-                    case .cloud:
-                        WeekBars(days: rows, rain: false)
-                    case .sea:
-                        WeekSea(days: rows, threshold: file.week.calmThresholdKj)
-                    }
+                    WeekPages(file: file, days: rows)
                 }
             }
         }

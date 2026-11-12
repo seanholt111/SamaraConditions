@@ -16,7 +16,13 @@ struct RootView: View {
             .padding(.horizontal, 16)
             .padding(.top, 4)
         }
-        .sheet(isPresented: $model.showSources) { InfoSheet() }
+        .sheet(isPresented: $model.showSources) {
+            if ProcessInfo.processInfo.arguments.contains("-open-sources") {
+                SourcesSheet()
+            } else {
+                InfoSheet()
+            }
+        }
         .dynamicTypeSize(model.typeScale > 1.2 ? .xxxLarge : .large)
         .sheet(item: $model.selectedAlert) { alert in
             AlertSheet(alert: alert)
@@ -48,7 +54,7 @@ struct RootView: View {
     private func sectionButton(_ title: String, _ section: AppModel.Section) -> some View {
         Button { model.section = section } label: {
             Text(title)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16 * model.typeScale, weight: .semibold))
                 .foregroundStyle(model.section == section ? Palette.text : Palette.muted)
                 .frame(width: 78, height: 34)
                 .background(model.section == section ? Palette.chipFill : Color.clear, in: Capsule())
@@ -68,9 +74,9 @@ struct RootView: View {
                         } label: {
                             VStack(spacing: 1) {
                                 Text(offset == 0 ? "Today" : weekday(date))
-                                    .font(.system(size: 11, weight: selected ? .bold : .medium))
+                                    .font(.system(size: 11 * model.typeScale, weight: selected ? .bold : .medium))
                                 Text(dayNumber(date))
-                                    .font(.system(size: 12, weight: selected ? .bold : .medium))
+                                    .font(.system(size: 12 * model.typeScale, weight: selected ? .bold : .medium))
                             }
                             .foregroundStyle(offset >= 3 ? Palette.muted : Palette.text)
                             .frame(maxWidth: .infinity, minHeight: 44)
