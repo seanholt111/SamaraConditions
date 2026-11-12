@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-11T05:02:00-06:00",
+  "generated_at": "2026-11-12T10:53:29-06:00",
   "timezone": "America/Costa_Rica",
   "location": {
     "name": "Sámara",
@@ -12,40 +12,155 @@
   },
   "feeds": {
     "forecast": {
-      "as_of": "2026-11-11T05:02:00-06:00",
+      "as_of": "2026-11-12T10:53:29-06:00",
       "ok": true,
       "source": "Open-Meteo Forecast"
     },
     "marine": {
-      "as_of": "2026-11-11T05:02:00-06:00",
+      "as_of": "2026-11-12T10:53:29-06:00",
       "ok": true,
       "source": "Open-Meteo Marine"
     },
     "imn": {
-      "as_of": "2026-11-11T05:02:00-06:00",
+      "as_of": "2026-11-12T10:53:29-06:00",
       "ok": true,
       "source": "IMN CAP RSS"
     },
     "tides": {
-      "as_of": "2026-11-11T05:02:00-06:00",
+      "as_of": "2026-11-12T10:53:29-06:00",
       "ok": true,
       "source": "NOAA CO-OPS 9684403"
     }
   },
   "week": {
-    "start": "2026-11-11",
-    "end": "2026-11-17",
-    "energy_q1_kj": 126.1,
+    "start": "2026-11-12",
+    "end": "2026-11-18",
+    "energy_q1_kj": 139.9,
     "energy_median_kj": 157.0,
-    "energy_q3_kj": 197.0,
+    "energy_q3_kj": 202.6,
     "energy_n": 112,
-    "calm_threshold_kj": 28.5,
-    "hs_median_m": 0.82,
+    "calm_threshold_kj": 28.0,
+    "hs_median_m": 0.84,
     "period_median_s": 10.4,
-    "kt_at_3ft": 0.302
+    "kt_at_3ft": 0.297
   },
   "alerts": [],
   "tides": [
+    {
+      "time": "2026-11-05T05:29:00-06:00",
+      "type": "low",
+      "ft": 1.28
+    },
+    {
+      "time": "2026-11-05T11:41:00-06:00",
+      "type": "high",
+      "ft": 7.73
+    },
+    {
+      "time": "2026-11-05T17:45:00-06:00",
+      "type": "low",
+      "ft": 1.2
+    },
+    {
+      "time": "2026-11-06T00:08:00-06:00",
+      "type": "high",
+      "ft": 8.61
+    },
+    {
+      "time": "2026-11-06T06:28:00-06:00",
+      "type": "low",
+      "ft": 0.93
+    },
+    {
+      "time": "2026-11-06T12:38:00-06:00",
+      "type": "high",
+      "ft": 7.95
+    },
+    {
+      "time": "2026-11-06T18:39:00-06:00",
+      "type": "low",
+      "ft": 1.03
+    },
+    {
+      "time": "2026-11-07T00:59:00-06:00",
+      "type": "high",
+      "ft": 8.9
+    },
+    {
+      "time": "2026-11-07T07:18:00-06:00",
+      "type": "low",
+      "ft": 0.59
+    },
+    {
+      "time": "2026-11-07T13:27:00-06:00",
+      "type": "high",
+      "ft": 8.17
+    },
+    {
+      "time": "2026-11-07T19:26:00-06:00",
+      "type": "low",
+      "ft": 0.89
+    },
+    {
+      "time": "2026-11-08T01:44:00-06:00",
+      "type": "high",
+      "ft": 9.12
+    },
+    {
+      "time": "2026-11-08T08:01:00-06:00",
+      "type": "low",
+      "ft": 0.34
+    },
+    {
+      "time": "2026-11-08T14:12:00-06:00",
+      "type": "high",
+      "ft": 8.33
+    },
+    {
+      "time": "2026-11-08T20:09:00-06:00",
+      "type": "low",
+      "ft": 0.81
+    },
+    {
+      "time": "2026-11-09T02:25:00-06:00",
+      "type": "high",
+      "ft": 9.22
+    },
+    {
+      "time": "2026-11-09T08:42:00-06:00",
+      "type": "low",
+      "ft": 0.18
+    },
+    {
+      "time": "2026-11-09T14:53:00-06:00",
+      "type": "high",
+      "ft": 8.42
+    },
+    {
+      "time": "2026-11-09T20:48:00-06:00",
+      "type": "low",
+      "ft": 0.81
+    },
+    {
+      "time": "2026-11-10T03:04:00-06:00",
+      "type": "high",
+      "ft": 9.21
+    },
+    {
+      "time": "2026-11-10T09:19:00-06:00",
+      "type": "low",
+      "ft": 0.14
+    },
+    {
+      "time": "2026-11-10T15:33:00-06:00",
+      "type": "high",
+      "ft": 8.41
+    },
+    {
+      "time": "2026-11-10T21:27:00-06:00",
+      "type": "low",
+      "ft": 0.91
+    },
     {
       "time": "2026-11-11T03:41:00-06:00",
       "type": "high",
@@ -180,1171 +295,55 @@
       "time": "2026-11-17T20:43:00-06:00",
       "type": "high",
       "ft": 7.21
+    },
+    {
+      "time": "2026-11-18T02:45:00-06:00",
+      "type": "low",
+      "ft": 2.42
+    },
+    {
+      "time": "2026-11-18T09:01:00-06:00",
+      "type": "high",
+      "ft": 6.82
+    },
+    {
+      "time": "2026-11-18T15:03:00-06:00",
+      "type": "low",
+      "ft": 2.05
+    },
+    {
+      "time": "2026-11-18T21:38:00-06:00",
+      "type": "high",
+      "ft": 7.34
+    },
+    {
+      "time": "2026-11-19T03:46:00-06:00",
+      "type": "low",
+      "ft": 2.26
+    },
+    {
+      "time": "2026-11-19T10:02:00-06:00",
+      "type": "high",
+      "ft": 6.83
+    },
+    {
+      "time": "2026-11-19T15:59:00-06:00",
+      "type": "low",
+      "ft": 2.02
+    },
+    {
+      "time": "2026-11-19T22:32:00-06:00",
+      "type": "high",
+      "ft": 7.64
     }
   ],
   "days": [
-    {
-      "date": "2026-11-11",
-      "weekday": "Wed",
-      "sunrise": "2026-11-11T05:35:00-06:00",
-      "sunset": "2026-11-11T17:17:00-06:00",
-      "data_kind": "fixture",
-      "precip_mm": 0.7,
-      "precip_off_axis_mm": 0.6,
-      "cloud_daylight_mean_pct": 33,
-      "energy_median_kj": 130.7,
-      "wave_word": "normal",
-      "reef_shelters": [
-        {
-          "start": "2026-11-11T07:34:00-06:00",
-          "end": "2026-11-11T12:26:00-06:00"
-        }
-      ],
-      "tide_extrema": [
-        {
-          "time": "2026-11-11T03:41:00-06:00",
-          "type": "high",
-          "ft": 9.09
-        },
-        {
-          "time": "2026-11-11T09:56:00-06:00",
-          "type": "low",
-          "ft": 0.2
-        },
-        {
-          "time": "2026-11-11T16:12:00-06:00",
-          "type": "high",
-          "ft": 8.32
-        },
-        {
-          "time": "2026-11-11T22:04:00-06:00",
-          "type": "low",
-          "ft": 1.08
-        }
-      ],
-      "windows": {
-        "beach": [
-          {
-            "start": "2026-11-11T05:50:00-06:00",
-            "end": "2026-11-11T07:30:00-06:00"
-          }
-        ],
-        "soccer_sun": [
-          {
-            "start": "2026-11-11T05:50:00-06:00",
-            "end": "2026-11-11T06:40:00-06:00"
-          }
-        ],
-        "soccer_shade": [
-          {
-            "start": "2026-11-11T05:50:00-06:00",
-            "end": "2026-11-11T16:45:00-06:00"
-          }
-        ],
-        "pool": [
-          {
-            "start": "2026-11-11T05:50:00-06:00",
-            "end": "2026-11-11T16:45:00-06:00"
-          }
-        ],
-        "jungle": [
-          {
-            "start": "2026-11-11T05:50:00-06:00",
-            "end": "2026-11-11T16:45:00-06:00"
-          }
-        ],
-        "beach_low": []
-      },
-      "calm_windows": [
-        {
-          "start": "2026-11-11T07:30:00-06:00",
-          "end": "2026-11-11T12:40:00-06:00"
-        }
-      ],
-      "sea": [
-        {
-          "time": "2026-11-11T06:00:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 86.01
-        },
-        {
-          "time": "2026-11-11T06:05:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 81.8
-        },
-        {
-          "time": "2026-11-11T06:10:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 77.65
-        },
-        {
-          "time": "2026-11-11T06:15:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 73.57
-        },
-        {
-          "time": "2026-11-11T06:20:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 69.59
-        },
-        {
-          "time": "2026-11-11T06:25:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 65.7
-        },
-        {
-          "time": "2026-11-11T06:30:00-06:00",
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 61.92
-        },
-        {
-          "time": "2026-11-11T06:35:00-06:00",
-          "energy_offshore_kj": 158.8,
-          "energy_shore_kj": 58.15
-        },
-        {
-          "time": "2026-11-11T06:40:00-06:00",
-          "energy_offshore_kj": 158.1,
-          "energy_shore_kj": 54.52
-        },
-        {
-          "time": "2026-11-11T06:45:00-06:00",
-          "energy_offshore_kj": 157.4,
-          "energy_shore_kj": 51.02
-        },
-        {
-          "time": "2026-11-11T06:50:00-06:00",
-          "energy_offshore_kj": 156.7,
-          "energy_shore_kj": 47.68
-        },
-        {
-          "time": "2026-11-11T06:55:00-06:00",
-          "energy_offshore_kj": 156.0,
-          "energy_shore_kj": 44.5
-        },
-        {
-          "time": "2026-11-11T07:00:00-06:00",
-          "energy_offshore_kj": 155.3,
-          "energy_shore_kj": 41.48
-        },
-        {
-          "time": "2026-11-11T07:05:00-06:00",
-          "energy_offshore_kj": 154.6,
-          "energy_shore_kj": 38.62
-        },
-        {
-          "time": "2026-11-11T07:10:00-06:00",
-          "energy_offshore_kj": 153.9,
-          "energy_shore_kj": 35.92
-        },
-        {
-          "time": "2026-11-11T07:15:00-06:00",
-          "energy_offshore_kj": 153.2,
-          "energy_shore_kj": 33.4
-        },
-        {
-          "time": "2026-11-11T07:20:00-06:00",
-          "energy_offshore_kj": 152.5,
-          "energy_shore_kj": 31.04
-        },
-        {
-          "time": "2026-11-11T07:25:00-06:00",
-          "energy_offshore_kj": 151.8,
-          "energy_shore_kj": 28.85
-        },
-        {
-          "time": "2026-11-11T07:30:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 26.83
-        },
-        {
-          "time": "2026-11-11T07:35:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 25.05
-        },
-        {
-          "time": "2026-11-11T07:40:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 23.43
-        },
-        {
-          "time": "2026-11-11T07:45:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 21.96
-        },
-        {
-          "time": "2026-11-11T07:50:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 20.63
-        },
-        {
-          "time": "2026-11-11T07:55:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 19.45
-        },
-        {
-          "time": "2026-11-11T08:00:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 18.4
-        },
-        {
-          "time": "2026-11-11T08:05:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 17.48
-        },
-        {
-          "time": "2026-11-11T08:10:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 16.69
-        },
-        {
-          "time": "2026-11-11T08:15:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 16.0
-        },
-        {
-          "time": "2026-11-11T08:20:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 15.42
-        },
-        {
-          "time": "2026-11-11T08:25:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 14.94
-        },
-        {
-          "time": "2026-11-11T08:30:00-06:00",
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 14.55
-        },
-        {
-          "time": "2026-11-11T08:35:00-06:00",
-          "energy_offshore_kj": 150.42,
-          "energy_shore_kj": 14.18
-        },
-        {
-          "time": "2026-11-11T08:40:00-06:00",
-          "energy_offshore_kj": 149.75,
-          "energy_shore_kj": 13.88
-        },
-        {
-          "time": "2026-11-11T08:45:00-06:00",
-          "energy_offshore_kj": 149.07,
-          "energy_shore_kj": 13.79
-        },
-        {
-          "time": "2026-11-11T08:50:00-06:00",
-          "energy_offshore_kj": 148.4,
-          "energy_shore_kj": 13.73
-        },
-        {
-          "time": "2026-11-11T08:55:00-06:00",
-          "energy_offshore_kj": 147.72,
-          "energy_shore_kj": 13.66
-        },
-        {
-          "time": "2026-11-11T09:00:00-06:00",
-          "energy_offshore_kj": 147.05,
-          "energy_shore_kj": 13.6
-        },
-        {
-          "time": "2026-11-11T09:05:00-06:00",
-          "energy_offshore_kj": 146.38,
-          "energy_shore_kj": 13.54
-        },
-        {
-          "time": "2026-11-11T09:10:00-06:00",
-          "energy_offshore_kj": 145.7,
-          "energy_shore_kj": 13.48
-        },
-        {
-          "time": "2026-11-11T09:15:00-06:00",
-          "energy_offshore_kj": 145.03,
-          "energy_shore_kj": 13.41
-        },
-        {
-          "time": "2026-11-11T09:20:00-06:00",
-          "energy_offshore_kj": 144.35,
-          "energy_shore_kj": 13.35
-        },
-        {
-          "time": "2026-11-11T09:25:00-06:00",
-          "energy_offshore_kj": 143.68,
-          "energy_shore_kj": 13.29
-        },
-        {
-          "time": "2026-11-11T09:30:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T09:35:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T09:40:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T09:45:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T09:50:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T09:55:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:00:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:05:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:10:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:15:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:20:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:25:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:30:00-06:00",
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:35:00-06:00",
-          "energy_offshore_kj": 142.35,
-          "energy_shore_kj": 13.17
-        },
-        {
-          "time": "2026-11-11T10:40:00-06:00",
-          "energy_offshore_kj": 141.7,
-          "energy_shore_kj": 13.11
-        },
-        {
-          "time": "2026-11-11T10:45:00-06:00",
-          "energy_offshore_kj": 141.05,
-          "energy_shore_kj": 13.05
-        },
-        {
-          "time": "2026-11-11T10:50:00-06:00",
-          "energy_offshore_kj": 140.4,
-          "energy_shore_kj": 12.99
-        },
-        {
-          "time": "2026-11-11T10:55:00-06:00",
-          "energy_offshore_kj": 139.75,
-          "energy_shore_kj": 12.93
-        },
-        {
-          "time": "2026-11-11T11:00:00-06:00",
-          "energy_offshore_kj": 139.1,
-          "energy_shore_kj": 12.87
-        },
-        {
-          "time": "2026-11-11T11:05:00-06:00",
-          "energy_offshore_kj": 138.45,
-          "energy_shore_kj": 12.81
-        },
-        {
-          "time": "2026-11-11T11:10:00-06:00",
-          "energy_offshore_kj": 137.8,
-          "energy_shore_kj": 12.75
-        },
-        {
-          "time": "2026-11-11T11:15:00-06:00",
-          "energy_offshore_kj": 137.15,
-          "energy_shore_kj": 12.69
-        },
-        {
-          "time": "2026-11-11T11:20:00-06:00",
-          "energy_offshore_kj": 136.5,
-          "energy_shore_kj": 12.81
-        },
-        {
-          "time": "2026-11-11T11:25:00-06:00",
-          "energy_offshore_kj": 135.85,
-          "energy_shore_kj": 13.01
-        },
-        {
-          "time": "2026-11-11T11:30:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 13.27
-        },
-        {
-          "time": "2026-11-11T11:35:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 13.68
-        },
-        {
-          "time": "2026-11-11T11:40:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 14.16
-        },
-        {
-          "time": "2026-11-11T11:45:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 14.73
-        },
-        {
-          "time": "2026-11-11T11:50:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 15.4
-        },
-        {
-          "time": "2026-11-11T11:55:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 16.17
-        },
-        {
-          "time": "2026-11-11T12:00:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 17.04
-        },
-        {
-          "time": "2026-11-11T12:05:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 18.03
-        },
-        {
-          "time": "2026-11-11T12:10:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 19.13
-        },
-        {
-          "time": "2026-11-11T12:15:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 20.35
-        },
-        {
-          "time": "2026-11-11T12:20:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 21.7
-        },
-        {
-          "time": "2026-11-11T12:25:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 23.17
-        },
-        {
-          "time": "2026-11-11T12:30:00-06:00",
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 24.77
-        },
-        {
-          "time": "2026-11-11T12:35:00-06:00",
-          "energy_offshore_kj": 135.08,
-          "energy_shore_kj": 26.48
-        },
-        {
-          "time": "2026-11-11T12:40:00-06:00",
-          "energy_offshore_kj": 134.97,
-          "energy_shore_kj": 28.31
-        },
-        {
-          "time": "2026-11-11T12:45:00-06:00",
-          "energy_offshore_kj": 134.85,
-          "energy_shore_kj": 30.28
-        },
-        {
-          "time": "2026-11-11T12:50:00-06:00",
-          "energy_offshore_kj": 134.73,
-          "energy_shore_kj": 32.37
-        },
-        {
-          "time": "2026-11-11T12:55:00-06:00",
-          "energy_offshore_kj": 134.62,
-          "energy_shore_kj": 34.58
-        },
-        {
-          "time": "2026-11-11T13:00:00-06:00",
-          "energy_offshore_kj": 134.5,
-          "energy_shore_kj": 36.92
-        },
-        {
-          "time": "2026-11-11T13:05:00-06:00",
-          "energy_offshore_kj": 134.38,
-          "energy_shore_kj": 39.37
-        },
-        {
-          "time": "2026-11-11T13:10:00-06:00",
-          "energy_offshore_kj": 134.27,
-          "energy_shore_kj": 41.94
-        },
-        {
-          "time": "2026-11-11T13:15:00-06:00",
-          "energy_offshore_kj": 134.15,
-          "energy_shore_kj": 44.61
-        },
-        {
-          "time": "2026-11-11T13:20:00-06:00",
-          "energy_offshore_kj": 134.03,
-          "energy_shore_kj": 47.39
-        },
-        {
-          "time": "2026-11-11T13:25:00-06:00",
-          "energy_offshore_kj": 133.92,
-          "energy_shore_kj": 50.26
-        },
-        {
-          "time": "2026-11-11T13:30:00-06:00",
-          "energy_offshore_kj": 133.8,
-          "energy_shore_kj": 53.23
-        },
-        {
-          "time": "2026-11-11T13:35:00-06:00",
-          "energy_offshore_kj": 133.28,
-          "energy_shore_kj": 56.25
-        },
-        {
-          "time": "2026-11-11T13:40:00-06:00",
-          "energy_offshore_kj": 132.77,
-          "energy_shore_kj": 59.35
-        },
-        {
-          "time": "2026-11-11T13:45:00-06:00",
-          "energy_offshore_kj": 132.25,
-          "energy_shore_kj": 62.51
-        },
-        {
-          "time": "2026-11-11T13:50:00-06:00",
-          "energy_offshore_kj": 131.73,
-          "energy_shore_kj": 65.73
-        },
-        {
-          "time": "2026-11-11T13:55:00-06:00",
-          "energy_offshore_kj": 131.22,
-          "energy_shore_kj": 69.0
-        },
-        {
-          "time": "2026-11-11T14:00:00-06:00",
-          "energy_offshore_kj": 130.7,
-          "energy_shore_kj": 72.29
-        },
-        {
-          "time": "2026-11-11T14:05:00-06:00",
-          "energy_offshore_kj": 130.18,
-          "energy_shore_kj": 75.61
-        },
-        {
-          "time": "2026-11-11T14:10:00-06:00",
-          "energy_offshore_kj": 129.67,
-          "energy_shore_kj": 78.4
-        },
-        {
-          "time": "2026-11-11T14:15:00-06:00",
-          "energy_offshore_kj": 129.15,
-          "energy_shore_kj": 78.01
-        },
-        {
-          "time": "2026-11-11T14:20:00-06:00",
-          "energy_offshore_kj": 128.63,
-          "energy_shore_kj": 77.63
-        },
-        {
-          "time": "2026-11-11T14:25:00-06:00",
-          "energy_offshore_kj": 128.12,
-          "energy_shore_kj": 77.24
-        },
-        {
-          "time": "2026-11-11T14:30:00-06:00",
-          "energy_offshore_kj": 127.6,
-          "energy_shore_kj": 76.85
-        },
-        {
-          "time": "2026-11-11T14:35:00-06:00",
-          "energy_offshore_kj": 127.49,
-          "energy_shore_kj": 76.78
-        },
-        {
-          "time": "2026-11-11T14:40:00-06:00",
-          "energy_offshore_kj": 127.38,
-          "energy_shore_kj": 76.72
-        },
-        {
-          "time": "2026-11-11T14:45:00-06:00",
-          "energy_offshore_kj": 127.27,
-          "energy_shore_kj": 76.65
-        },
-        {
-          "time": "2026-11-11T14:50:00-06:00",
-          "energy_offshore_kj": 127.17,
-          "energy_shore_kj": 76.59
-        },
-        {
-          "time": "2026-11-11T14:55:00-06:00",
-          "energy_offshore_kj": 127.06,
-          "energy_shore_kj": 76.52
-        },
-        {
-          "time": "2026-11-11T15:00:00-06:00",
-          "energy_offshore_kj": 126.95,
-          "energy_shore_kj": 76.46
-        },
-        {
-          "time": "2026-11-11T15:05:00-06:00",
-          "energy_offshore_kj": 126.84,
-          "energy_shore_kj": 76.39
-        },
-        {
-          "time": "2026-11-11T15:10:00-06:00",
-          "energy_offshore_kj": 126.73,
-          "energy_shore_kj": 76.32
-        },
-        {
-          "time": "2026-11-11T15:15:00-06:00",
-          "energy_offshore_kj": 126.62,
-          "energy_shore_kj": 76.26
-        },
-        {
-          "time": "2026-11-11T15:20:00-06:00",
-          "energy_offshore_kj": 126.52,
-          "energy_shore_kj": 76.19
-        },
-        {
-          "time": "2026-11-11T15:25:00-06:00",
-          "energy_offshore_kj": 126.41,
-          "energy_shore_kj": 76.13
-        },
-        {
-          "time": "2026-11-11T15:30:00-06:00",
-          "energy_offshore_kj": 126.3,
-          "energy_shore_kj": 76.06
-        },
-        {
-          "time": "2026-11-11T15:35:00-06:00",
-          "energy_offshore_kj": 126.19,
-          "energy_shore_kj": 76.0
-        },
-        {
-          "time": "2026-11-11T15:40:00-06:00",
-          "energy_offshore_kj": 126.08,
-          "energy_shore_kj": 75.93
-        },
-        {
-          "time": "2026-11-11T15:45:00-06:00",
-          "energy_offshore_kj": 125.97,
-          "energy_shore_kj": 75.87
-        },
-        {
-          "time": "2026-11-11T15:50:00-06:00",
-          "energy_offshore_kj": 125.87,
-          "energy_shore_kj": 75.8
-        },
-        {
-          "time": "2026-11-11T15:55:00-06:00",
-          "energy_offshore_kj": 125.76,
-          "energy_shore_kj": 75.74
-        },
-        {
-          "time": "2026-11-11T16:00:00-06:00",
-          "energy_offshore_kj": 125.65,
-          "energy_shore_kj": 75.67
-        },
-        {
-          "time": "2026-11-11T16:05:00-06:00",
-          "energy_offshore_kj": 125.54,
-          "energy_shore_kj": 75.61
-        },
-        {
-          "time": "2026-11-11T16:10:00-06:00",
-          "energy_offshore_kj": 125.43,
-          "energy_shore_kj": 75.54
-        },
-        {
-          "time": "2026-11-11T16:15:00-06:00",
-          "energy_offshore_kj": 125.33,
-          "energy_shore_kj": 75.48
-        },
-        {
-          "time": "2026-11-11T16:20:00-06:00",
-          "energy_offshore_kj": 125.22,
-          "energy_shore_kj": 75.41
-        },
-        {
-          "time": "2026-11-11T16:25:00-06:00",
-          "energy_offshore_kj": 125.11,
-          "energy_shore_kj": 75.35
-        },
-        {
-          "time": "2026-11-11T16:30:00-06:00",
-          "energy_offshore_kj": 125.0,
-          "energy_shore_kj": 75.28
-        },
-        {
-          "time": "2026-11-11T16:35:00-06:00",
-          "energy_offshore_kj": 124.51,
-          "energy_shore_kj": 74.91
-        },
-        {
-          "time": "2026-11-11T16:40:00-06:00",
-          "energy_offshore_kj": 124.02,
-          "energy_shore_kj": 74.54
-        },
-        {
-          "time": "2026-11-11T16:45:00-06:00",
-          "energy_offshore_kj": 123.53,
-          "energy_shore_kj": 74.17
-        },
-        {
-          "time": "2026-11-11T16:50:00-06:00",
-          "energy_offshore_kj": 123.03,
-          "energy_shore_kj": 73.79
-        },
-        {
-          "time": "2026-11-11T16:55:00-06:00",
-          "energy_offshore_kj": 122.54,
-          "energy_shore_kj": 73.42
-        },
-        {
-          "time": "2026-11-11T17:00:00-06:00",
-          "energy_offshore_kj": 122.05,
-          "energy_shore_kj": 73.05
-        }
-      ],
-      "hours": [
-        {
-          "time": "2026-11-11T00:00:00-06:00",
-          "temp_c": 25.2,
-          "rh_pct": 93.0,
-          "wind_ms": 1.91,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1008.6,
-          "cloud_pct": 16.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 24.4,
-          "wbgt_shade_c": 24.4,
-          "swell_m": 0.98,
-          "swell_period_s": 10.55,
-          "energy_offshore_kj": 209.8,
-          "energy_shore_kj": null
-        },
-        {
-          "time": "2026-11-11T01:00:00-06:00",
-          "temp_c": 24.9,
-          "rh_pct": 92.0,
-          "wind_ms": 2.24,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.9,
-          "cloud_pct": 4.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 24.0,
-          "wbgt_shade_c": 24.0,
-          "swell_m": 0.96,
-          "swell_period_s": 10.3,
-          "energy_offshore_kj": 191.9,
-          "energy_shore_kj": null
-        },
-        {
-          "time": "2026-11-11T02:00:00-06:00",
-          "temp_c": 24.7,
-          "rh_pct": 92.0,
-          "wind_ms": 2.33,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.4,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 23.8,
-          "wbgt_shade_c": 23.8,
-          "swell_m": 0.96,
-          "swell_period_s": 10.05,
-          "energy_offshore_kj": 182.7,
-          "energy_shore_kj": null
-        },
-        {
-          "time": "2026-11-11T03:00:00-06:00",
-          "temp_c": 24.5,
-          "rh_pct": 92.0,
-          "wind_ms": 2.09,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.1,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 23.6,
-          "wbgt_shade_c": 23.6,
-          "swell_m": 0.94,
-          "swell_period_s": 9.85,
-          "energy_offshore_kj": 168.2,
-          "energy_shore_kj": null
-        },
-        {
-          "time": "2026-11-11T04:00:00-06:00",
-          "temp_c": 24.3,
-          "rh_pct": 91.0,
-          "wind_ms": 2.02,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1006.8,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 23.3,
-          "wbgt_shade_c": 23.3,
-          "swell_m": 0.94,
-          "swell_period_s": 9.8,
-          "energy_offshore_kj": 166.5,
-          "energy_shore_kj": 105.79
-        },
-        {
-          "time": "2026-11-11T05:00:00-06:00",
-          "temp_c": 24.3,
-          "rh_pct": 91.0,
-          "wind_ms": 1.95,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.0,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 23.3,
-          "wbgt_shade_c": 23.3,
-          "swell_m": 0.92,
-          "swell_period_s": 9.8,
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 100.37
-        },
-        {
-          "time": "2026-11-11T06:00:00-06:00",
-          "temp_c": 25.0,
-          "rh_pct": 88.0,
-          "wind_ms": 2.84,
-          "shortwave_wm2": 8.0,
-          "pressure_hpa": 1007.5,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 23.8,
-          "wbgt_shade_c": 23.8,
-          "swell_m": 0.92,
-          "swell_period_s": 9.8,
-          "energy_offshore_kj": 159.5,
-          "energy_shore_kj": 86.01
-        },
-        {
-          "time": "2026-11-11T07:00:00-06:00",
-          "temp_c": 27.0,
-          "rh_pct": 80.0,
-          "wind_ms": 2.93,
-          "shortwave_wm2": 154.0,
-          "pressure_hpa": 1007.7,
-          "cloud_pct": 1.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 26.4,
-          "wbgt_shade_c": 24.9,
-          "swell_m": 0.9,
-          "swell_period_s": 9.75,
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 40.86
-        },
-        {
-          "time": "2026-11-11T08:00:00-06:00",
-          "temp_c": 28.7,
-          "rh_pct": 76.0,
-          "wind_ms": 2.14,
-          "shortwave_wm2": 383.0,
-          "pressure_hpa": 1008.2,
-          "cloud_pct": 1.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 29.1,
-          "wbgt_shade_c": 26.1,
-          "swell_m": 0.9,
-          "swell_period_s": 9.75,
-          "energy_offshore_kj": 151.1,
-          "energy_shore_kj": 18.4
-        },
-        {
-          "time": "2026-11-11T09:00:00-06:00",
-          "temp_c": 30.1,
-          "rh_pct": 69.0,
-          "wind_ms": 1.16,
-          "shortwave_wm2": 598.0,
-          "pressure_hpa": 1008.3,
-          "cloud_pct": 2.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 31.6,
-          "wbgt_shade_c": 26.7,
-          "swell_m": 0.88,
-          "swell_period_s": 9.7,
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T10:00:00-06:00",
-          "temp_c": 31.2,
-          "rh_pct": 65.0,
-          "wind_ms": 1.93,
-          "shortwave_wm2": 767.0,
-          "pressure_hpa": 1008.1,
-          "cloud_pct": 27.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 31.8,
-          "wbgt_shade_c": 27.2,
-          "swell_m": 0.88,
-          "swell_period_s": 9.7,
-          "energy_offshore_kj": 143.0,
-          "energy_shore_kj": 13.23
-        },
-        {
-          "time": "2026-11-11T11:00:00-06:00",
-          "temp_c": 30.7,
-          "rh_pct": 69.0,
-          "wind_ms": 4.11,
-          "shortwave_wm2": 856.0,
-          "pressure_hpa": 1007.3,
-          "cloud_pct": 23.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 30.7,
-          "wbgt_shade_c": 27.3,
-          "swell_m": 0.86,
-          "swell_period_s": 9.65,
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 12.51
-        },
-        {
-          "time": "2026-11-11T12:00:00-06:00",
-          "temp_c": 30.4,
-          "rh_pct": 70.0,
-          "wind_ms": 3.46,
-          "shortwave_wm2": 865.0,
-          "pressure_hpa": 1006.6,
-          "cloud_pct": 8.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 30.9,
-          "wbgt_shade_c": 27.1,
-          "swell_m": 0.86,
-          "swell_period_s": 9.65,
-          "energy_offshore_kj": 135.2,
-          "energy_shore_kj": 17.04
-        },
-        {
-          "time": "2026-11-11T13:00:00-06:00",
-          "temp_c": 30.4,
-          "rh_pct": 70.0,
-          "wind_ms": 2.41,
-          "shortwave_wm2": 816.0,
-          "pressure_hpa": 1006.3,
-          "cloud_pct": 48.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 31.4,
-          "wbgt_shade_c": 27.1,
-          "swell_m": 0.86,
-          "swell_period_s": 9.6,
-          "energy_offshore_kj": 133.8,
-          "energy_shore_kj": 36.72
-        },
-        {
-          "time": "2026-11-11T14:00:00-06:00",
-          "temp_c": 30.0,
-          "rh_pct": 74.0,
-          "wind_ms": 1.98,
-          "shortwave_wm2": 698.0,
-          "pressure_hpa": 1005.8,
-          "cloud_pct": 78.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 31.4,
-          "wbgt_shade_c": 27.2,
-          "swell_m": 0.84,
-          "swell_period_s": 9.6,
-          "energy_offshore_kj": 127.6,
-          "energy_shore_kj": 71.86
-        },
-        {
-          "time": "2026-11-11T15:00:00-06:00",
-          "temp_c": 29.8,
-          "rh_pct": 75.0,
-          "wind_ms": 1.35,
-          "shortwave_wm2": 532.0,
-          "pressure_hpa": 1005.4,
-          "cloud_pct": 73.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 31.3,
-          "wbgt_shade_c": 27.1,
-          "swell_m": 0.84,
-          "swell_period_s": 9.55,
-          "energy_offshore_kj": 126.3,
-          "energy_shore_kj": 76.06
-        },
-        {
-          "time": "2026-11-11T16:00:00-06:00",
-          "temp_c": 29.0,
-          "rh_pct": 77.0,
-          "wind_ms": 1.52,
-          "shortwave_wm2": 283.0,
-          "pressure_hpa": 1006.0,
-          "cloud_pct": 99.0,
-          "precip_mm": 0.1,
-          "uv": null,
-          "wbgt_sun_c": 29.1,
-          "wbgt_shade_c": 26.5,
-          "swell_m": 0.84,
-          "swell_period_s": 9.5,
-          "energy_offshore_kj": 125.0,
-          "energy_shore_kj": 75.28
-        },
-        {
-          "time": "2026-11-11T17:00:00-06:00",
-          "temp_c": 28.0,
-          "rh_pct": 87.0,
-          "wind_ms": 1.17,
-          "shortwave_wm2": 103.0,
-          "pressure_hpa": 1006.2,
-          "cloud_pct": 16.0,
-          "precip_mm": 0.3,
-          "uv": null,
-          "wbgt_sun_c": 27.9,
-          "wbgt_shade_c": 26.6,
-          "swell_m": 0.82,
-          "swell_period_s": 9.5,
-          "energy_offshore_kj": 119.1,
-          "energy_shore_kj": 70.84
-        },
-        {
-          "time": "2026-11-11T18:00:00-06:00",
-          "temp_c": 26.9,
-          "rh_pct": 91.0,
-          "wind_ms": 1.11,
-          "shortwave_wm2": 3.0,
-          "pressure_hpa": 1007.1,
-          "cloud_pct": 54.0,
-          "precip_mm": 0.2,
-          "uv": null,
-          "wbgt_sun_c": 25.9,
-          "wbgt_shade_c": 25.9,
-          "swell_m": 0.82,
-          "swell_period_s": 9.45,
-          "energy_offshore_kj": 117.8,
-          "energy_shore_kj": 70.07
-        },
-        {
-          "time": "2026-11-11T19:00:00-06:00",
-          "temp_c": 26.6,
-          "rh_pct": 94.0,
-          "wind_ms": 0.85,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.6,
-          "cloud_pct": 9.0,
-          "precip_mm": 0.1,
-          "uv": null,
-          "wbgt_sun_c": 25.9,
-          "wbgt_shade_c": 25.9,
-          "swell_m": 0.82,
-          "swell_period_s": 9.45,
-          "energy_offshore_kj": 117.8,
-          "energy_shore_kj": 46.98
-        },
-        {
-          "time": "2026-11-11T20:00:00-06:00",
-          "temp_c": 26.3,
-          "rh_pct": 95.0,
-          "wind_ms": 1.53,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1008.0,
-          "cloud_pct": 30.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 25.7,
-          "wbgt_shade_c": 25.7,
-          "swell_m": 0.8,
-          "swell_period_s": 9.4,
-          "energy_offshore_kj": 111.0,
-          "energy_shore_kj": 21.2
-        },
-        {
-          "time": "2026-11-11T21:00:00-06:00",
-          "temp_c": 25.9,
-          "rh_pct": 95.0,
-          "wind_ms": 1.48,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1008.2,
-          "cloud_pct": 27.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 25.3,
-          "wbgt_shade_c": 25.3,
-          "swell_m": 0.8,
-          "swell_period_s": 9.4,
-          "energy_offshore_kj": 111.0,
-          "energy_shore_kj": 11.8
-        },
-        {
-          "time": "2026-11-11T22:00:00-06:00",
-          "temp_c": 25.4,
-          "rh_pct": 95.0,
-          "wind_ms": 1.31,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1008.0,
-          "cloud_pct": 30.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 24.8,
-          "wbgt_shade_c": 24.8,
-          "swell_m": 0.8,
-          "swell_period_s": 9.4,
-          "energy_offshore_kj": 111.0,
-          "energy_shore_kj": 10.29
-        },
-        {
-          "time": "2026-11-11T23:00:00-06:00",
-          "temp_c": 25.2,
-          "rh_pct": 94.0,
-          "wind_ms": 1.63,
-          "shortwave_wm2": 0.0,
-          "pressure_hpa": 1007.7,
-          "cloud_pct": 44.0,
-          "precip_mm": 0.0,
-          "uv": null,
-          "wbgt_sun_c": 24.5,
-          "wbgt_shade_c": 24.5,
-          "swell_m": 0.8,
-          "swell_period_s": 9.35,
-          "energy_offshore_kj": 109.8,
-          "energy_shore_kj": 11.14
-        }
-      ]
-    },
     {
       "date": "2026-11-12",
       "weekday": "Thu",
       "sunrise": "2026-11-12T05:35:00-06:00",
       "sunset": "2026-11-12T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 1.4,
       "precip_off_axis_mm": 0.7,
       "cloud_daylight_mean_pct": 31,
@@ -1414,7 +413,7 @@
       "calm_windows": [
         {
           "start": "2026-11-12T07:55:00-06:00",
-          "end": "2026-11-12T13:05:00-06:00"
+          "end": "2026-11-12T13:00:00-06:00"
         }
       ],
       "sea": [
@@ -2500,7 +1499,7 @@
       "weekday": "Fri",
       "sunrise": "2026-11-13T05:35:00-06:00",
       "sunset": "2026-11-13T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 5.1,
       "precip_off_axis_mm": 4.0,
       "cloud_daylight_mean_pct": 34,
@@ -3660,12 +2659,12 @@
       "weekday": "Sat",
       "sunrise": "2026-11-14T05:36:00-06:00",
       "sunset": "2026-11-14T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 2.3,
       "precip_off_axis_mm": 0.5,
       "cloud_daylight_mean_pct": 41,
       "energy_median_kj": 135.7,
-      "wave_word": "normal",
+      "wave_word": "calm",
       "reef_shelters": [
         {
           "start": "2026-11-14T09:37:00-06:00",
@@ -4811,7 +3810,7 @@
       "weekday": "Sun",
       "sunrise": "2026-11-15T05:36:00-06:00",
       "sunset": "2026-11-15T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 1.4,
       "precip_off_axis_mm": 0.2,
       "cloud_daylight_mean_pct": 46,
@@ -5967,7 +4966,7 @@
       "weekday": "Mon",
       "sunrise": "2026-11-16T05:36:00-06:00",
       "sunset": "2026-11-16T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 2.1,
       "precip_off_axis_mm": 0.2,
       "cloud_daylight_mean_pct": 80,
@@ -6036,8 +5035,8 @@
       },
       "calm_windows": [
         {
-          "start": "2026-11-16T11:35:00-06:00",
-          "end": "2026-11-16T14:20:00-06:00"
+          "start": "2026-11-16T11:40:00-06:00",
+          "end": "2026-11-16T14:15:00-06:00"
         }
       ],
       "sea": [
@@ -7123,7 +6122,7 @@
       "weekday": "Tue",
       "sunrise": "2026-11-17T05:37:00-06:00",
       "sunset": "2026-11-17T17:16:00-06:00",
-      "data_kind": "snapshot-2026-11-12",
+      "data_kind": "forecast",
       "precip_mm": 5.1,
       "precip_off_axis_mm": 1.0,
       "cloud_daylight_mean_pct": 31,
@@ -7192,7 +6191,7 @@
       },
       "calm_windows": [
         {
-          "start": "2026-11-17T12:15:00-06:00",
+          "start": "2026-11-17T12:20:00-06:00",
           "end": "2026-11-17T16:05:00-06:00"
         }
       ],
@@ -8236,7 +7235,7 @@
           "swell_m": 0.86,
           "swell_period_s": 10.4,
           "energy_offshore_kj": 157.0,
-          "energy_shore_kj": null
+          "energy_shore_kj": 95.67
         },
         {
           "time": "2026-11-17T22:00:00-06:00",
@@ -8253,7 +7252,7 @@
           "swell_m": 0.86,
           "swell_period_s": 10.4,
           "energy_offshore_kj": 157.0,
-          "energy_shore_kj": null
+          "energy_shore_kj": 95.67
         },
         {
           "time": "2026-11-17T23:00:00-06:00",
@@ -8270,7 +7269,1163 @@
           "swell_m": 0.84,
           "swell_period_s": 10.35,
           "energy_offshore_kj": 148.3,
-          "energy_shore_kj": null
+          "energy_shore_kj": 74.26
+        }
+      ]
+    },
+    {
+      "date": "2026-11-18",
+      "weekday": "Wed",
+      "sunrise": "2026-11-18T05:37:00-06:00",
+      "sunset": "2026-11-18T17:16:00-06:00",
+      "data_kind": "forecast",
+      "precip_mm": 3.0,
+      "precip_off_axis_mm": 0.8,
+      "cloud_daylight_mean_pct": 21,
+      "energy_median_kj": 144.5,
+      "wave_word": "normal",
+      "reef_shelters": [
+        {
+          "start": "2026-11-18T13:16:00-06:00",
+          "end": "2026-11-18T16:53:00-06:00"
+        }
+      ],
+      "tide_extrema": [
+        {
+          "time": "2026-11-18T02:45:00-06:00",
+          "type": "low",
+          "ft": 2.42
+        },
+        {
+          "time": "2026-11-18T09:01:00-06:00",
+          "type": "high",
+          "ft": 6.82
+        },
+        {
+          "time": "2026-11-18T15:03:00-06:00",
+          "type": "low",
+          "ft": 2.05
+        },
+        {
+          "time": "2026-11-18T21:38:00-06:00",
+          "type": "high",
+          "ft": 7.34
+        }
+      ],
+      "windows": {
+        "beach": [
+          {
+            "start": "2026-11-18T05:55:00-06:00",
+            "end": "2026-11-18T07:45:00-06:00"
+          }
+        ],
+        "soccer_sun": [
+          {
+            "start": "2026-11-18T05:55:00-06:00",
+            "end": "2026-11-18T07:05:00-06:00"
+          }
+        ],
+        "soccer_shade": [
+          {
+            "start": "2026-11-18T05:55:00-06:00",
+            "end": "2026-11-18T16:45:00-06:00"
+          }
+        ],
+        "pool": [
+          {
+            "start": "2026-11-18T05:55:00-06:00",
+            "end": "2026-11-18T16:45:00-06:00"
+          }
+        ],
+        "jungle": [
+          {
+            "start": "2026-11-18T05:55:00-06:00",
+            "end": "2026-11-18T16:45:00-06:00"
+          }
+        ],
+        "beach_low": []
+      },
+      "calm_windows": [
+        {
+          "start": "2026-11-18T13:20:00-06:00",
+          "end": "2026-11-18T16:45:00-06:00"
+        }
+      ],
+      "sea": [
+        {
+          "time": "2026-11-18T06:00:00-06:00",
+          "energy_offshore_kj": 136.61,
+          "energy_shore_kj": 50.64
+        },
+        {
+          "time": "2026-11-18T06:05:00-06:00",
+          "energy_offshore_kj": 136.5,
+          "energy_shore_kj": 52.35
+        },
+        {
+          "time": "2026-11-18T06:10:00-06:00",
+          "energy_offshore_kj": 136.39,
+          "energy_shore_kj": 54.08
+        },
+        {
+          "time": "2026-11-18T06:15:00-06:00",
+          "energy_offshore_kj": 136.28,
+          "energy_shore_kj": 55.83
+        },
+        {
+          "time": "2026-11-18T06:20:00-06:00",
+          "energy_offshore_kj": 136.17,
+          "energy_shore_kj": 57.61
+        },
+        {
+          "time": "2026-11-18T06:25:00-06:00",
+          "energy_offshore_kj": 136.05,
+          "energy_shore_kj": 59.4
+        },
+        {
+          "time": "2026-11-18T06:30:00-06:00",
+          "energy_offshore_kj": 135.94,
+          "energy_shore_kj": 61.21
+        },
+        {
+          "time": "2026-11-18T06:35:00-06:00",
+          "energy_offshore_kj": 135.72,
+          "energy_shore_kj": 62.97
+        },
+        {
+          "time": "2026-11-18T06:40:00-06:00",
+          "energy_offshore_kj": 135.5,
+          "energy_shore_kj": 64.73
+        },
+        {
+          "time": "2026-11-18T06:45:00-06:00",
+          "energy_offshore_kj": 135.28,
+          "energy_shore_kj": 66.48
+        },
+        {
+          "time": "2026-11-18T06:50:00-06:00",
+          "energy_offshore_kj": 135.05,
+          "energy_shore_kj": 68.23
+        },
+        {
+          "time": "2026-11-18T06:55:00-06:00",
+          "energy_offshore_kj": 134.83,
+          "energy_shore_kj": 69.96
+        },
+        {
+          "time": "2026-11-18T07:00:00-06:00",
+          "energy_offshore_kj": 134.61,
+          "energy_shore_kj": 71.67
+        },
+        {
+          "time": "2026-11-18T07:05:00-06:00",
+          "energy_offshore_kj": 134.39,
+          "energy_shore_kj": 73.35
+        },
+        {
+          "time": "2026-11-18T07:10:00-06:00",
+          "energy_offshore_kj": 134.16,
+          "energy_shore_kj": 75.0
+        },
+        {
+          "time": "2026-11-18T07:15:00-06:00",
+          "energy_offshore_kj": 133.94,
+          "energy_shore_kj": 76.61
+        },
+        {
+          "time": "2026-11-18T07:20:00-06:00",
+          "energy_offshore_kj": 133.72,
+          "energy_shore_kj": 78.19
+        },
+        {
+          "time": "2026-11-18T07:25:00-06:00",
+          "energy_offshore_kj": 133.5,
+          "energy_shore_kj": 79.4
+        },
+        {
+          "time": "2026-11-18T07:30:00-06:00",
+          "energy_offshore_kj": 133.28,
+          "energy_shore_kj": 79.27
+        },
+        {
+          "time": "2026-11-18T07:35:00-06:00",
+          "energy_offshore_kj": 132.64,
+          "energy_shore_kj": 78.81
+        },
+        {
+          "time": "2026-11-18T07:40:00-06:00",
+          "energy_offshore_kj": 132.0,
+          "energy_shore_kj": 78.34
+        },
+        {
+          "time": "2026-11-18T07:45:00-06:00",
+          "energy_offshore_kj": 131.36,
+          "energy_shore_kj": 77.88
+        },
+        {
+          "time": "2026-11-18T07:50:00-06:00",
+          "energy_offshore_kj": 130.72,
+          "energy_shore_kj": 77.41
+        },
+        {
+          "time": "2026-11-18T07:55:00-06:00",
+          "energy_offshore_kj": 130.08,
+          "energy_shore_kj": 76.95
+        },
+        {
+          "time": "2026-11-18T08:00:00-06:00",
+          "energy_offshore_kj": 129.44,
+          "energy_shore_kj": 76.49
+        },
+        {
+          "time": "2026-11-18T08:05:00-06:00",
+          "energy_offshore_kj": 128.8,
+          "energy_shore_kj": 76.03
+        },
+        {
+          "time": "2026-11-18T08:10:00-06:00",
+          "energy_offshore_kj": 128.16,
+          "energy_shore_kj": 75.57
+        },
+        {
+          "time": "2026-11-18T08:15:00-06:00",
+          "energy_offshore_kj": 127.52,
+          "energy_shore_kj": 75.11
+        },
+        {
+          "time": "2026-11-18T08:20:00-06:00",
+          "energy_offshore_kj": 126.88,
+          "energy_shore_kj": 74.65
+        },
+        {
+          "time": "2026-11-18T08:25:00-06:00",
+          "energy_offshore_kj": 126.23,
+          "energy_shore_kj": 74.19
+        },
+        {
+          "time": "2026-11-18T08:30:00-06:00",
+          "energy_offshore_kj": 125.59,
+          "energy_shore_kj": 73.73
+        },
+        {
+          "time": "2026-11-18T08:35:00-06:00",
+          "energy_offshore_kj": 125.7,
+          "energy_shore_kj": 73.79
+        },
+        {
+          "time": "2026-11-18T08:40:00-06:00",
+          "energy_offshore_kj": 125.8,
+          "energy_shore_kj": 73.85
+        },
+        {
+          "time": "2026-11-18T08:45:00-06:00",
+          "energy_offshore_kj": 125.91,
+          "energy_shore_kj": 73.91
+        },
+        {
+          "time": "2026-11-18T08:50:00-06:00",
+          "energy_offshore_kj": 126.01,
+          "energy_shore_kj": 73.97
+        },
+        {
+          "time": "2026-11-18T08:55:00-06:00",
+          "energy_offshore_kj": 126.12,
+          "energy_shore_kj": 74.04
+        },
+        {
+          "time": "2026-11-18T09:00:00-06:00",
+          "energy_offshore_kj": 126.22,
+          "energy_shore_kj": 74.1
+        },
+        {
+          "time": "2026-11-18T09:05:00-06:00",
+          "energy_offshore_kj": 126.33,
+          "energy_shore_kj": 74.16
+        },
+        {
+          "time": "2026-11-18T09:10:00-06:00",
+          "energy_offshore_kj": 126.43,
+          "energy_shore_kj": 74.22
+        },
+        {
+          "time": "2026-11-18T09:15:00-06:00",
+          "energy_offshore_kj": 126.54,
+          "energy_shore_kj": 74.28
+        },
+        {
+          "time": "2026-11-18T09:20:00-06:00",
+          "energy_offshore_kj": 126.64,
+          "energy_shore_kj": 74.34
+        },
+        {
+          "time": "2026-11-18T09:25:00-06:00",
+          "energy_offshore_kj": 126.75,
+          "energy_shore_kj": 74.4
+        },
+        {
+          "time": "2026-11-18T09:30:00-06:00",
+          "energy_offshore_kj": 126.85,
+          "energy_shore_kj": 74.47
+        },
+        {
+          "time": "2026-11-18T09:35:00-06:00",
+          "energy_offshore_kj": 127.49,
+          "energy_shore_kj": 74.84
+        },
+        {
+          "time": "2026-11-18T09:40:00-06:00",
+          "energy_offshore_kj": 128.14,
+          "energy_shore_kj": 75.22
+        },
+        {
+          "time": "2026-11-18T09:45:00-06:00",
+          "energy_offshore_kj": 128.78,
+          "energy_shore_kj": 75.59
+        },
+        {
+          "time": "2026-11-18T09:50:00-06:00",
+          "energy_offshore_kj": 129.42,
+          "energy_shore_kj": 75.97
+        },
+        {
+          "time": "2026-11-18T09:55:00-06:00",
+          "energy_offshore_kj": 130.06,
+          "energy_shore_kj": 76.35
+        },
+        {
+          "time": "2026-11-18T10:00:00-06:00",
+          "energy_offshore_kj": 130.7,
+          "energy_shore_kj": 76.72
+        },
+        {
+          "time": "2026-11-18T10:05:00-06:00",
+          "energy_offshore_kj": 131.34,
+          "energy_shore_kj": 77.1
+        },
+        {
+          "time": "2026-11-18T10:10:00-06:00",
+          "energy_offshore_kj": 131.98,
+          "energy_shore_kj": 77.47
+        },
+        {
+          "time": "2026-11-18T10:15:00-06:00",
+          "energy_offshore_kj": 132.62,
+          "energy_shore_kj": 77.85
+        },
+        {
+          "time": "2026-11-18T10:20:00-06:00",
+          "energy_offshore_kj": 133.26,
+          "energy_shore_kj": 78.23
+        },
+        {
+          "time": "2026-11-18T10:25:00-06:00",
+          "energy_offshore_kj": 133.9,
+          "energy_shore_kj": 78.6
+        },
+        {
+          "time": "2026-11-18T10:30:00-06:00",
+          "energy_offshore_kj": 134.54,
+          "energy_shore_kj": 78.98
+        },
+        {
+          "time": "2026-11-18T10:35:00-06:00",
+          "energy_offshore_kj": 134.93,
+          "energy_shore_kj": 79.12
+        },
+        {
+          "time": "2026-11-18T10:40:00-06:00",
+          "energy_offshore_kj": 135.33,
+          "energy_shore_kj": 79.26
+        },
+        {
+          "time": "2026-11-18T10:45:00-06:00",
+          "energy_offshore_kj": 135.72,
+          "energy_shore_kj": 78.96
+        },
+        {
+          "time": "2026-11-18T10:50:00-06:00",
+          "energy_offshore_kj": 136.11,
+          "energy_shore_kj": 77.35
+        },
+        {
+          "time": "2026-11-18T10:55:00-06:00",
+          "energy_offshore_kj": 136.51,
+          "energy_shore_kj": 75.67
+        },
+        {
+          "time": "2026-11-18T11:00:00-06:00",
+          "energy_offshore_kj": 136.9,
+          "energy_shore_kj": 73.95
+        },
+        {
+          "time": "2026-11-18T11:05:00-06:00",
+          "energy_offshore_kj": 137.29,
+          "energy_shore_kj": 72.17
+        },
+        {
+          "time": "2026-11-18T11:10:00-06:00",
+          "energy_offshore_kj": 137.69,
+          "energy_shore_kj": 70.36
+        },
+        {
+          "time": "2026-11-18T11:15:00-06:00",
+          "energy_offshore_kj": 138.08,
+          "energy_shore_kj": 68.52
+        },
+        {
+          "time": "2026-11-18T11:20:00-06:00",
+          "energy_offshore_kj": 138.47,
+          "energy_shore_kj": 66.65
+        },
+        {
+          "time": "2026-11-18T11:25:00-06:00",
+          "energy_offshore_kj": 138.87,
+          "energy_shore_kj": 64.76
+        },
+        {
+          "time": "2026-11-18T11:30:00-06:00",
+          "energy_offshore_kj": 139.26,
+          "energy_shore_kj": 62.86
+        },
+        {
+          "time": "2026-11-18T11:35:00-06:00",
+          "energy_offshore_kj": 140.03,
+          "energy_shore_kj": 60.93
+        },
+        {
+          "time": "2026-11-18T11:40:00-06:00",
+          "energy_offshore_kj": 140.79,
+          "energy_shore_kj": 59.0
+        },
+        {
+          "time": "2026-11-18T11:45:00-06:00",
+          "energy_offshore_kj": 141.55,
+          "energy_shore_kj": 57.09
+        },
+        {
+          "time": "2026-11-18T11:50:00-06:00",
+          "energy_offshore_kj": 142.32,
+          "energy_shore_kj": 55.19
+        },
+        {
+          "time": "2026-11-18T11:55:00-06:00",
+          "energy_offshore_kj": 143.08,
+          "energy_shore_kj": 53.31
+        },
+        {
+          "time": "2026-11-18T12:00:00-06:00",
+          "energy_offshore_kj": 143.85,
+          "energy_shore_kj": 51.47
+        },
+        {
+          "time": "2026-11-18T12:05:00-06:00",
+          "energy_offshore_kj": 144.61,
+          "energy_shore_kj": 49.65
+        },
+        {
+          "time": "2026-11-18T12:10:00-06:00",
+          "energy_offshore_kj": 145.38,
+          "energy_shore_kj": 47.88
+        },
+        {
+          "time": "2026-11-18T12:15:00-06:00",
+          "energy_offshore_kj": 146.14,
+          "energy_shore_kj": 46.14
+        },
+        {
+          "time": "2026-11-18T12:20:00-06:00",
+          "energy_offshore_kj": 146.9,
+          "energy_shore_kj": 44.46
+        },
+        {
+          "time": "2026-11-18T12:25:00-06:00",
+          "energy_offshore_kj": 147.67,
+          "energy_shore_kj": 42.82
+        },
+        {
+          "time": "2026-11-18T12:30:00-06:00",
+          "energy_offshore_kj": 148.43,
+          "energy_shore_kj": 41.24
+        },
+        {
+          "time": "2026-11-18T12:35:00-06:00",
+          "energy_offshore_kj": 148.66,
+          "energy_shore_kj": 39.57
+        },
+        {
+          "time": "2026-11-18T12:40:00-06:00",
+          "energy_offshore_kj": 148.88,
+          "energy_shore_kj": 37.97
+        },
+        {
+          "time": "2026-11-18T12:45:00-06:00",
+          "energy_offshore_kj": 149.1,
+          "energy_shore_kj": 36.44
+        },
+        {
+          "time": "2026-11-18T12:50:00-06:00",
+          "energy_offshore_kj": 149.32,
+          "energy_shore_kj": 34.99
+        },
+        {
+          "time": "2026-11-18T12:55:00-06:00",
+          "energy_offshore_kj": 149.55,
+          "energy_shore_kj": 33.61
+        },
+        {
+          "time": "2026-11-18T13:00:00-06:00",
+          "energy_offshore_kj": 149.77,
+          "energy_shore_kj": 32.3
+        },
+        {
+          "time": "2026-11-18T13:05:00-06:00",
+          "energy_offshore_kj": 149.99,
+          "energy_shore_kj": 31.07
+        },
+        {
+          "time": "2026-11-18T13:10:00-06:00",
+          "energy_offshore_kj": 150.22,
+          "energy_shore_kj": 29.91
+        },
+        {
+          "time": "2026-11-18T13:15:00-06:00",
+          "energy_offshore_kj": 150.44,
+          "energy_shore_kj": 28.82
+        },
+        {
+          "time": "2026-11-18T13:20:00-06:00",
+          "energy_offshore_kj": 150.66,
+          "energy_shore_kj": 27.81
+        },
+        {
+          "time": "2026-11-18T13:25:00-06:00",
+          "energy_offshore_kj": 150.88,
+          "energy_shore_kj": 26.86
+        },
+        {
+          "time": "2026-11-18T13:30:00-06:00",
+          "energy_offshore_kj": 151.11,
+          "energy_shore_kj": 25.98
+        },
+        {
+          "time": "2026-11-18T13:35:00-06:00",
+          "energy_offshore_kj": 151.64,
+          "energy_shore_kj": 25.18
+        },
+        {
+          "time": "2026-11-18T13:40:00-06:00",
+          "energy_offshore_kj": 152.18,
+          "energy_shore_kj": 24.44
+        },
+        {
+          "time": "2026-11-18T13:45:00-06:00",
+          "energy_offshore_kj": 152.72,
+          "energy_shore_kj": 23.77
+        },
+        {
+          "time": "2026-11-18T13:50:00-06:00",
+          "energy_offshore_kj": 153.25,
+          "energy_shore_kj": 23.16
+        },
+        {
+          "time": "2026-11-18T13:55:00-06:00",
+          "energy_offshore_kj": 153.79,
+          "energy_shore_kj": 22.61
+        },
+        {
+          "time": "2026-11-18T14:00:00-06:00",
+          "energy_offshore_kj": 154.33,
+          "energy_shore_kj": 22.12
+        },
+        {
+          "time": "2026-11-18T14:05:00-06:00",
+          "energy_offshore_kj": 154.86,
+          "energy_shore_kj": 21.68
+        },
+        {
+          "time": "2026-11-18T14:10:00-06:00",
+          "energy_offshore_kj": 155.4,
+          "energy_shore_kj": 21.29
+        },
+        {
+          "time": "2026-11-18T14:15:00-06:00",
+          "energy_offshore_kj": 155.94,
+          "energy_shore_kj": 20.95
+        },
+        {
+          "time": "2026-11-18T14:20:00-06:00",
+          "energy_offshore_kj": 156.47,
+          "energy_shore_kj": 20.65
+        },
+        {
+          "time": "2026-11-18T14:25:00-06:00",
+          "energy_offshore_kj": 157.01,
+          "energy_shore_kj": 20.4
+        },
+        {
+          "time": "2026-11-18T14:30:00-06:00",
+          "energy_offshore_kj": 157.55,
+          "energy_shore_kj": 20.19
+        },
+        {
+          "time": "2026-11-18T14:35:00-06:00",
+          "energy_offshore_kj": 157.43,
+          "energy_shore_kj": 19.96
+        },
+        {
+          "time": "2026-11-18T14:40:00-06:00",
+          "energy_offshore_kj": 157.31,
+          "energy_shore_kj": 19.76
+        },
+        {
+          "time": "2026-11-18T14:45:00-06:00",
+          "energy_offshore_kj": 157.2,
+          "energy_shore_kj": 19.6
+        },
+        {
+          "time": "2026-11-18T14:50:00-06:00",
+          "energy_offshore_kj": 157.08,
+          "energy_shore_kj": 19.48
+        },
+        {
+          "time": "2026-11-18T14:55:00-06:00",
+          "energy_offshore_kj": 156.96,
+          "energy_shore_kj": 19.39
+        },
+        {
+          "time": "2026-11-18T15:00:00-06:00",
+          "energy_offshore_kj": 156.84,
+          "energy_shore_kj": 19.34
+        },
+        {
+          "time": "2026-11-18T15:05:00-06:00",
+          "energy_offshore_kj": 156.73,
+          "energy_shore_kj": 19.32
+        },
+        {
+          "time": "2026-11-18T15:10:00-06:00",
+          "energy_offshore_kj": 156.61,
+          "energy_shore_kj": 19.34
+        },
+        {
+          "time": "2026-11-18T15:15:00-06:00",
+          "energy_offshore_kj": 156.49,
+          "energy_shore_kj": 19.38
+        },
+        {
+          "time": "2026-11-18T15:20:00-06:00",
+          "energy_offshore_kj": 156.38,
+          "energy_shore_kj": 19.46
+        },
+        {
+          "time": "2026-11-18T15:25:00-06:00",
+          "energy_offshore_kj": 156.26,
+          "energy_shore_kj": 19.57
+        },
+        {
+          "time": "2026-11-18T15:30:00-06:00",
+          "energy_offshore_kj": 156.14,
+          "energy_shore_kj": 19.72
+        },
+        {
+          "time": "2026-11-18T15:35:00-06:00",
+          "energy_offshore_kj": 156.03,
+          "energy_shore_kj": 19.9
+        },
+        {
+          "time": "2026-11-18T15:40:00-06:00",
+          "energy_offshore_kj": 155.91,
+          "energy_shore_kj": 20.11
+        },
+        {
+          "time": "2026-11-18T15:45:00-06:00",
+          "energy_offshore_kj": 155.79,
+          "energy_shore_kj": 20.37
+        },
+        {
+          "time": "2026-11-18T15:50:00-06:00",
+          "energy_offshore_kj": 155.68,
+          "energy_shore_kj": 20.66
+        },
+        {
+          "time": "2026-11-18T15:55:00-06:00",
+          "energy_offshore_kj": 155.56,
+          "energy_shore_kj": 21.0
+        },
+        {
+          "time": "2026-11-18T16:00:00-06:00",
+          "energy_offshore_kj": 155.44,
+          "energy_shore_kj": 21.38
+        },
+        {
+          "time": "2026-11-18T16:05:00-06:00",
+          "energy_offshore_kj": 155.33,
+          "energy_shore_kj": 21.8
+        },
+        {
+          "time": "2026-11-18T16:10:00-06:00",
+          "energy_offshore_kj": 155.21,
+          "energy_shore_kj": 22.27
+        },
+        {
+          "time": "2026-11-18T16:15:00-06:00",
+          "energy_offshore_kj": 155.09,
+          "energy_shore_kj": 22.79
+        },
+        {
+          "time": "2026-11-18T16:20:00-06:00",
+          "energy_offshore_kj": 154.98,
+          "energy_shore_kj": 23.36
+        },
+        {
+          "time": "2026-11-18T16:25:00-06:00",
+          "energy_offshore_kj": 154.86,
+          "energy_shore_kj": 23.99
+        },
+        {
+          "time": "2026-11-18T16:30:00-06:00",
+          "energy_offshore_kj": 154.75,
+          "energy_shore_kj": 24.67
+        },
+        {
+          "time": "2026-11-18T16:35:00-06:00",
+          "energy_offshore_kj": 154.63,
+          "energy_shore_kj": 25.41
+        },
+        {
+          "time": "2026-11-18T16:40:00-06:00",
+          "energy_offshore_kj": 154.51,
+          "energy_shore_kj": 26.21
+        },
+        {
+          "time": "2026-11-18T16:45:00-06:00",
+          "energy_offshore_kj": 154.4,
+          "energy_shore_kj": 27.08
+        },
+        {
+          "time": "2026-11-18T16:50:00-06:00",
+          "energy_offshore_kj": 154.28,
+          "energy_shore_kj": 28.01
+        },
+        {
+          "time": "2026-11-18T16:55:00-06:00",
+          "energy_offshore_kj": 154.17,
+          "energy_shore_kj": 29.01
+        },
+        {
+          "time": "2026-11-18T17:00:00-06:00",
+          "energy_offshore_kj": 154.05,
+          "energy_shore_kj": 30.08
+        }
+      ],
+      "hours": [
+        {
+          "time": "2026-11-18T00:00:00-06:00",
+          "temp_c": 24.5,
+          "rh_pct": 95.0,
+          "wind_ms": 2.32,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1010.0,
+          "cloud_pct": 48.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 23.87,
+          "wbgt_shade_c": 23.87,
+          "swell_m": 0.84,
+          "swell_period_s": 10.35,
+          "energy_offshore_kj": 148.3,
+          "energy_shore_kj": 48.27
+        },
+        {
+          "time": "2026-11-18T01:00:00-06:00",
+          "temp_c": 24.4,
+          "rh_pct": 92.0,
+          "wind_ms": 1.9,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.7,
+          "cloud_pct": 33.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 23.47,
+          "wbgt_shade_c": 23.47,
+          "swell_m": 0.84,
+          "swell_period_s": 10.3,
+          "energy_offshore_kj": 146.9,
+          "energy_shore_kj": 30.27
+        },
+        {
+          "time": "2026-11-18T02:00:00-06:00",
+          "temp_c": 24.0,
+          "rh_pct": 92.0,
+          "wind_ms": 2.1,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.7,
+          "cloud_pct": 26.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 23.08,
+          "wbgt_shade_c": 23.08,
+          "swell_m": 0.82,
+          "swell_period_s": 10.3,
+          "energy_offshore_kj": 140.0,
+          "energy_shore_kj": 21.36
+        },
+        {
+          "time": "2026-11-18T03:00:00-06:00",
+          "temp_c": 23.6,
+          "rh_pct": 92.0,
+          "wind_ms": 2.26,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.7,
+          "cloud_pct": 19.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 22.68,
+          "wbgt_shade_c": 22.68,
+          "swell_m": 0.82,
+          "swell_period_s": 10.25,
+          "energy_offshore_kj": 138.6,
+          "energy_shore_kj": 19.74
+        },
+        {
+          "time": "2026-11-18T04:00:00-06:00",
+          "temp_c": 23.4,
+          "rh_pct": 92.0,
+          "wind_ms": 2.42,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.7,
+          "cloud_pct": 11.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 22.48,
+          "wbgt_shade_c": 22.48,
+          "swell_m": 0.82,
+          "swell_period_s": 10.2,
+          "energy_offshore_kj": 137.3,
+          "energy_shore_kj": 23.2
+        },
+        {
+          "time": "2026-11-18T05:00:00-06:00",
+          "temp_c": 23.3,
+          "rh_pct": 92.0,
+          "wind_ms": 2.42,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.7,
+          "cloud_pct": 6.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 22.38,
+          "wbgt_shade_c": 22.38,
+          "swell_m": 0.82,
+          "swell_period_s": 10.2,
+          "energy_offshore_kj": 137.3,
+          "energy_shore_kj": 33.27
+        },
+        {
+          "time": "2026-11-18T06:00:00-06:00",
+          "temp_c": 23.6,
+          "rh_pct": 90.0,
+          "wind_ms": 2.17,
+          "shortwave_wm2": 4.0,
+          "pressure_hpa": 1009.6,
+          "cloud_pct": 3.0,
+          "precip_mm": 0.0,
+          "uv": 0.05,
+          "wbgt_sun_c": 22.54,
+          "wbgt_shade_c": 22.5,
+          "swell_m": 0.82,
+          "swell_period_s": 10.15,
+          "energy_offshore_kj": 135.9,
+          "energy_shore_kj": 50.39
+        },
+        {
+          "time": "2026-11-18T07:00:00-06:00",
+          "temp_c": 24.4,
+          "rh_pct": 87.0,
+          "wind_ms": 1.6,
+          "shortwave_wm2": 158.0,
+          "pressure_hpa": 1009.5,
+          "cloud_pct": 5.0,
+          "precip_mm": 0.1,
+          "uv": 1.1,
+          "wbgt_sun_c": 25.23,
+          "wbgt_shade_c": 23.04,
+          "swell_m": 0.82,
+          "swell_period_s": 10.05,
+          "energy_offshore_kj": 133.3,
+          "energy_shore_kj": 70.94
+        },
+        {
+          "time": "2026-11-18T08:00:00-06:00",
+          "temp_c": 25.6,
+          "rh_pct": 83.0,
+          "wind_ms": 0.71,
+          "shortwave_wm2": 393.0,
+          "pressure_hpa": 1009.4,
+          "cloud_pct": 9.0,
+          "precip_mm": 0.1,
+          "uv": 2.9,
+          "wbgt_sun_c": 28.76,
+          "wbgt_shade_c": 23.8,
+          "swell_m": 0.8,
+          "swell_period_s": 10.0,
+          "energy_offshore_kj": 125.6,
+          "energy_shore_kj": 73.73
+        },
+        {
+          "time": "2026-11-18T09:00:00-06:00",
+          "temp_c": 27.1,
+          "rh_pct": 78.0,
+          "wind_ms": 0.6,
+          "shortwave_wm2": 593.0,
+          "pressure_hpa": 1009.3,
+          "cloud_pct": 16.0,
+          "precip_mm": 0.1,
+          "uv": 4.7,
+          "wbgt_sun_c": 31.26,
+          "wbgt_shade_c": 24.76,
+          "swell_m": 0.8,
+          "swell_period_s": 10.05,
+          "energy_offshore_kj": 126.9,
+          "energy_shore_kj": 74.47
+        },
+        {
+          "time": "2026-11-18T10:00:00-06:00",
+          "temp_c": 28.5,
+          "rh_pct": 74.0,
+          "wind_ms": 1.55,
+          "shortwave_wm2": 740.0,
+          "pressure_hpa": 1009.1,
+          "cloud_pct": 22.0,
+          "precip_mm": 0.1,
+          "uv": 6.7,
+          "wbgt_sun_c": 30.68,
+          "wbgt_shade_c": 25.72,
+          "swell_m": 0.8,
+          "swell_period_s": 10.35,
+          "energy_offshore_kj": 134.5,
+          "energy_shore_kj": 78.98
+        },
+        {
+          "time": "2026-11-18T11:00:00-06:00",
+          "temp_c": 29.7,
+          "rh_pct": 72.0,
+          "wind_ms": 2.33,
+          "shortwave_wm2": 823.0,
+          "pressure_hpa": 1009.0,
+          "cloud_pct": 28.0,
+          "precip_mm": 0.1,
+          "uv": 7.6,
+          "wbgt_sun_c": 31.04,
+          "wbgt_shade_c": 26.66,
+          "swell_m": 0.78,
+          "swell_period_s": 10.8,
+          "energy_offshore_kj": 139.3,
+          "energy_shore_kj": 76.74
+        },
+        {
+          "time": "2026-11-18T12:00:00-06:00",
+          "temp_c": 30.2,
+          "rh_pct": 71.0,
+          "wind_ms": 2.74,
+          "shortwave_wm2": 838.0,
+          "pressure_hpa": 1008.9,
+          "cloud_pct": 31.0,
+          "precip_mm": 0.1,
+          "uv": 7.6,
+          "wbgt_sun_c": 31.14,
+          "wbgt_shade_c": 27.02,
+          "swell_m": 0.78,
+          "swell_period_s": 11.15,
+          "energy_offshore_kj": 148.4,
+          "energy_shore_kj": 53.14
+        },
+        {
+          "time": "2026-11-18T13:00:00-06:00",
+          "temp_c": 30.1,
+          "rh_pct": 72.0,
+          "wind_ms": 2.68,
+          "shortwave_wm2": 744.0,
+          "pressure_hpa": 1008.8,
+          "cloud_pct": 31.0,
+          "precip_mm": 0.4,
+          "uv": 6.95,
+          "wbgt_sun_c": 30.96,
+          "wbgt_shade_c": 27.04,
+          "swell_m": 0.78,
+          "swell_period_s": 11.25,
+          "energy_offshore_kj": 151.1,
+          "energy_shore_kj": 32.6
+        },
+        {
+          "time": "2026-11-18T14:00:00-06:00",
+          "temp_c": 29.5,
+          "rh_pct": 76.0,
+          "wind_ms": 2.26,
+          "shortwave_wm2": 643.0,
+          "pressure_hpa": 1008.7,
+          "cloud_pct": 30.0,
+          "precip_mm": 0.4,
+          "uv": 5.6,
+          "wbgt_sun_c": 30.85,
+          "wbgt_shade_c": 26.92,
+          "swell_m": 0.8,
+          "swell_period_s": 11.2,
+          "energy_offshore_kj": 157.5,
+          "energy_shore_kj": 22.43
+        },
+        {
+          "time": "2026-11-18T15:00:00-06:00",
+          "temp_c": 28.7,
+          "rh_pct": 80.0,
+          "wind_ms": 1.65,
+          "shortwave_wm2": 497.0,
+          "pressure_hpa": 1008.6,
+          "cloud_pct": 28.0,
+          "precip_mm": 0.4,
+          "uv": 3.9,
+          "wbgt_sun_c": 30.32,
+          "wbgt_shade_c": 26.58,
+          "swell_m": 0.8,
+          "swell_period_s": 11.15,
+          "energy_offshore_kj": 156.1,
+          "energy_shore_kj": 19.25
+        },
+        {
+          "time": "2026-11-18T16:00:00-06:00",
+          "temp_c": 27.6,
+          "rh_pct": 86.0,
+          "wind_ms": 0.98,
+          "shortwave_wm2": 316.0,
+          "pressure_hpa": 1008.5,
+          "cloud_pct": 25.0,
+          "precip_mm": 0.4,
+          "uv": 2.1,
+          "wbgt_sun_c": 29.57,
+          "wbgt_shade_c": 26.11,
+          "swell_m": 0.8,
+          "swell_period_s": 11.1,
+          "energy_offshore_kj": 154.7,
+          "energy_shore_kj": 21.28
+        },
+        {
+          "time": "2026-11-18T17:00:00-06:00",
+          "temp_c": 26.7,
+          "rh_pct": 90.0,
+          "wind_ms": 0.58,
+          "shortwave_wm2": 114.0,
+          "pressure_hpa": 1008.5,
+          "cloud_pct": 22.0,
+          "precip_mm": 0.4,
+          "uv": 0.7,
+          "wbgt_sun_c": 27.7,
+          "wbgt_shade_c": 25.57,
+          "swell_m": 0.8,
+          "swell_period_s": 11.05,
+          "energy_offshore_kj": 153.4,
+          "energy_shore_kj": 29.94
+        },
+        {
+          "time": "2026-11-18T18:00:00-06:00",
+          "temp_c": 25.9,
+          "rh_pct": 93.0,
+          "wind_ms": 0.79,
+          "shortwave_wm2": 1.0,
+          "pressure_hpa": 1008.5,
+          "cloud_pct": 20.0,
+          "precip_mm": 0.4,
+          "uv": 0.0,
+          "wbgt_sun_c": 25.04,
+          "wbgt_shade_c": 25.02,
+          "swell_m": 0.8,
+          "swell_period_s": 11.0,
+          "energy_offshore_kj": 152.0,
+          "energy_shore_kj": 48.39
+        },
+        {
+          "time": "2026-11-18T19:00:00-06:00",
+          "temp_c": 25.4,
+          "rh_pct": 94.0,
+          "wind_ms": 1.18,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1008.6,
+          "cloud_pct": 18.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 24.63,
+          "wbgt_shade_c": 24.63,
+          "swell_m": 0.78,
+          "swell_period_s": 11.0,
+          "energy_offshore_kj": 144.5,
+          "energy_shore_kj": 75.78
+        },
+        {
+          "time": "2026-11-18T20:00:00-06:00",
+          "temp_c": 24.9,
+          "rh_pct": 92.0,
+          "wind_ms": 1.66,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1008.8,
+          "cloud_pct": 15.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 23.97,
+          "wbgt_shade_c": 23.97,
+          "swell_m": 0.78,
+          "swell_period_s": 11.0,
+          "energy_offshore_kj": 144.5,
+          "energy_shore_kj": 83.63
+        },
+        {
+          "time": "2026-11-18T21:00:00-06:00",
+          "temp_c": 24.4,
+          "rh_pct": 90.0,
+          "wind_ms": 2.19,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.0,
+          "cloud_pct": 13.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 23.3,
+          "wbgt_shade_c": 23.3,
+          "swell_m": 0.76,
+          "swell_period_s": 11.0,
+          "energy_offshore_kj": 137.2,
+          "energy_shore_kj": 78.24
+        },
+        {
+          "time": "2026-11-18T22:00:00-06:00",
+          "temp_c": 24.0,
+          "rh_pct": 88.0,
+          "wind_ms": 2.62,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.2,
+          "cloud_pct": 11.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 22.77,
+          "wbgt_shade_c": 22.77,
+          "swell_m": 0.74,
+          "swell_period_s": 11.0,
+          "energy_offshore_kj": 130.0,
+          "energy_shore_kj": 73.03
+        },
+        {
+          "time": "2026-11-18T23:00:00-06:00",
+          "temp_c": 23.7,
+          "rh_pct": 85.0,
+          "wind_ms": 3.02,
+          "shortwave_wm2": 0.0,
+          "pressure_hpa": 1009.4,
+          "cloud_pct": 9.0,
+          "precip_mm": 0.0,
+          "uv": 0.0,
+          "wbgt_sun_c": 22.2,
+          "wbgt_shade_c": 22.2,
+          "swell_m": 0.74,
+          "swell_period_s": 10.95,
+          "energy_offshore_kj": 128.8,
+          "energy_shore_kj": 72.37
         }
       ]
     }

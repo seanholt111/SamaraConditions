@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from samara.build import ROOT, build_fixture, build_live, publish, validate, write_document
+from samara.build import CR, ROOT, build_fixture, build_live, publish, validate, write_document
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -19,7 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     fixture.add_argument("--out", type=Path, default=ROOT / "fixtures" / "conditions.fixture.json")
 
     live = sub.add_parser("live")
-    live.add_argument("--out", type=Path, default=ROOT / "site" / "conditions.json")
+    live.add_argument("--out", type=Path, default=ROOT / "docs" / "conditions.json")
     live.add_argument("--previous", type=Path, default=None)
 
     args = parser.parse_args(argv)
@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     previous_path = args.previous or args.out
     previous = json.loads(previous_path.read_text()) if previous_path.exists() else None
     try:
-        candidate = build_live(datetime.now(), previous)
+        candidate = build_live(datetime.now(CR), previous)
     except Exception as exc:
         print(f"build failed: {exc}", file=sys.stderr)
         if previous is None:

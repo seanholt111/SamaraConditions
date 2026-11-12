@@ -18,7 +18,7 @@ A live file, from the repo root, keeping the previous file if this run is bad:
 
 ```bash
 cd pipeline
-PYTHONPATH=src ../.venv/bin/python -m samara live --out ../site/conditions.json --previous ../site/conditions.json
+PYTHONPATH=src ../.venv/bin/python -m samara live --out ../docs/conditions.json --previous ../docs/conditions.json
 ```
 
 The fixture week pins the published quartiles (126.1 / 157.0 / 197.0 kJ) and the 28.5 kJ calm line. 11 Nov hours come from `data/this-week-hourly-nov11.csv`. 12–17 Nov hours come from `data/snapshot-forecast.json` and `data/snapshot-marine.json`, an Open-Meteo pull on 12 Nov 2026. The original all-days hourly file was not in the source bundle, and the live model has moved, so Thu–Tue calm windows are this later run.
@@ -69,6 +69,6 @@ The app reads `https://seanholt111.github.io/SamaraConditions/conditions.json`, 
 
 ## Morning job
 
-`docs/github-actions-conditions.yml` is the workflow. It belongs at `.github/workflows/conditions.yml`. It runs at 10:17 and 11:17 UTC (04:17 and 05:17 in Costa Rica) and on workflow_dispatch. It validates `conditions.json`, publishes the `site/` folder to GitHub Pages, and commits `heartbeat.txt` so the schedule is not turned off for inactivity. A failed fetch or a failed validation leaves the last good file in place.
+The workflow is `.github/workflows/conditions.yml` (the same text is kept at `docs/github-actions-conditions.yml`). It runs at 10:17 and 11:17 UTC (04:17 and 05:17 in Costa Rica) and on workflow_dispatch. It runs the tests, then writes `docs/conditions.json` with `--previous` pointed at that same file, and commits the file with `heartbeat.txt` so the schedule is not turned off for inactivity. A failed fetch or a failed validation leaves the last good file in place.
 
-GitHub will not accept that file from a token that lacks the `workflow` scope. The token on this machine has `gist`, `read:org`, and `repo` only. After `gh auth refresh -s workflow`, copy the file into `.github/workflows/conditions.yml` and push. Then set the repo's Pages source to GitHub Actions.
+GitHub Pages already serves the `docs/` folder from `main`, so that commit is the publish. The job does not upload a Pages artifact or use a `github-pages` environment, and the repository Pages setting stays as it is.
