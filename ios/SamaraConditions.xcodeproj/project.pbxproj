@@ -7,8 +7,18 @@
 
 		AA0001 /* SamaraConditions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA0003 /* Exceptions for "SamaraConditions" folder in "SamaraConditions" target */,
+			);
 			path = SamaraConditions;
 			sourceTree = "<group>";
+		};
+		AA0003 /* Exceptions for "SamaraConditions" folder in "SamaraConditions" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA0600 /* SamaraConditions */;
 		};
 		AA0002 /* SamaraConditionsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -238,6 +248,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SamaraConditions/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -262,6 +273,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SamaraConditions/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
