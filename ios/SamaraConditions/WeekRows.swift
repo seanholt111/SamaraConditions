@@ -59,14 +59,17 @@ struct WeekPages: View {
     }
 
     private var axis: some View {
-        HStack(spacing: 0) {
-            ForEach(["6a", "9a", "12p", "3p", "6p", "9p"], id: \.self) { tick in
-                Text(tick)
+        GeometryReader { geo in
+            ForEach([6, 9, 12, 15, 18, 21], id: \.self) { hour in
+                let label = hour == 12 ? "12p" : (hour < 12 ? "\(hour)a" : "\(hour - 12)p")
+                let x = geo.size.width * CGFloat(hour - 6) / 15
+                Text(label)
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(Palette.muted)
-                    .frame(maxWidth: .infinity, alignment: tick == "6a" ? .leading : (tick == "9p" ? .trailing : .center))
+                    .position(x: hour == 6 ? 8 : (hour == 21 ? geo.size.width - 8 : x), y: 8)
             }
         }
+        .frame(height: 16)
         .accessibilityHidden(true)
     }
 
@@ -85,7 +88,7 @@ struct WeekPages: View {
                 Text("›").font(.system(size: 17, weight: .medium)).foregroundStyle(Palette.muted)
             }
             .frame(height: 18)
-            strip(offset, day).frame(height: model.weekTab == .heat ? 46 : 54).opacity(muted ? 0.45 : 1)
+            strip(offset, day).frame(height: model.weekTab == .sea ? 70 : (model.weekTab == .heat ? 52 : 54))
         }
     }
 
@@ -106,13 +109,9 @@ struct WeekPages: View {
         case .cloud:
             return "\(day.cloudDaylightMeanPct)%"
         case .heat:
-            let spans = care(day)
-            if spans.isEmpty { return "no window" }
-            return spans.map { WindowWords.label(start: CareDay.hour($0.start), end: CareDay.hour($0.end)) }.joined(separator: "  ")
+            return care(day).isEmpty ? "no window" : ""
         case .sea:
-            let calm = SeaSeries.calm(samples: SeaSeries.points(hours: day.hours, extrema: model.extrema(for: file), day: day.sunrise), threshold: file.week.calmThresholdKj)
-            if calm.isEmpty { return "no calm" }
-            return calm.map { WindowWords.label(start: $0.start, end: $0.end) }.joined(separator: ", ")
+            return ""
         }
     }
 
@@ -127,17 +126,25 @@ struct WeekPages: View {
             case .heat:
                 heat(context, size, day: day, axis: axis, muted: muted)
             case .sea:
-                sea(context, size, day: day, axis: axis)
+                sea(context, size, day: day, axis: axis, muted: muted)
             }
-            let x = axis.x(day.sunset, width: size.width)
-            var line = Path()
-            line.move(to: CGPoint(x: x, y: 0))
-            line.addLine(to: CGPoint(x: x, y: size.height))
-            context.stroke(line, with: .color(Palette.muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
+            if model.weekTab != .heat {
+                let x = axis.x(day.sunset, width: size.width)
+                var line = Path()
+                line.move(to: CGPoint(x: x, y: 0))
+                line.addLine(to: CGPoint(x: x, y: size.height - (model.weekTab == .sea ? 18 : 0)))
+                context.stroke(line, with: .color(Palette.muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
+            }
         }
     }
 
     private func bars(_ context: GraphicsContext, _ size: CGSize, day: DayConditions, axis: PlotAxis, rain: Bool, muted: Bool) {
+        let track = CGRect(x: 0, y: 2, width: size.width, height: size.height - 4)
+        context.fill(Path(roundedRect: track, cornerRadius: 4), with: .color(Palette.track))
+        var hair = Path()
+        hair.move(to: CGPoint(x: 0, y: 2))
+        hair.addLine(to: CGPoint(x: size.width, y: 2))
+        context.stroke(hair, with: .color(.white.opacity(0.12)), lineWidth: 1)
         let sunset = CareDay.hour(day.sunset)
         for hour in day.hours {
             let h = CareDay.hour(hour.time)
@@ -145,41 +152,60 @@ struct WeekPages: View {
             let x = axis.x(hour.time, width: size.width)
             let next = axis.x(hour.time.addingTimeInterval(3600), width: size.width)
             let fraction: CGFloat = rain ? CGFloat(min(1, hour.precipMm)) : CGFloat(min(100, hour.cloudPct) / 100)
-            let height = max(0, (size.height - 4) * fraction)
-            let rect = CGRect(x: x, y: size.height - height, width: max(1, next - x - 1), height: height)
+            let height = max(0, (size.height - 8) * fraction)
+            let rect = CGRect(x: x, y: size.height - 4 - height, width: max(1, next - x - 1), height: height)
             var color = rain ? Palette.mid : Palette.cloud
             if !rain && h + 0.5 >= sunset { color = Color(red: 90/255, green: 94/255, blue: 102/255) }
             if muted { color = color.opacity(0.55) }
             context.fill(Path(rect), with: .color(color))
+            if rain, hour.precipMm > 1 {
+                context.draw(Text(String(format: "%.1f", hour.precipMm)).font(.system(size: 9, weight: .bold)).foregroundColor(.white), at: CGPoint(x: rect.midX, y: max(10, rect.minY - 7)))
+            }
         }
     }
 
     private func heat(_ context: GraphicsContext, _ size: CGSize, day: DayConditions, axis: PlotAxis, muted: Bool) {
         let shade = model.activity.heatUsesShade
         let series = ActivityWindows.hourly(day.hours) { shade ? $0.wbgtShadeC : $0.wbgtSunC }
+        var runs: [(start: Date, end: Date, zone: HeatMinutes)] = []
         var cursor = axis.start
         while cursor < axis.end {
             let next = min(axis.end, cursor.addingTimeInterval(5 * 60))
-            let value = ActivityWindows.interpolate(series, CareDay.hour(cursor))
-            let zone = HeatScale.minutes(wbgt: value, on: day.sunrise)
-            let x0 = axis.x(cursor, width: size.width)
-            let x1 = axis.x(next, width: size.width)
-            let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: 16)
-            context.fill(Path(rect), with: .color(muted ? Palette.zone(zone).opacity(0.45) : Palette.zone(zone)))
-            if zone == .stop { hatch(in: rect, context: context, gap: 4) }
+            let zone = HeatScale.minutes(wbgt: ActivityWindows.interpolate(series, CareDay.hour(cursor)), on: day.sunrise)
+            if let last = runs.last, last.zone == zone, last.end == cursor {
+                runs[runs.count - 1].end = next
+            } else {
+                runs.append((cursor, next, zone))
+            }
             cursor = next
         }
+        for run in runs {
+            let x0 = axis.x(run.start, width: size.width)
+            let x1 = axis.x(run.end, width: size.width)
+            let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0 + 0.5), height: 16)
+            context.fill(Path(rect), with: .color(muted ? Palette.zone(run.zone).opacity(0.45) : Palette.zone(run.zone)))
+            if run.zone == .stop { hatch(in: rect, context: context, gap: 4) }
+        }
+        let sunsetX = axis.x(day.sunset, width: size.width)
+        var hair = Path()
+        hair.move(to: CGPoint(x: sunsetX, y: -2))
+        hair.addLine(to: CGPoint(x: sunsetX, y: 18))
+        context.stroke(hair, with: .color(Palette.muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
         for span in care(day) {
-            let x0 = axis.x(span.start, width: size.width)
-            let x1 = axis.x(span.end, width: size.width)
             let label = WindowWords.label(start: CareDay.hour(span.start), end: CareDay.hour(span.end))
-            let rect = CGRect(x: x0, y: 20, width: max(36, x1 - x0), height: 22)
-            context.fill(Path(roundedRect: rect, cornerRadius: 6), with: .color(muted ? Color(white: 0.75) : .white))
-            context.draw(Text(label).font(.system(size: 13, weight: .bold)).foregroundColor(muted ? Palette.muted : Palette.night), at: CGPoint(x: rect.midX, y: rect.midY))
+            let text = context.resolve(Text(label).font(.system(size: 17, weight: .bold)).foregroundColor(Palette.night))
+            let textWidth = text.measure(in: CGSize(width: 600, height: 40)).width + 12
+            let x0 = axis.x(span.start, width: size.width)
+            let window = max(8, axis.x(span.end, width: size.width) - x0)
+            let pill = min(size.width, max(window, textWidth))
+            let origin = min(max(0, x0), max(0, size.width - pill))
+            let rect = CGRect(x: origin, y: 20, width: pill, height: 28)
+            context.fill(Path(roundedRect: rect, cornerRadius: 6), with: .color(muted ? Color(red: 0.784, green: 0.784, blue: 0.784) : .white))
+            context.draw(text, at: CGPoint(x: rect.midX, y: rect.midY))
         }
     }
 
-    private func sea(_ context: GraphicsContext, _ size: CGSize, day: DayConditions, axis: PlotAxis) {
+    private func sea(_ context: GraphicsContext, _ size: CGSize, day: DayConditions, axis: PlotAxis, muted: Bool) {
         let samples = SeaSeries.points(hours: day.hours, extrema: model.extrema(for: file), day: day.sunrise)
         func y(_ energy: Double) -> CGFloat {
             size.height - 8 - CGFloat(min(210, max(0, energy)) / 210) * (size.height - 12)
@@ -198,7 +224,7 @@ struct WeekPages: View {
             fill.addLine(to: CGPoint(x: axis.x(CareDay.date(hour: first.hour, on: day.sunrise), width: size.width), y: size.height))
             fill.closeSubpath()
         }
-        context.fill(fill, with: .color(Palette.ocean))
+        context.fill(fill, with: .color(muted ? Palette.ocean.opacity(0.45) : Palette.ocean))
         context.stroke(shore, with: .color(.white), lineWidth: 1.2)
         context.stroke(off, with: .color(.white.opacity(0.7)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
         var calmLine = Path()
@@ -206,6 +232,19 @@ struct WeekPages: View {
         calmLine.move(to: CGPoint(x: 0, y: cy))
         calmLine.addLine(to: CGPoint(x: size.width, y: cy))
         context.stroke(calmLine, with: .color(Palette.lagoon), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
+        let calm = SeaSeries.calm(samples: samples, threshold: file.week.calmThresholdKj)
+        for span in calm {
+            let label = WindowWords.label(start: span.start, end: span.end)
+            let text = context.resolve(Text(label).font(.system(size: 11.5, weight: .heavy)).foregroundColor(Palette.night))
+            let textWidth = text.measure(in: CGSize(width: 400, height: 30)).width + 12
+            let x0 = axis.x(CareDay.date(hour: span.start, on: day.sunrise), width: size.width)
+            let x1 = axis.x(CareDay.date(hour: span.end, on: day.sunrise), width: size.width)
+            let pill = min(size.width, max(max(8, x1 - x0), textWidth))
+            let origin = min(max(0, x0), max(0, size.width - pill))
+            let rect = CGRect(x: origin, y: size.height - 16, width: pill, height: 15)
+            context.fill(Path(roundedRect: rect, cornerRadius: 4), with: .color(.white))
+            context.draw(text, at: CGPoint(x: rect.midX, y: rect.midY))
+        }
     }
 
     private func care(_ day: DayConditions) -> [TimeSpan] {

@@ -5,31 +5,104 @@ struct ActivityChips: View {
     @EnvironmentObject private var model: AppModel
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
+        if model.typeScale > 1.2 {
+            ChipFlow(spacing: 8, lineSpacing: 8) {
                 ForEach(ActivityKind.allCases, id: \.self) { kind in
-                    Button {
-                        if model.activity != kind {
-                            model.setActivity(kind)
-                        }
-                        if kind != .beach { model.lowTideOnly = false }
-                    } label: {
-                        Text(kind.title)
-                            .font(.system(size: 13 * model.typeScale, weight: .semibold))
-                            .multilineTextAlignment(.center)
-                            .foregroundStyle(model.activity == kind ? Palette.text : Palette.muted)
-                            .padding(.horizontal, 12)
-                            .frame(height: 36)
-                            .background(
-                                Capsule().fill(model.activity == kind ? Palette.chipFill : Color.clear)
-                            )
-                            .overlay(
-                                Capsule().stroke(model.activity == kind ? Palette.chipEdge : Palette.chipEdge.opacity(0.7), lineWidth: 1)
-                            )
-                    }
-                    .accessibilityIdentifier("chip-\(kind.rawValue)")
+                    chip(kind, scale: 1)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            GeometryReader { geo in
+                let scale = fittedScale(geo.size.width)
+                HStack(spacing: max(4, 8 * scale)) {
+                    ForEach(ActivityKind.allCases, id: \.self) { kind in
+                        chip(kind, scale: scale)
+                    }
+                }
+            }
+            .frame(height: 48)
+        }
+    }
+
+    /// Shrinks the row until every name fits, and never goes under a 4 pt gap.
+    private func fittedScale(_ width: CGFloat) -> CGFloat {
+        var scale: CGFloat = 1
+        for _ in 0..<14 {
+            let gap = max(4, 8 * scale)
+            let sum = ActivityKind.allCases.reduce(CGFloat(0)) { $0 + measured($1.title, scale) }
+            if sum + gap * CGFloat(ActivityKind.allCases.count - 1) <= width - 2 { return scale }
+            scale *= 0.94
+        }
+        return scale
+    }
+
+    private func measured(_ title: String, _ scale: CGFloat) -> CGFloat {
+        let font = UIFont.systemFont(ofSize: 13 * model.typeScale * scale, weight: .semibold)
+        let widest = title.split(separator: "\n", omittingEmptySubsequences: false).map {
+            (String($0) as NSString).size(withAttributes: [.font: font]).width
+        }.max() ?? 0
+        return ceil(widest) + max(16, 24 * scale) + 4
+    }
+
+    private func chip(_ kind: ActivityKind, scale: CGFloat) -> some View {
+        Button {
+            if model.activity != kind { model.setActivity(kind) }
+            if kind != .beach { model.lowTideOnly = false }
+        } label: {
+            Text(kind.title)
+                .font(.system(size: 13 * model.typeScale * scale, weight: .semibold))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+                .fixedSize()
+                .foregroundStyle(model.activity == kind ? Palette.text : Palette.muted)
+                .padding(.horizontal, max(8, 12 * scale))
+                .padding(.vertical, 7)
+                .background(Capsule().fill(model.activity == kind ? Palette.chipFill : Color.clear))
+                .overlay(Capsule().stroke(model.activity == kind ? Palette.chipEdge : Palette.chipEdge.opacity(0.7), lineWidth: 1))
+        }
+        .fixedSize()
+        .accessibilityIdentifier("chip-\(kind.rawValue)")
+    }
+}
+
+/// Puts chips on the next line when the row is narrower than their text.
+private struct ChipFlow: Layout {
+    var spacing: CGFloat
+    var lineSpacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let limit = proposal.width ?? .greatestFiniteMagnitude
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        var row: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > 0, x + size.width > limit {
+                y += row + lineSpacing
+                x = 0
+                row = 0
+            }
+            row = max(row, size.height)
+            x += size.width + spacing
+        }
+        return CGSize(width: proposal.width ?? x, height: y + row)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        var x = bounds.minX
+        var y = bounds.minY
+        var row: CGFloat = 0
+        for subview in subviews {
+            let size = subview.sizeThatFits(.unspecified)
+            if x > bounds.minX, x + size.width > bounds.maxX {
+                y += row + lineSpacing
+                x = bounds.minX
+                row = 0
+            }
+            subview.place(at: CGPoint(x: x, y: y), proposal: ProposedViewSize(size))
+            row = max(row, size.height)
+            x += size.width + spacing
         }
     }
 }

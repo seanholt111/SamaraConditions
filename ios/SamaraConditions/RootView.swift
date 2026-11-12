@@ -7,14 +7,19 @@ struct RootView: View {
     var body: some View {
         ZStack {
             Palette.night.ignoresSafeArea()
-            VStack(spacing: 10) {
-                header
-                dateRow
-                statusBlock
-                content
+            GeometryReader { proxy in
+                VStack(spacing: 10) {
+                    header
+                    dateRow
+                    statusBlock
+                    content
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, max(proxy.safeAreaInsets.top, 20) + 4)
+                .padding(.bottom, proxy.safeAreaInsets.bottom)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 4)
+            .ignoresSafeArea(edges: .top)
         }
         .sheet(isPresented: $model.showSources) {
             if ProcessInfo.processInfo.arguments.contains("-open-sources") {

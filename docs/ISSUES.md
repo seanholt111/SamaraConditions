@@ -192,3 +192,20 @@ Grade C+. These are fixes against the approved spec, not new UX. Pepper decided 
 13. The Wednesday Sea header is 12 pt semibold. Dropping "· Waves normal" is acceptable if the full line does not fit.
 14. "No window" is 15 pt semibold, muted, and leading-aligned.
 15. While dragging, the "calm line" and "offshore" labels fade. They return when the drag ends.
+
+## Build 7, Pepper's review of build 6 (763e8da), not signed off
+
+Grade B−. Eleven of the fifteen build-6 fixes pass. These are the ones that do not.
+
+1. Week Heat pills are at least as wide as their text and stay on screen. Days 4–7 use a solid grey pill. The heat bar has no hairline seams.
+2. The Week Heat label line shows the day and ›, and "no window" only when there is no window. The sunset line stays on the bar.
+3. Week Sea puts the calm times back in white ribbons under each strip, including "From 7:40p" and "From 7:50p". The label line does not repeat them.
+4. Hour labels sit on their hours. On Day the order is the plot, then the hours, then the window bars.
+5. The drag line in Heat starts below the label row, so it does not cut "sunset 5:17p".
+6. The now line and both dots are drawn when Costa Rica time is between 6a and 9p today.
+7. At xxxLarge, "20 min/hr" and the time stay on one line each. Chips scroll instead of truncating.
+8. The top of the screen follows the safe area, including on iPhone SE. Chips fit a 375 pt width.
+9. The Sources windows paragraph says 6a–9p, and that Beach, low-tide Beach and Soccer sun end 30 minutes after sunset. Stop follows °F/°C.
+10. Week Rain and Cloud have the track, the top hairline, and values over 1 mm/hr printed on the bar.
+11. Sun and Shade labels move to 10:30a when the now or drag line is within 24 pt of 1:30p.
+12. The Sun label sits 12 pt above the highest point of the sun line across the label, and Shade sits 14 pt below the lowest point of the shade line.

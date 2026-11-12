@@ -27,6 +27,7 @@ struct DayScreen: View {
         VStack(alignment: .leading, spacing: 8) {
             readout
             chart
+            axisTicks
             WindowRibbon(
                 spans: windowSpans,
                 axis: axis,
@@ -37,7 +38,6 @@ struct DayScreen: View {
                     WindowWords.label(start: CareDay.hour(span.start), end: CareDay.hour(span.end))
                 }
             )
-            axisTicks
             MinutesKey(showStop: day.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) })
             ActivityChips()
             LowTideToggle()
@@ -57,12 +57,14 @@ struct DayScreen: View {
     }
 
     private var axisTicks: some View {
-        HStack(spacing: 0) {
-            ForEach(["6a", "9a", "12p", "3p", "6p", "9p"], id: \.self) { tick in
-                Text(tick)
+        GeometryReader { geo in
+            ForEach([6, 9, 12, 15, 18, 21], id: \.self) { hour in
+                let label = hour == 12 ? "12p" : (hour < 12 ? "\(hour)a" : "\(hour - 12)p")
+                let x = geo.size.width * CGFloat(hour - 6) / 15
+                Text(label)
                     .font(.system(size: 11 * model.typeScale, weight: .medium))
                     .foregroundStyle(Palette.muted)
-                    .frame(maxWidth: .infinity, alignment: tick == "6a" ? .leading : (tick == "9p" ? .trailing : .center))
+                    .position(x: hour == 6 ? 10 : (hour == 21 ? geo.size.width - 10 : x), y: 8)
             }
         }
         .frame(height: 16)
@@ -70,6 +72,20 @@ struct DayScreen: View {
     }
 
     private var readout: some View {
+        let stack = dragging && model.typeScale > 1.2
+        return VStack(alignment: .leading, spacing: 2) {
+            HStack(spacing: 8) {
+                readoutTemps
+                if dragging && !stack { readoutUnit }
+                Spacer(minLength: 4)
+                if dragging { readoutTime }
+            }
+            if stack { readoutUnit }
+        }
+        .foregroundStyle(Palette.text)
+    }
+
+    private var readoutTemps: some View {
         let sunC = ActivityWindows.interpolate(sun, CareDay.hour(model.viewingToday ? shown : maxSunHour))
         let shadeC = ActivityWindows.interpolate(shade, CareDay.hour(model.viewingToday ? shown : maxShadeHour))
         let oneValue = scale.whole(sunC) == scale.whole(shadeC)
@@ -79,35 +95,56 @@ struct DayScreen: View {
             }
             if oneValue {
                 Capsule().fill(.white).frame(width: 16, height: 3)
-                Text(scale.whole(shadeC)).font(.system(size: 22 * model.typeScale, weight: .medium)).monospacedDigit()
+                Text(scale.whole(shadeC))
+                    .font(.system(size: 22 * model.typeScale, weight: .medium))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .fixedSize()
                 Text("sun = shade")
                     .font(.system(size: 13 * model.typeScale, weight: .medium))
                     .foregroundStyle(Palette.muted)
+                    .lineLimit(1)
+                    .fixedSize()
                     .accessibilityIdentifier("sun-shade-equal")
             } else {
                 Capsule().fill(.white).frame(width: 16, height: 3)
-                Text(scale.whole(sunC)).font(.system(size: 22 * model.typeScale, weight: .medium)).monospacedDigit()
+                Text(scale.whole(sunC))
+                    .font(.system(size: 22 * model.typeScale, weight: .medium))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .fixedSize()
                     .accessibilityIdentifier("sun-temp")
                 Capsule().stroke(style: StrokeStyle(lineWidth: 2, dash: [3, 2])).frame(width: 16, height: 3)
-                Text(scale.whole(shadeC)).font(.system(size: 22 * model.typeScale, weight: .medium)).monospacedDigit()
+                Text(scale.whole(shadeC))
+                    .font(.system(size: 22 * model.typeScale, weight: .medium))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .fixedSize()
                     .accessibilityIdentifier("shade-temp")
             }
-            if dragging {
-                zoneSwatch
-                Text(zoneLabel).font(.system(size: 13 * model.typeScale, weight: .semibold))
-                Spacer(minLength: 4)
-                Text(WindowWords.clock(CareDay.hour(shown)))
-                    .font(.system(size: 15 * model.typeScale, weight: .bold))
-                    .foregroundStyle(Palette.night)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(.white, in: RoundedRectangle(cornerRadius: 6))
-                    .accessibilityIdentifier("drag-time")
-            } else {
-                Spacer(minLength: 0)
-            }
         }
-        .foregroundStyle(Palette.text)
+    }
+
+    private var readoutUnit: some View {
+        HStack(spacing: 6) {
+            zoneSwatch
+            Text(zoneLabel)
+                .font(.system(size: 13 * model.typeScale, weight: .semibold))
+                .lineLimit(1)
+                .fixedSize()
+        }
+    }
+
+    private var readoutTime: some View {
+        Text(WindowWords.clock(CareDay.hour(shown)))
+            .font(.system(size: 15 * model.typeScale, weight: .bold))
+            .lineLimit(1)
+            .fixedSize()
+            .foregroundStyle(Palette.night)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(.white, in: RoundedRectangle(cornerRadius: 6))
+            .accessibilityIdentifier("drag-time")
     }
 
     private var maxSunHour: Date {
@@ -297,19 +334,21 @@ struct DayScreen: View {
                 if let now = nowInstant, !dragging {
                     let x = axis.x(now, width: size.width)
                     var nowLine = Path()
-                    nowLine.move(to: CGPoint(x: x, y: 16))
+                    nowLine.move(to: CGPoint(x: x, y: 32))
                     nowLine.addLine(to: CGPoint(x: x, y: size.height - 7))
                     context.stroke(nowLine, with: .color(.white.opacity(0.55)), lineWidth: 1)
                     dot(context, x, y: heatY(ActivityWindows.interpolate(sun, CareDay.hour(now)), size))
                     dot(context, x, y: heatY(ActivityWindows.interpolate(shade, CareDay.hour(now)), size))
                 }
-                let sunX = axis.x(CareDay.date(hour: 13.5, on: day.sunrise), width: size.width)
-                context.draw(Text("Sun").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: sunX, y: heatY(ActivityWindows.interpolate(sun, 13.5), size) - 12))
-                context.draw(Text("Shade").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: sunX, y: heatY(ActivityWindows.interpolate(shade, 13.5), size) + 14))
+                let place = labelHour(width: size.width)
+                let sunX = axis.x(CareDay.date(hour: place, on: day.sunrise), width: size.width)
+                let span = labelPeak(at: place, width: size.width, plot: size.width)
+                context.draw(Text("Sun").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: sunX, y: heatY(span.sun, size) - 12))
+                context.draw(Text("Shade").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: sunX, y: heatY(span.shade, size) + 14))
                 if dragging {
                     let x = axis.x(shown, width: size.width)
                     var line = Path()
-                    line.move(to: CGPoint(x: x, y: 16))
+                    line.move(to: CGPoint(x: x, y: 32))
                     line.addLine(to: CGPoint(x: x, y: size.height - 7))
                     context.stroke(line, with: .color(.white.opacity(0.8)), lineWidth: 1)
                     dot(context, x, y: heatY(ActivityWindows.interpolate(sun, CareDay.hour(shown)), size))
@@ -319,7 +358,7 @@ struct DayScreen: View {
             Text("Heat").font(SamaraFont.band()).foregroundStyle(Palette.muted).padding(8)
         }
         .frame(maxHeight: .infinity)
-        .frame(minHeight: 180)
+        .frame(minHeight: 88)
         .accessibilityIdentifier("heat-plot")
     }
 
@@ -412,6 +451,29 @@ struct DayScreen: View {
         }
         casedLine(shadePath, context: context, dashed: true)
         casedLine(sunPath, context: context, dashed: false)
+    }
+
+    private func labelHour(width: CGFloat) -> Double {
+        let anchor = 13.5
+        let anchorX = (anchor - 6) / 15 * Double(width)
+        let probe = dragging ? CareDay.hour(shown) : (nowInstant.map { CareDay.hour($0) } ?? -100)
+        let probeX = (probe - 6) / 15 * Double(width)
+        return abs(probeX - anchorX) < 24 ? 10.5 : anchor
+    }
+
+    private func labelPeak(at hour: Double, width: CGFloat, plot: CGFloat) -> (sun: Double, shade: Double) {
+        let half = 24.0
+        let left = max(6, hour - half / Double(plot) * 15)
+        let right = min(21, hour + half / Double(plot) * 15)
+        var peak = -100.0
+        var low = 100.0
+        var cursor = left
+        while cursor <= right {
+            peak = max(peak, ActivityWindows.interpolate(sun, cursor))
+            low = min(low, ActivityWindows.interpolate(shade, cursor))
+            cursor += 0.05
+        }
+        return (peak, low)
     }
 
     private func heatY(_ value: Double, _ size: CGSize) -> CGFloat {
