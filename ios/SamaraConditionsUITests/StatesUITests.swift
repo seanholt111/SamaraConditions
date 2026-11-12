@@ -54,6 +54,7 @@ final class StatesUITests: XCTestCase {
     func testTodayBeach() {
         let app = launch(["-ui-state", "fresh", "-activity", "beach"])
         XCTAssertTrue(app.staticTexts["5:50–7:30a"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["Tide · Calm at shore 7:30a–12:40p"].exists)
     }
 
     func testLowTide() {

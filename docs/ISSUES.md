@@ -110,11 +110,14 @@ Everything in spec §6: Heat Clock, Overview, a verdict headline, colour-class r
 
 Also not built, because they are still open in §8: a Friday big-swell flag, a Kt-ceiling caption, a field measurement, a separate shade colouring for Week Heat, and a real in-water pool rule. Pool stays daylight only.
 
-## Questions for Pepper
+## Pepper, 12 Nov 2026, on rc1
 
-1. Week Heat zone colours stay on sun WBGT for every chip. The ribbon follows the chip. Should Soccer shade and Jungle recolour the bars with shade WBGT?
-2. Rain labels follow the spec sentence ("0.7 mm · 0.6 after dark"), not the "most 5p" wording on `week-rain-v20.png`. Should "most {hour}" come back?
-3. The bottom row Heat / Tide / Rain / Sources is built because it is on the locked renders. Should any of those four go away?
-4. Wave words are calm / normal / big. Should the middle word be "typical" instead?
-5. The on state of "Low tide only" uses a grey switch, so it is not a green mark. The system switch is green.
-6. A window under 3 hours uses one range label. Longer windows use the two end times.
+1. Week Heat bars follow the chip. Soccer shade and Jungle use shade WBGT. Beach, Soccer sun, and Pool use sun WBGT.
+2. Rain labels stay with the spec. The v20 "most 5p" line is retired.
+3. The bottom row stays.
+4. Wave words are calm / normal / big. Never "safe".
+5. The low-tide switch stays grey or white, not green.
+6. Under 3 hours, one range label. A longer Today window uses the two end times. Sea always uses one range.
+7. Today’s bands run from sunrise to sunset. The first hour label is sunrise.
+8. Week Heat is continuous colour runs. No hour seams.
+9. The tide header is “Tide · Calm at shore <that day’s Sea window> · Waves …”, the same window as the Sea ribbon.

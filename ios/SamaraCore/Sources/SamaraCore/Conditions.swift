@@ -155,6 +155,28 @@ public enum ActivityKind: String, CaseIterable, Sendable {
         case .jungle: return "Jungle"
         }
     }
+
+    /// Soccer shade and Jungle read the shade WBGT. Beach, Soccer sun and Pool read the sun WBGT.
+    public var heatUsesShade: Bool {
+        self == .soccerShade || self == .jungle
+    }
+}
+
+public enum WindowText {
+    public static func range(_ span: TimeSpan) -> String {
+        let start = CostaRica.clock(span.start)
+        let end = CostaRica.clock(span.end)
+        if start.suffix(1) == end.suffix(1) {
+            return "\(start.dropLast())–\(end)"
+        }
+        return "\(start)–\(end)"
+    }
+
+    /// Same string the Sea ribbon uses, so the tide header matches it to the minute.
+    public static func tideHeader(calm: [TimeSpan], wave: String) -> String {
+        let when = calm.isEmpty ? "no calm" : calm.map(range).joined(separator: " · ")
+        return "Tide · Calm at shore \(when) · Waves \(wave)"
+    }
 }
 
 public struct TideBundleFile: Codable, Sendable {

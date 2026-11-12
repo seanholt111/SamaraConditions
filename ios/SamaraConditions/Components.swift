@@ -115,6 +115,7 @@ struct IMNBanner: View {
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(Palette.amber)
                     .lineLimit(2)
+                    .minimumScaleFactor(0.85)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 8)

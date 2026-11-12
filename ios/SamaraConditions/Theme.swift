@@ -57,10 +57,5 @@ func axisTick(_ date: Date) -> String {
 }
 
 func shortRange(_ span: TimeSpan) -> String {
-    let start = CostaRica.clock(span.start)
-    let end = CostaRica.clock(span.end)
-    if start.suffix(1) == end.suffix(1) {
-        return "\(start.dropLast())–\(end)"
-    }
-    return "\(start)–\(end)"
+    WindowText.range(span)
 }
