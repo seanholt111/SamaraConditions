@@ -48,6 +48,10 @@ final class CoreTests: XCTestCase {
         XCTAssertTrue(wednesday.windows.beachLow.isEmpty)
         XCTAssertEqual(CostaRica.clock(wednesday.calmWindows[0].start), "7:30a")
         XCTAssertEqual(CostaRica.clock(wednesday.calmWindows[0].end), "12:40p")
+        XCTAssertEqual(
+            WindowText.tideHeader(calm: wednesday.calmWindows, wave: wednesday.waveWord),
+            "Tide · Calm at shore 7:30a–12:40p · Waves normal"
+        )
     }
 
     func testCacheRoundTrip() throws {

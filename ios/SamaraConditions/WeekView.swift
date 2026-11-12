@@ -19,7 +19,10 @@ struct WeekView: View {
                             WeekHeat(days: rows, activity: model.activity, lowTideOnly: model.lowTideOnly)
                             MinutesKey(showStop: rows.contains { item in
                                 guard let day = item.day else { return false }
-                                return day.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) }
+                                return day.hours.contains {
+                                    let value = model.activity.heatUsesShade ? $0.wbgtShadeC : $0.wbgtSunC
+                                    return HeatScale.isStopHour(wbgt: value, on: day.sunrise)
+                                }
                             })
                             ActivityChips()
                             LowTideToggle()

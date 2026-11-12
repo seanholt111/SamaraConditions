@@ -37,8 +37,7 @@ struct TodayChart: View {
     @Binding var scrub: Date?
 
     private var axis: PlotAxis {
-        let end = CostaRica.calendar.date(bySettingHour: 21, minute: 0, second: 0, of: day.sunrise) ?? day.sunset
-        return PlotAxis(start: day.sunrise, end: end)
+        PlotAxis(start: day.sunrise, end: day.sunset)
     }
 
     private var shown: Date { scrub ?? now }
@@ -77,11 +76,15 @@ struct TodayChart: View {
         ZStack(alignment: .topLeading) {
             Palette.track
             Canvas { context, size in
-                let hours = day.hours.filter { $0.time >= axis.start.addingTimeInterval(-1800) && $0.time <= axis.end }
+                let hours = day.hours.filter {
+                    $0.time < axis.end && $0.time.addingTimeInterval(3600) > axis.start
+                }
                 for hour in hours {
-                    let x = axis.x(hour.time, width: size.width)
-                    let next = axis.x(hour.time.addingTimeInterval(3600), width: size.width)
-                    let width = max(1, next - x - 1)
+                    let visibleStart = max(hour.time, axis.start)
+                    let visibleEnd = min(hour.time.addingTimeInterval(3600), axis.end)
+                    let x = axis.x(visibleStart, width: size.width)
+                    let next = axis.x(visibleEnd, width: size.width)
+                    let width = max(1, next - x)
                     let cloudH = size.height * CGFloat(min(100, hour.cloudPct) / 100) * 0.86
                     let cloudRect = CGRect(x: x, y: size.height - cloudH - 4, width: width, height: cloudH)
                     context.fill(Path(cloudRect), with: .color(Palette.cloud.opacity(0.9)))
@@ -110,8 +113,7 @@ struct TodayChart: View {
     }
 
     private var tide: some View {
-        let shelters = TideMath.reefShelters(extrema: extrema, sunrise: day.sunrise, sunset: day.sunset)
-        let shelterText = shelters.map { "\(CostaRica.clock($0.0))–\(CostaRica.clock($0.1))" }.joined(separator: " · ")
+        let headline = WindowText.tideHeader(calm: day.calmWindows, wave: day.waveWord)
         return ZStack(alignment: .topLeading) {
             Palette.track
             Canvas { context, size in
@@ -152,16 +154,16 @@ struct TodayChart: View {
                             .foregroundStyle(Palette.amber)
                             .accessibilityIdentifier("tide-stale")
                     } else {
-                        Text("Tide").foregroundStyle(Palette.text)
-                        if !shelterText.isEmpty {
-                            Text("Reef shelters \(shelterText)")
-                                .foregroundStyle(Palette.lagoon)
-                                .lineLimit(1)
-                        }
+                        Text("Tide · Calm at shore \(calmPhrase(day.calmWindows))")
+                            .foregroundStyle(Palette.lagoon)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.65)
+                            .accessibilityIdentifier("tide-header")
+                        Spacer(minLength: 4)
+                        Text(marineStale ? Freshness.blockHeader(name: "Waves \(day.waveWord)", asOf: marineAsOf, now: staleNow) : "· Waves \(day.waveWord)")
+                            .foregroundStyle(marineStale ? Palette.amber : Palette.text)
+                            .lineLimit(1)
                     }
-                    Spacer()
-                    Text(marineStale ? Freshness.blockHeader(name: "Waves \(day.waveWord)", asOf: marineAsOf, now: staleNow) : "Waves \(day.waveWord)")
-                        .foregroundStyle(marineStale ? Palette.amber : Palette.muted)
                 }
                 .font(SamaraFont.band())
             }
@@ -267,20 +269,36 @@ struct TodayChart: View {
 
     private var hourLabels: some View {
         GeometryReader { geo in
+            let ticks = daylightTicks(sunrise: day.sunrise, sunset: day.sunset)
             ZStack(alignment: .leading) {
-                ForEach([6, 9, 12, 15, 18, 21], id: \.self) { hour in
-                    if let time = CostaRica.calendar.date(bySettingHour: hour, minute: 0, second: 0, of: day.sunrise),
-                       time >= axis.start && time <= axis.end {
-                        Text(axisTick(time))
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Palette.muted)
-                            .position(x: axis.x(time, width: geo.size.width), y: 8)
-                    }
+                ForEach(Array(ticks.enumerated()), id: \.offset) { _, time in
+                    let raw = axis.x(time, width: geo.size.width)
+                    let x = min(max(raw, 18), max(18, geo.size.width - 20))
+                    Text(axisTick(time))
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Palette.muted)
+                        .position(x: x, y: 8)
                 }
             }
         }
         .frame(height: 16)
     }
+}
+
+private func calmPhrase(_ spans: [TimeSpan]) -> String {
+    spans.isEmpty ? "no calm" : spans.map(WindowText.range).joined(separator: " · ")
+}
+
+private func daylightTicks(sunrise: Date, sunset: Date) -> [Date] {
+    var ticks = [sunrise]
+    for hour in [9, 12, 15] {
+        guard let time = CostaRica.calendar.date(bySettingHour: hour, minute: 0, second: 0, of: sunrise) else { continue }
+        if time > sunrise.addingTimeInterval(45 * 60) && time < sunset.addingTimeInterval(-45 * 60) {
+            ticks.append(time)
+        }
+    }
+    ticks.append(sunset)
+    return ticks
 }
 
 struct WeekBars: View {
@@ -488,7 +506,6 @@ struct WeekHeat: View {
     }
 
     private func heatRow(_ offset: Int, _ day: DayConditions?) -> some View {
-        let showStop = day?.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day!.sunrise) } ?? false
         return HStack(alignment: .center, spacing: 8) {
             Text(day.map { "\($0.weekday) \(String($0.date.suffix(2)))" } ?? "—")
                 .font(.system(size: 13, weight: .semibold))
@@ -499,24 +516,33 @@ struct WeekHeat: View {
                 Canvas { context, size in
                     guard let day else { return }
                     let axis = PlotAxis(start: day.sunrise, end: day.sunset)
-                    let step = 15.0 * 60
+                    let shade = activity.heatUsesShade
+                    var runs: [(start: Date, end: Date, zone: HeatMinutes)] = []
+                    let step = 5.0 * 60
                     var cursor = day.sunrise
                     while cursor < day.sunset {
                         let next = min(day.sunset, cursor.addingTimeInterval(step))
-                        let x0 = axis.x(cursor, width: size.width)
-                        let x1 = axis.x(next, width: size.width)
-                        let bin = hourBin(day.hours, at: cursor)
-                        let value = bin?.wbgtSunC ?? 25
-                        let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: size.height)
-                        if HeatScale.isStopHour(wbgt: value, on: day.sunrise) {
-                            context.fill(Path(rect), with: .color(Palette.hatch))
-                            hatch(in: rect, context: context, gap: 4)
+                        let bin = hourBin(day.hours, at: cursor.addingTimeInterval(1))
+                        let value = shade ? (bin?.wbgtShadeC ?? 25) : (bin?.wbgtSunC ?? 25)
+                        let zone = HeatScale.minutes(wbgt: value, on: day.sunrise)
+                        if let last = runs.last, last.zone == zone, last.end == cursor {
+                            runs[runs.count - 1].end = next
                         } else {
-                            context.fill(Path(rect), with: .color(Palette.zone(HeatScale.minutes(wbgt: value, on: day.sunrise))))
+                            runs.append((cursor, next, zone))
                         }
                         cursor = next
                     }
-                    _ = showStop
+                    for run in runs {
+                        let x0 = axis.x(run.start, width: size.width)
+                        let x1 = axis.x(run.end, width: size.width)
+                        let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0 + 0.6), height: size.height)
+                        if run.zone == .stop {
+                            context.fill(Path(rect), with: .color(Palette.hatch))
+                            hatch(in: rect, context: context, gap: 4)
+                        } else {
+                            context.fill(Path(rect), with: .color(Palette.zone(run.zone)))
+                        }
+                    }
                 }
                 .frame(height: 18)
                 .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
