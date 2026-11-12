@@ -182,33 +182,68 @@ struct TodayChart: View {
                 let fraction = (value - minV) / (maxV - minV)
                 return size.height - CGFloat(min(1, max(0, fraction))) * size.height
             }
+            struct HeatSample {
+                var x: CGFloat
+                var sun: Double
+                var shade: Double
+                var sunZone: HeatMinutes
+                var shadeZone: HeatMinutes
+            }
+            var samples: [HeatSample] = []
             let step = 5.0 * 60
             var cursor = axis.start
-            while cursor < axis.end {
-                let next = min(axis.end, cursor.addingTimeInterval(step))
-                let mid = cursor.addingTimeInterval(next.timeIntervalSince(cursor) / 2)
-                let sun = sample(day.hours, at: mid, \.wbgtSunC)
-                let shade = sample(day.hours, at: mid, \.wbgtShadeC)
-                let x0 = axis.x(cursor, width: size.width)
-                let x1 = axis.x(next, width: size.width)
-                let bin = hourBin(day.hours, at: mid)
-                let sunStop = bin.map { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) } ?? false
-                let shadeStop = bin.map { HeatScale.isStopHour(wbgt: $0.wbgtShadeC, on: day.sunrise) } ?? false
-                let shadeRect = CGRect(x: x0, y: y(shade), width: max(1, x1 - x0), height: size.height - y(shade))
-                let sunRect = CGRect(x: x0, y: y(max(sun, shade)), width: max(1, x1 - x0), height: max(0, y(min(sun, shade)) - y(max(sun, shade))))
-                if shadeStop {
-                    context.fill(Path(shadeRect), with: .color(Palette.hatch))
-                    hatch(in: shadeRect, context: context, gap: 5)
+            while cursor <= axis.end {
+                let sun = sample(day.hours, at: cursor, \.wbgtSunC)
+                let shade = sample(day.hours, at: cursor, \.wbgtShadeC)
+                let bin = hourBin(day.hours, at: min(cursor.addingTimeInterval(1), axis.end))
+                let sunZone = (bin?.wbgtSunC).map { HeatScale.isStopHour(wbgt: $0, on: day.sunrise) } == true
+                    ? HeatMinutes.stop
+                    : HeatScale.minutes(wbgt: sun, on: day.sunrise)
+                let shadeZone = (bin?.wbgtShadeC).map { HeatScale.isStopHour(wbgt: $0, on: day.sunrise) } == true
+                    ? HeatMinutes.stop
+                    : HeatScale.minutes(wbgt: shade, on: day.sunrise)
+                samples.append(HeatSample(x: axis.x(cursor, width: size.width), sun: sun, shade: shade, sunZone: sunZone, shadeZone: shadeZone))
+                cursor = cursor.addingTimeInterval(step)
+            }
+            func paint(_ zone: HeatMinutes, _ path: Path) {
+                if zone == .stop {
+                    context.fill(path, with: .color(Palette.hatch))
+                    hatch(in: path.boundingRect, context: context, gap: 5)
                 } else {
-                    context.fill(Path(shadeRect), with: .color(Palette.zone(HeatScale.minutes(wbgt: shade, on: day.sunrise))))
+                    context.fill(path, with: .color(Palette.zone(zone)))
                 }
-                if sunStop {
-                    context.fill(Path(sunRect), with: .color(Palette.hatch))
-                    hatch(in: sunRect, context: context, gap: 5)
-                } else if sunRect.height > 0 {
-                    context.fill(Path(sunRect), with: .color(Palette.zone(HeatScale.minutes(wbgt: sun, on: day.sunrise))))
+            }
+            func runs(of key: KeyPath<HeatSample, HeatMinutes>) -> [Range<Int>] {
+                var result: [Range<Int>] = []
+                var start = 0
+                for index in samples.indices.dropFirst() {
+                    if samples[index][keyPath: key] != samples[start][keyPath: key] {
+                        result.append(start..<index)
+                        start = index - 1
+                    }
                 }
-                cursor = next
+                if !samples.isEmpty { result.append(start..<samples.count) }
+                return result
+            }
+            for run in runs(of: \.shadeZone) {
+                let slice = Array(samples[run])
+                guard let first = slice.first, let last = slice.last else { continue }
+                var path = Path()
+                path.move(to: CGPoint(x: first.x, y: size.height))
+                slice.forEach { path.addLine(to: CGPoint(x: $0.x, y: y($0.shade))) }
+                path.addLine(to: CGPoint(x: last.x, y: size.height))
+                path.closeSubpath()
+                paint(first.shadeZone, path)
+            }
+            for run in runs(of: \.sunZone) {
+                let slice = Array(samples[run])
+                guard slice.count > 1, let first = slice.first else { continue }
+                var path = Path()
+                path.move(to: CGPoint(x: first.x, y: y(first.shade)))
+                slice.forEach { path.addLine(to: CGPoint(x: $0.x, y: y(max($0.sun, $0.shade)))) }
+                slice.reversed().forEach { path.addLine(to: CGPoint(x: $0.x, y: y(min($0.sun, $0.shade)))) }
+                path.closeSubpath()
+                paint(first.sunZone, path)
             }
             var sunPath = Path()
             var shadePath = Path()
