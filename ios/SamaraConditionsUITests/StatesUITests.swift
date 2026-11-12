@@ -72,5 +72,12 @@ final class StatesUITests: XCTestCase {
         let app = launch(["-ui-state", "fresh", "-show-sources", "1"])
         let credit = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Open-Meteo")).firstMatch
         XCTAssertTrue(credit.waitForExistence(timeout: 8))
+        let export = app.buttons["export-log"]
+        var swipes = 0
+        while !export.exists && swipes < 8 {
+            app.swipeUp()
+            swipes += 1
+        }
+        XCTAssertTrue(export.exists)
     }
 }

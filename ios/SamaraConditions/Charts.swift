@@ -206,7 +206,7 @@ struct TodayChart: View {
             func paint(_ zone: HeatMinutes, _ path: Path) {
                 if zone == .stop {
                     context.fill(path, with: .color(Palette.hatch))
-                    hatch(in: path.boundingRect, context: context, gap: 5)
+                    hatch(in: path.boundingRect, context: context, gap: 5, clip: path)
                 } else {
                     context.fill(path, with: .color(Palette.zone(zone)))
                 }

@@ -9,7 +9,9 @@ struct ActivityChips: View {
             HStack(spacing: 8) {
                 ForEach(ActivityKind.allCases, id: \.self) { kind in
                     Button {
-                        model.activity = kind
+                        if model.activity != kind {
+                            model.setActivity(kind)
+                        }
                         if kind != .beach { model.lowTideOnly = false }
                     } label: {
                         Text(kind.title)
@@ -92,13 +94,15 @@ struct HatchSwatch: View {
     }
 }
 
-func hatch(in rect: CGRect, context: GraphicsContext, gap: CGFloat) {
+func hatch(in rect: CGRect, context: GraphicsContext, gap: CGFloat, clip: Path? = nil) {
+    var draw = context
+    draw.clip(to: clip ?? Path(rect))
     var x = rect.minX - rect.height
     while x < rect.maxX {
         var path = Path()
         path.move(to: CGPoint(x: x, y: rect.maxY))
         path.addLine(to: CGPoint(x: x + rect.height, y: rect.minY))
-        context.stroke(path, with: .color(Palette.hatchLine), lineWidth: 1)
+        draw.stroke(path, with: .color(Palette.hatchLine), lineWidth: 1)
         x += gap
     }
 }

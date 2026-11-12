@@ -91,10 +91,50 @@ final class CoreTests: XCTestCase {
         XCTAssertFalse(HeatScale.acclimating(after))
     }
 
+    func testLiveNov12SunStopHoursAreNineTenAndOne() throws {
+        let file = try ConditionsFile.decode(Data(contentsOf: liveFixtureURL()))
+        let day = try XCTUnwrap(file.day(on: date("2026-11-12T12:00:00-06:00")))
+        let clocks = day.hours
+            .filter { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) }
+            .map { CostaRica.clock($0.time) }
+        XCTAssertEqual(clocks, ["9:00a", "10:00a", "1:00p"])
+        XCTAssertFalse(day.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtShadeC, on: day.sunrise) })
+    }
+
+    func testLogRotatesAndKeepsTwoFiles() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("samara-log-\(UUID().uuidString)", isDirectory: true)
+        let log = AppLog(directory: directory, byteCap: 180)
+        log.append("one", at: try date("2026-11-12T10:00:00-06:00"))
+        log.append(String(repeating: "x", count: 200), at: try date("2026-11-12T10:01:00-06:00"))
+        log.append("two", at: try date("2026-11-12T10:02:00-06:00"))
+        let names = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil).map(\.lastPathComponent)
+        XCTAssertTrue(names.contains("log.txt"))
+        XCTAssertTrue(names.contains("log.1.txt"))
+        let current = try Data(contentsOf: directory.appendingPathComponent("log.txt"))
+        XCTAssertLessThanOrEqual(current.count, 180)
+        let exported = try String(contentsOf: log.exportFile(), encoding: .utf8)
+        XCTAssertTrue(exported.contains(String(repeating: "x", count: 200)))
+        XCTAssertTrue(exported.contains("two"))
+        XCTAssertFalse(exported.contains(" one"))
+        try FileManager.default.removeItem(at: directory)
+    }
+
     private func date(_ text: String) throws -> Date {
         let parser = ISO8601DateFormatter()
         parser.formatOptions = [.withInternetDateTime]
         return try XCTUnwrap(parser.date(from: text))
+    }
+
+    private func liveFixtureURL() -> URL {
+        var url = URL(fileURLWithPath: #filePath)
+        for _ in 0..<8 {
+            url.deleteLastPathComponent()
+            let candidate = url.appendingPathComponent("data/fixture-live-2026-11-12.json")
+            if FileManager.default.fileExists(atPath: candidate.path) {
+                return candidate
+            }
+        }
+        return url
     }
 
     private func fixtureURL() -> URL {

@@ -1,10 +1,14 @@
 import SwiftUI
+import UIKit
 
 struct SourcesSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var model: AppModel
+    @State private var shareURL: ShareURL?
 
     var body: some View {
         NavigationStack {
+            ScrollViewReader { proxy in
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     block("What this is", """
@@ -31,8 +35,28 @@ struct SourcesSheet: View {
                     block("Credit", """
                     Weather and wave data from Open-Meteo.com, CC BY 4.0. Tide predictions from NOAA, public domain. WBGT code includes software produced by UChicago Argonne, LLC under Contract No. DE-AC02-06CH11357 with the Department of Energy.
                     """)
+                    Button {
+                        if let url = try? model.prepareLogExport() {
+                            shareURL = ShareURL(url: url)
+                        }
+                    } label: {
+                        Text("Export log")
+                            .font(.system(size: 15))
+                            .foregroundStyle(Palette.text)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("export-log")
+                    .id("export-log")
                 }
                 .padding(20)
+            }
+            .onAppear {
+                guard ProcessInfo.processInfo.arguments.contains("-scroll-sources") else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    proxy.scrollTo("export-log", anchor: .bottom)
+                }
+            }
             }
             .background(Palette.night)
             .navigationTitle("Sources")
@@ -42,6 +66,9 @@ struct SourcesSheet: View {
                     Button("Done") { dismiss() }
                 }
             }
+        }
+        .sheet(item: $shareURL) { item in
+            ActivityShare(url: item.url)
         }
         .preferredColorScheme(.dark)
         .accessibilityIdentifier("sources-sheet")
@@ -58,4 +85,19 @@ struct SourcesSheet: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
+}
+
+private struct ShareURL: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+private struct ActivityShare: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
 }
