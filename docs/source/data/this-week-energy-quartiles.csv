@@ -1,0 +1,2 @@
+window,q1_kJ,median_kJ,q3_kJ,n,expected_n,method,fetch_time_pt,cutoff_hour_cr
+"6a–9p inclusive, 2026-11-11–2026-11-17, this-week model/forecast hours",126.1,157.0,197.0,112,112,"numpy.percentile linear, unrounded energy_kj, display rounded to 1 decimal",2026-11-11T15:00:01-08:00,2026-11-11T17:00

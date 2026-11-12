@@ -1,0 +1,53 @@
+name: Morning conditions
+
+on:
+  schedule:
+    # 04:17 and 05:17 America/Costa_Rica (UTC−6, no daylight saving).
+    - cron: "17 10 * * *"
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: samara-conditions
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test and build
+        run: |
+          python -m pip install -r pipeline/requirements.txt
+          cd pipeline
+          PYTHONPATH=src python -m pytest tests -q
+          PYTHONPATH=src python -m samara live --out ../site/conditions.json --previous ../site/conditions.json
+
+      - name: Heartbeat
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > heartbeat.txt
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "samara-conditions"
+          git add heartbeat.txt site/conditions.json
+          git diff --cached --quiet || git commit -m "Morning conditions"
+          git push
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

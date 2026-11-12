@@ -1,0 +1,347 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 77;
+	objects = {
+
+		AA0001 /* SamaraConditions */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SamaraConditions;
+			sourceTree = "<group>";
+		};
+		AA0002 /* SamaraConditionsUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SamaraConditionsUITests;
+			sourceTree = "<group>";
+		};
+		AA0100 /* SamaraConditions.app */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			path = SamaraConditions.app;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA0101 /* SamaraConditionsUITests.xctest */ = {
+			isa = PBXFileReference;
+			explicitFileType = wrapper.cfbundle;
+			includeInIndex = 0;
+			path = SamaraConditionsUITests.xctest;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA0201 /* SamaraCore in Frameworks */ = {
+			isa = PBXBuildFile;
+			productRef = AA0400 /* SamaraCore */;
+		};
+		AA0200 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0201 /* SamaraCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0202 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0500 = {
+			isa = PBXGroup;
+			children = (
+				AA0001 /* SamaraConditions */,
+				AA0002 /* SamaraConditionsUITests */,
+				AA0502 /* SamaraCore */,
+				AA0501 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0502 /* SamaraCore */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SamaraCore;
+			sourceTree = "<group>";
+		};
+		AA0501 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0100 /* SamaraConditions.app */,
+				AA0101 /* SamaraConditionsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0600 /* SamaraConditions */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0700 /* Build configuration list for PBXNativeTarget "SamaraConditions" */;
+			buildPhases = (
+				AA0800 /* Sources */,
+				AA0200 /* Frameworks */,
+				AA0801 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				AA0001 /* SamaraConditions */,
+			);
+			name = SamaraConditions;
+			packageProductDependencies = (
+				AA0400 /* SamaraCore */,
+			);
+			productName = SamaraConditions;
+			productReference = AA0100 /* SamaraConditions.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA0601 /* SamaraConditionsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0701 /* Build configuration list for PBXNativeTarget "SamaraConditionsUITests" */;
+			buildPhases = (
+				AA0802 /* Sources */,
+				AA0202 /* Frameworks */,
+				AA0803 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA0900 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA0002 /* SamaraConditionsUITests */,
+			);
+			name = SamaraConditionsUITests;
+			packageProductDependencies = (
+			);
+			productName = SamaraConditionsUITests;
+			productReference = AA0101 /* SamaraConditionsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		AA0800 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0801 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0802 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0803 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA0900 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA0600 /* SamaraConditions */;
+			targetProxy = AA0901 /* PBXContainerItemProxy */;
+		};
+		AA0901 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA1000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA0600;
+			remoteInfo = SamaraConditions;
+		};
+		AA0400 /* SamaraCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0401 /* XCLocalSwiftPackageReference "SamaraCore" */;
+			productName = SamaraCore;
+		};
+		AA0401 /* XCLocalSwiftPackageReference "SamaraCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = SamaraCore;
+		};
+		AA1000 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 2700;
+				TargetAttributes = {
+					AA0601 = {
+						TestTargetID = AA0600;
+					};
+				};
+			};
+			buildConfigurationList = AA0702 /* Build configuration list for PBXProject "SamaraConditions" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA0500;
+			packageReferences = (
+				AA0401 /* XCLocalSwiftPackageReference "SamaraCore" */,
+			);
+			productRefGroup = AA0501 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0600 /* SamaraConditions */,
+				AA0601 /* SamaraConditionsUITests */,
+			);
+		};
+		AA1100 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		AA1101 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA1102 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seanholt.samaraconditions;
+				PRODUCT_NAME = SamaraConditions;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA1103 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seanholt.samaraconditions;
+				PRODUCT_NAME = SamaraConditions;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		AA1104 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seanholt.samaraconditions.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = SamaraConditions;
+			};
+			name = Debug;
+		};
+		AA1105 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.seanholt.samaraconditions.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = SamaraConditions;
+			};
+			name = Release;
+		};
+		AA0702 /* Build configuration list for PBXProject "SamaraConditions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1100 /* Debug */,
+				AA1101 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0700 /* Build configuration list for PBXNativeTarget "SamaraConditions" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1102 /* Debug */,
+				AA1103 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0701 /* Build configuration list for PBXNativeTarget "SamaraConditionsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1104 /* Debug */,
+				AA1105 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+	};
+	rootObject = AA1000 /* Project object */;
+}

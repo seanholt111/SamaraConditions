@@ -1,0 +1,15 @@
+Sámara Conditions
+
+Weather and marine data are from Open-Meteo (https://open-meteo.com/), © Open-Meteo, licensed CC BY 4.0.
+Tide predictions are from NOAA CO-OPS station 9684403 (Puntarenas), which NOAA places in the public domain.
+
+Wet-bulb globe temperature is computed with James C. Liljegren's 2008 model.
+The C implementation vendored in pipeline/vendor/liljegren/ is the source published
+through mdljts/wbgt (Max Lieblich, MIT license, included in those files), which
+packages the Argonne code.
+
+This product includes software produced by UChicago Argonne, LLC
+under Contract No. DE-AC02-06CH11357 with the Department of Energy.
+
+The shore-energy model is a calculation, not a measurement. Reef crest height,
+crest width, front slope, and the gap coefficient are guesses. See docs/source/design-spec-v1.md.
