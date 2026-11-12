@@ -16,7 +16,10 @@ struct WeekView: View {
                     switch model.weekTab {
                     case .heat:
                         VStack(spacing: 10) {
-                            WeekHeat(days: rows, activity: model.activity, lowTideOnly: model.lowTideOnly)
+                            WeekHeat(days: rows, activity: model.activity, lowTideOnly: model.lowTideOnly) { offset in
+                                model.dayOffset = offset
+                                model.section = .today
+                            }
                             MinutesKey(showStop: rows.contains { item in
                                 guard let day = item.day else { return false }
                                 return day.hours.contains {

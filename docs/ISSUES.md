@@ -149,11 +149,26 @@ The existing i sheet gains one plain text row at the bottom, "Export log". It op
 
 **Check.** The row is on the i sheet. A unit test rotates the file and keeps two copies.
 
-## Held. Not in build 4
+## Build 4 UX, approved by Sean 12 Nov 2026, 1:40pm PT
 
-Sean will approve these after Pepper self-grades them. Do not build them until he says so.
+Sean said "Nice, send it." `docs/design/build4/` is the graded spec. His calls override anything the spec still marks open:
 
-- 6:00a–9:00p axis, dark hours after sunset and before sunrise, and the All day / Until / From window wording. Today still clips to sunrise–sunset.
-- °F / °C units row. The app still shows °C.
-- The tracer across Clouds, Tide, and Heat, and the drag readouts in those headers.
-- Deleting the Heat / Tide / Rain / Sources row, and moving Sources into the i sheet as "Sources & method". That row stays.
+1. On Day, the shore-energy plot replaces the tide band. Tide height is a readout only. There is no tide line.
+2. The heat readout stays in the top row. There is no heat pill on the line.
+3. Option B: Beach, Low-tide Beach and Soccer sun end at sunset plus 30 minutes, rounded down to 5 minutes, with a dotted tick at that cutoff. Soccer shade, Jungle and Pool run to 9p.
+4. The top toggle says Day, not Today. The first date cell still says Today.
+5. Week Sea uses the same full-width rows as the other Week pages. The shore-energy drawing itself is unchanged.
+
+The morning file must carry shore and offshore energy every 5 minutes from 6:00a through 9:00p. The job runs `python -m samara live`, which builds that file.
+
+**Care hours.** Day and Week use 6:00a–9:00p. Ticks are 6a, 9a, 12p, 3p, 6p, 9p. A dashed sunset hairline crosses Clouds, Sea and Heat, with "sunset 5:17p" at the top of Heat. After sunset the ground is `#0E121A`. Cloud bars after sunset are `#70757E`. Rain, heat and sea run to 9p. The Stop hatch stays clipped to the band under the Sun line.
+
+**Windows.** Computed over 6:00a–9:00p, then option B, then the Low-tide toggle. Wording: "All day", "Until …", "From …", a range, or "No window". Week uses the same words in lowercase. The Sea header uses them too: "Sea (model) · Calm … · Waves …".
+
+**Temperature.** The i sheet order is Sources & method, Temperature °F | °C, Export log. Default is °F. Colours, windows, feet and millimetres stay in their own units. Whole degrees on screen. Sources thresholds keep one decimal.
+
+**Tracer.** Dragging the chart snaps to 5 minutes. A white line runs through the three plots and skips the header lanes. Cloud, rain, sea and tide readouts are pills in those lanes. The time sits in the top readout row.
+
+**Day and Week.** A 7-day strip picks the day. A Week row opens that day. The Heat / Tide / Rain / Sources row is gone. Chips, and the Low-tide toggle on Beach, are the bottom of the screen.
+
+**Check.** SamaraCore tests cover the Wednesday labels, option B, °F not moving a window, pill placement on the 402/393/375 sweep, and calm through 9p. Screenshots match the round-9 list.

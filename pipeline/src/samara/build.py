@@ -131,9 +131,9 @@ def build_day(
         return day + timedelta(hours=t_hours)
 
     samples: list[tuple[datetime, float, float]] = []
-    # Chart series and the calm grid share the model. Calm uses the daylight 5-min grid.
-    lo = sunrise + timedelta(minutes=15)
-    hi = sunset - timedelta(minutes=30)
+    # Chart series and the calm grid share the model. Calm uses the 6:00–21:00 care hours.
+    lo = day.replace(hour=6)
+    hi = day.replace(hour=21)
     m0 = math.ceil(_hours_since(day, lo) * 12 - 1e-9)
     m1 = math.floor(_hours_since(day, hi) * 12 + 1e-9)
     calm_samples: list[tuple[datetime, float]] = []
@@ -150,7 +150,7 @@ def build_day(
         calm_samples.append((at_hour_float(t_hours), e_sh))
 
     sea: list[dict] = []
-    for minute in range(6 * 60, 17 * 60 + 1, 5):
+    for minute in range(6 * 60, 21 * 60 + 1, 5):
         t_hours = minute / 60
         when = at_hour_float(t_hours)
         e_off = _lerp(by_hour, t_hours, "energy_offshore_kj")
@@ -239,7 +239,7 @@ def build_day(
             "jungle": _iso_pair(jungle),
             "beach_low": _iso_pair(beach_low),
         },
-        "calm_windows": _iso_pair(calm_windows(calm_samples, threshold, sunrise, sunset)),
+        "calm_windows": _iso_pair(calm_windows(calm_samples, threshold, sunrise, sunset, bounds=(lo, hi))),
         "sea": sea,
         "hours": out_hours,
     }

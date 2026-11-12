@@ -44,7 +44,7 @@ struct LowTideToggle: View {
                     .font(.system(size: 16, weight: .medium))
                     .foregroundStyle(Palette.text)
             }
-            .tint(Palette.cloud)
+            .tint(Palette.muted)
             .accessibilityIdentifier("low-tide-toggle")
         }
     }
@@ -142,6 +142,7 @@ struct WindowRibbon: View {
     var labelSize: CGFloat = 17
     var largeSize: CGFloat = 22
     var alwaysRange: Bool = false
+    var words: ((TimeSpan) -> String)? = nil
 
     var body: some View {
         GeometryReader { geo in
@@ -166,16 +167,17 @@ struct WindowRibbon: View {
     private func ribbon(_ span: TimeSpan, width: CGFloat) -> some View {
         let x0 = axis.x(span.start, width: width)
         let x1 = axis.x(span.end, width: width)
-        let short = alwaysRange || span.duration < 3 * 3600 || (x1 - x0) < 130
-        let label = shortRange(span)
+        let label = words?(span) ?? shortRange(span)
+        let coversDay = words != nil && (label == "All day" || label == "all day")
+        let short = !coversDay && (alwaysRange || span.duration < 3 * 3600 || (x1 - x0) < 130 || words != nil)
         let needed = CGFloat(label.count) * labelSize * 0.62 + 14
-        let pill = short ? min(width - 4, max(x1 - x0, needed)) : max(8, x1 - x0)
+        let pill = coversDay ? width - 4 : (short ? min(width - 4, max(x1 - x0, needed)) : max(8, x1 - x0))
         var origin = (x0 + x1) / 2 - pill / 2
         origin = min(max(2, origin), max(2, width - pill - 2))
         return ZStack {
-            if short {
-                Text(label)
-                    .font(.system(size: labelSize, weight: .heavy))
+            if coversDay || short {
+                Text(coversDay ? label : label)
+                    .font(.system(size: coversDay ? largeSize : labelSize, weight: .heavy))
                     .foregroundStyle(ink)
                     .lineLimit(1)
             } else {

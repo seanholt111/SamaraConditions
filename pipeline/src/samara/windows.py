@@ -135,9 +135,10 @@ def calm_windows(
     threshold: float,
     sunrise: datetime,
     sunset: datetime,
+    bounds: tuple[datetime, datetime] | None = None,
 ) -> list[tuple[datetime, datetime]]:
-    """samples are on a 5-minute grid. Keep runs of at least 15 minutes inside daylight."""
-    lo, hi = daylight(sunrise, sunset)
+    """samples are on a 5-minute grid. Keep runs of at least 15 minutes inside the bounds."""
+    lo, hi = bounds if bounds is not None else daylight(sunrise, sunset)
     day = sunrise.replace(hour=0, minute=0, second=0, microsecond=0)
     inside = [(t, v) for t, v in samples if lo <= t <= hi]
     if not inside:

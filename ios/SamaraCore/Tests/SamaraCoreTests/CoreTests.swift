@@ -91,6 +91,71 @@ final class CoreTests: XCTestCase {
         XCTAssertFalse(HeatScale.acclimating(after))
     }
 
+    func testWednesdayWindowsUseCareHoursAndOptionB() throws {
+        let file = try ConditionsFile.decode(Data(contentsOf: fixtureURL()))
+        let day = try XCTUnwrap(file.days.first)
+        let sun = ActivityWindows.hourly(day.hours) { $0.wbgtSunC }
+        let shade = ActivityWindows.hourly(day.hours) { $0.wbgtShadeC }
+        let sunset = CareDay.hour(day.sunset)
+        func labels(_ activity: ActivityKind, low: Bool = false) -> [String] {
+            ActivityWindows.spans(
+                sun: sun, shade: shade, activity: activity, sunsetHour: sunset,
+                lowTide: low,
+                lowHours: file.extrema().filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) },
+                offshore: ActivityWindows.hourly(day.hours) { $0.energyOffshoreKj },
+                upperQuartile: file.week.energyQ3Kj
+            ).map { WindowWords.label(start: $0.start, end: $0.end) }
+        }
+        XCTAssertEqual(labels(.beach), ["Until 7:30a", "5:00–5:45p"])
+        XCTAssertEqual(labels(.soccerSun), ["Until 6:40a"])
+        XCTAssertEqual(labels(.jungle), ["All day"])
+        XCTAssertEqual(labels(.pool), ["All day"])
+        XCTAssertEqual(labels(.beach, low: true), [])
+        let fahrenheit = labels(.beach)
+        XCTAssertEqual(fahrenheit, labels(.beach))
+    }
+
+    func testFahrenheitDoesNotMoveWindows() throws {
+        let file = try ConditionsFile.decode(Data(contentsOf: fixtureURL()))
+        let day = try XCTUnwrap(file.days.first)
+        let sun = ActivityWindows.hourly(day.hours) { $0.wbgtSunC }
+        let shade = ActivityWindows.hourly(day.hours) { $0.wbgtShadeC }
+        let celsius = ActivityWindows.spans(sun: sun, shade: shade, activity: .beach, sunsetHour: CareDay.hour(day.sunset))
+        let displayed = TemperatureScale.fahrenheit.whole(27.88)
+        XCTAssertEqual(displayed, "82°")
+        XCTAssertEqual(TemperatureScale.celsius.whole(27.88), "28°")
+        XCTAssertEqual(TemperatureScale.fahrenheit.threshold(32.3), "90.1 °F")
+        XCTAssertEqual(celsius.map(\.start), ActivityWindows.spans(sun: sun, shade: shade, activity: .beach, sunsetHour: CareDay.hour(day.sunset)).map(\.start))
+    }
+
+    func testPillsStayInsideTheBand() {
+        let widths = [88.0, 96.0]
+        for band in [402.0 - 32, 393.0 - 32, 375.0 - 32] {
+            for step in 0...180 {
+                let line = 6.0 + Double(step) / 12 * (band / (15.0))
+                let clamped = min(max(line, 0), band)
+                let spans = PillLayout.place(line: clamped, widths: widths, bandWidth: band)
+                XCTAssertGreaterThanOrEqual(spans[0].start, 6 - 0.01, "left \(clamped) \(band)")
+                XCTAssertLessThanOrEqual(spans[1].end, band - 6 + 0.01, "right \(clamped) \(band)")
+                if clamped > 14 && clamped < band - 14 {
+                    XCTAssertFalse(PillLayout.lineSitsInGap(line: clamped, spans: spans))
+                }
+            }
+        }
+    }
+
+    func testWednesdayCalmRunsThroughNine() throws {
+        let file = try ConditionsFile.decode(Data(contentsOf: fixtureURL()))
+        let day = try XCTUnwrap(file.days.first)
+        let samples = SeaSeries.points(hours: day.hours, extrema: file.extrema(), day: day.sunrise)
+        XCTAssertEqual(samples.first?.hour, 6)
+        XCTAssertEqual(samples.last?.hour, 21)
+        let calm = SeaSeries.calm(samples: samples, threshold: file.week.calmThresholdKj)
+        let labels = calm.map { WindowWords.label(start: $0.start, end: $0.end) }
+        XCTAssertTrue(labels.contains("7:30a–12:40p"), "\(labels)")
+        XCTAssertTrue(labels.contains("From 7:40p"), "\(labels)")
+    }
+
     func testLiveNov12SunStopHoursAreNineTenAndOne() throws {
         let file = try ConditionsFile.decode(Data(contentsOf: liveFixtureURL()))
         let day = try XCTUnwrap(file.day(on: date("2026-11-12T12:00:00-06:00")))

@@ -22,6 +22,9 @@ final class AppModel: ObservableObject {
     @Published var selectedAlert: OfficialAlert?
     @Published var scrub: Date?
     @Published var now = Date()
+    @Published var dayOffset = 0
+    @Published var useFahrenheit = true
+    @Published var typeScale = 1.0
 
     let pagesURL = URL(string: "https://seanholt111.github.io/SamaraConditions/conditions.json")!
     let log: AppLog
@@ -34,6 +37,9 @@ final class AppModel: ObservableObject {
             ?? FileManager.default.temporaryDirectory
         cacheDirectory = base.appendingPathComponent("SamaraConditions", isDirectory: true)
         log = AppLog(directory: cacheDirectory.appendingPathComponent("logs", isDirectory: true))
+        if UserDefaults.standard.object(forKey: "temperatureUnitF") != nil {
+            useFahrenheit = UserDefaults.standard.bool(forKey: "temperatureUnitF")
+        }
         applyLaunchArguments()
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "?"
@@ -132,7 +138,15 @@ final class AppModel: ObservableObject {
     }
 
     func today(_ file: ConditionsFile) -> DayConditions? {
-        file.day(on: now) ?? file.days.first
+        let date = CostaRica.dayOffset(dayOffset, from: now)
+        return file.day(on: date) ?? file.day(on: now) ?? file.days.first
+    }
+
+    var viewingToday: Bool { dayOffset == 0 }
+
+    func setFahrenheit(_ fahrenheit: Bool) {
+        useFahrenheit = fahrenheit
+        UserDefaults.standard.set(fahrenheit, forKey: "temperatureUnitF")
     }
 
     func orderedDays(_ file: ConditionsFile) -> [(offset: Int, day: DayConditions?)] {
@@ -172,6 +186,13 @@ final class AppModel: ObservableObject {
         if let raw = value("-tab"), let section = Section(rawValue: raw) { self.section = section }
         if let raw = value("-week"), let tab = WeekTab(rawValue: raw) { weekTab = tab }
         if value("-show-sources") == "1" { showSources = true }
+        if let raw = value("-day-offset"), let offset = Int(raw) { dayOffset = offset }
+        if value("-unit") == "C" { useFahrenheit = false }
+        if value("-unit") == "F" { useFahrenheit = true }
+        if value("-dynamic-type") == "xxxLarge" { typeScale = 1.35 }
+        if let raw = value("-scrub"), let date = ISO8601DateFormatter.internet.date(from: raw) {
+            scrub = date
+        }
         let state = value("-ui-state")
         let useFixture = args.contains("-use-fixture") || state != nil
         let fixtureName = value("-fixture") ?? "conditions.fixture"

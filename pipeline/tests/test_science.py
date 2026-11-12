@@ -120,11 +120,13 @@ def test_wednesday_calm_window_is_7_30_to_12_40():
     hours = _nov11_hours()
     day = build_day(hours, _extrema(), PINNED_WEEK["energy_q1_kj"], PINNED_WEEK["energy_q3_kj"], PINNED_WEEK["calm_threshold_kj"])
     windows = day["calm_windows"]
-    assert len(windows) == 1
+    assert windows, "expected a calm window"
     start = datetime.fromisoformat(windows[0]["start"])
     end = datetime.fromisoformat(windows[0]["end"])
     assert abs((start - _dt("2026-11-11T07:30:00")).total_seconds()) <= 5 * 60
     assert abs((end - _dt("2026-11-11T12:40:00")).total_seconds()) <= 5 * 60
+    last_sea = datetime.fromisoformat(day["sea"][-1]["time"])
+    assert last_sea.hour == 21 and last_sea.minute == 0
     assert day["wave_word"] == "normal"
     assert day["cloud_daylight_mean_pct"] == 33
     assert day["precip_mm"] == 0.7

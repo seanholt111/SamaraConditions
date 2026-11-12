@@ -18,8 +18,8 @@ final class StatesUITests: XCTestCase {
     func testFresh() {
         let app = launch(["-ui-state", "fresh"])
         XCTAssertTrue(app.staticTexts["as of 5:02a"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts["27.9°"].exists)
-        XCTAssertTrue(app.staticTexts["26.6°"].exists)
+        XCTAssertTrue(app.staticTexts["82°"].exists)
+        XCTAssertTrue(app.staticTexts["80°"].exists)
     }
 
     func testStale() {
@@ -53,8 +53,9 @@ final class StatesUITests: XCTestCase {
 
     func testTodayBeach() {
         let app = launch(["-ui-state", "fresh", "-activity", "beach"])
-        XCTAssertTrue(app.staticTexts["5:50–7:30a"].waitForExistence(timeout: 8))
-        XCTAssertTrue(app.staticTexts["Tide · Calm at shore 7:30a–12:40p · Waves normal"].exists)
+        XCTAssertTrue(app.staticTexts["Until 7:30a"].waitForExistence(timeout: 8))
+        let sea = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Sea (model) · Calm 7:30a–12:40p, from 7:40p")).firstMatch
+        XCTAssertTrue(sea.exists)
     }
 
     func testLowTide() {
@@ -70,14 +71,10 @@ final class StatesUITests: XCTestCase {
 
     func testSources() {
         let app = launch(["-ui-state", "fresh", "-show-sources", "1"])
+        XCTAssertTrue(app.buttons["Export log"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.buttons["Sources & method"].exists)
+        app.buttons["Sources & method"].tap()
         let credit = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Open-Meteo")).firstMatch
         XCTAssertTrue(credit.waitForExistence(timeout: 8))
-        let export = app.buttons["export-log"]
-        var swipes = 0
-        while !export.exists && swipes < 8 {
-            app.swipeUp()
-            swipes += 1
-        }
-        XCTAssertTrue(export.exists)
     }
 }
