@@ -128,3 +128,32 @@ Logged after she signed off rc3. Do not build these in v1.
 
 1. Tide headroom. Keep at least 16 pt of empty track above the crest on high-tide days. On the rc3 Today screen the crest still comes close to the right end of the header.
 2. Week Heat ribbon. Use a slimmer ribbon when a window is 8 hours or longer.
+
+## Phone, build 3, 12 Nov 2026, as of 10:53a
+
+Evidence is `docs/screenshots/phone-b3/samara-phone-bug-hatch.png`. Sean, live data, Soccer sun. The file is `data/fixture-live-2026-11-12.json`.
+
+### A. Stop hatch escapes the heat curve
+
+**What happened.** The pink Stop hatch is drawn as diagonal strokes across the axis-aligned bounding rectangle of the stop band. The fill of that band already follows the curve between the shade line and the sun line. The strokes do not. Each line runs the full height of the rectangle and starts a full height to the left of it, so the hatch climbs above the Sun line, with a slanted top, and hangs in the hours before the stop run. On 12 Nov the sun hours that reach Stop (32.3 °C) are 9a, 10a, and 1p. Shade does not reach Stop.
+
+**Fix.** Clip the hatch strokes to the same path that is filled. The hours stay the hours whose WBGT is Stop. Do not change the band geometry.
+
+**Check.** Live fixture, Today, Soccer sun and Beach. The hatch stays inside the painted band.
+
+### B. Export log
+
+**Behaviour.** A rotating log in Application Support, about 1 MB, keeping the current file and one previous file. It records the version and build, launches, each fetch (URL, HTTP status, bytes, generated_at, schema_version, and decode errors verbatim), whether the screen used the cache or a fresh file, the data state (fresh, stale, offline, error), chip changes, and caught errors. No personal data.
+
+The existing i sheet gains one plain text row at the bottom, "Export log". It opens the iOS share sheet with the .txt file.
+
+**Check.** The row is on the i sheet. A unit test rotates the file and keeps two copies.
+
+## Held. Not in build 4
+
+Sean will approve these after Pepper self-grades them. Do not build them until he says so.
+
+- 6:00a–9:00p axis, dark hours after sunset and before sunrise, and the All day / Until / From window wording. Today still clips to sunrise–sunset.
+- °F / °C units row. The app still shows °C.
+- The tracer across Clouds, Tide, and Heat, and the drag readouts in those headers.
+- Deleting the Heat / Tide / Rain / Sources row, and moving Sources into the i sheet as "Sources & method". That row stays.
