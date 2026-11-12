@@ -121,3 +121,10 @@ Also not built, because they are still open in §8: a Friday big-swell flag, a K
 7. Today’s bands run from sunrise to sunset. The first hour label is sunrise.
 8. Week Heat is continuous colour runs. No hour seams.
 9. The tide header is “Tide · Calm at shore <that day’s Sea window> · Waves …”, the same window as the Sea ribbon.
+
+## Post-v1, Pepper, not in this build
+
+Logged after she signed off rc3. Do not build these in v1.
+
+1. Tide headroom. Keep at least 16 pt of empty track above the crest on high-tide days. On the rc3 Today screen the crest still comes close to the right end of the header.
+2. Week Heat ribbon. Use a slimmer ribbon when a window is 8 hours or longer.
