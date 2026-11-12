@@ -114,6 +114,8 @@ struct TodayChart: View {
 
     private var tide: some View {
         let headline = WindowText.tideHeader(calm: day.calmWindows, wave: day.waveWord)
+        let maxTide = daylightMaxTide()
+        let tideScale: CGFloat = (86 - 8) / 10
         return ZStack(alignment: .topLeading) {
             Palette.track
             Canvas { context, size in
@@ -124,7 +126,7 @@ struct TodayChart: View {
                     let fraction = Double(step) / Double(steps)
                     let when = axis.start.addingTimeInterval(axis.end.timeIntervalSince(axis.start) * fraction)
                     let feet = TideMath.height(at: when, extrema: extrema) ?? 0
-                    let y = size.height - CGFloat(feet / 10) * (size.height - 8) - 4
+                    let y = tideY(feet, maxFeet: maxTide, scale: tideScale)
                     points.append(CGPoint(x: CGFloat(fraction) * size.width, y: y))
                 }
                 guard let first = points.first, let last = points.last else { return }
@@ -140,7 +142,7 @@ struct TodayChart: View {
                     endPoint: CGPoint(x: 0, y: size.height)
                 ))
                 context.stroke(crest, with: .color(.white), lineWidth: 1.4)
-                let reefY = size.height - CGFloat(3.0 / 10) * (size.height - 8) - 4
+                let reefY = tideY(3, maxFeet: maxTide, scale: tideScale)
                 var reef = Path()
                 reef.move(to: CGPoint(x: 0, y: reefY))
                 reef.addLine(to: CGPoint(x: size.width, y: reefY))
@@ -154,22 +156,18 @@ struct TodayChart: View {
                             .foregroundStyle(Palette.amber)
                             .accessibilityIdentifier("tide-stale")
                     } else {
-                        Text("Tide · Calm at shore \(calmPhrase(day.calmWindows))")
-                            .foregroundStyle(Palette.lagoon)
+                        Text(headline)
+                            .foregroundStyle(marineStale ? Palette.amber : Palette.lagoon)
                             .lineLimit(1)
                             .minimumScaleFactor(0.65)
                             .accessibilityIdentifier("tide-header")
-                        Spacer(minLength: 4)
-                        Text(marineStale ? Freshness.blockHeader(name: "Waves \(day.waveWord)", asOf: marineAsOf, now: staleNow) : "· Waves \(day.waveWord)")
-                            .foregroundStyle(marineStale ? Palette.amber : Palette.text)
-                            .lineLimit(1)
                     }
                 }
                 .font(SamaraFont.band())
             }
             .padding(8)
         }
-        .frame(height: 86)
+        .frame(height: tideTrackHeight(maxFeet: maxTide, scale: tideScale))
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .accessibilityIdentifier("tide-band")
     }
@@ -268,7 +266,7 @@ struct TodayChart: View {
             if shown >= axis.start && shown <= axis.end {
                 let x = axis.x(shown, width: size.width)
                 var nowLine = Path()
-                nowLine.move(to: CGPoint(x: x, y: 0))
+                nowLine.move(to: CGPoint(x: x, y: 6))
                 nowLine.addLine(to: CGPoint(x: x, y: size.height - 7))
                 context.stroke(nowLine, with: .color(Palette.muted.opacity(0.9)), lineWidth: 1)
                 let sunDot = CGPoint(x: x, y: y(sample(day.hours, at: shown, \.wbgtSunC)))
@@ -284,12 +282,14 @@ struct TodayChart: View {
                 context.draw(Text("Sun").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: x, y: y(sample(day.hours, at: labelTime, \.wbgtSunC)) - 12))
                 context.draw(Text("Shade").font(.system(size: 13, weight: .bold)).foregroundColor(.white), at: CGPoint(x: x, y: y(sample(day.hours, at: labelTime, \.wbgtShadeC)) + 14))
             }
-            context.draw(
-                Text("Heat").font(.system(size: 12, weight: .semibold)).foregroundColor(forecastStale ? Palette.amber : Palette.muted),
-                at: CGPoint(x: size.width - 24, y: 14)
-            )
         }
         .frame(minHeight: 230)
+        .overlay(alignment: .topLeading) {
+            Text("Heat")
+                .font(SamaraFont.band())
+                .foregroundStyle(forecastStale ? Palette.amber : Palette.muted)
+                .padding(8)
+        }
         .overlay {
             GeometryReader { geo in
                 Color.clear.contentShape(Rectangle()).gesture(
@@ -300,6 +300,17 @@ struct TodayChart: View {
             }
         }
         .accessibilityIdentifier("heat-plot")
+    }
+
+    private func daylightMaxTide() -> Double {
+        var peak = 0.0
+        let steps = 80
+        for step in 0...steps {
+            let fraction = Double(step) / Double(steps)
+            let when = axis.start.addingTimeInterval(axis.end.timeIntervalSince(axis.start) * fraction)
+            peak = max(peak, TideMath.height(at: when, extrema: extrema) ?? 0)
+        }
+        return peak
     }
 
     private var hourLabels: some View {
@@ -318,6 +329,17 @@ struct TodayChart: View {
         }
         .frame(height: 16)
     }
+}
+
+private func tideY(_ feet: Double, maxFeet: Double, scale: CGFloat) -> CGFloat {
+    let oldY = 86 - 4 - CGFloat(feet) * scale
+    let oldPeak = 86 - 4 - CGFloat(maxFeet) * scale
+    return oldY + max(0, 16 - oldPeak)
+}
+
+private func tideTrackHeight(maxFeet: Double, scale: CGFloat) -> CGFloat {
+    let oldPeak = 86 - 4 - CGFloat(maxFeet) * scale
+    return 86 + max(0, 16 - oldPeak)
 }
 
 private func calmPhrase(_ spans: [TimeSpan]) -> String {

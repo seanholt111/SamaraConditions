@@ -424,24 +424,47 @@ def hours_from_csv(path: Path, sunrise: datetime, sunset: datetime) -> list[dict
     return hours
 
 
-def build_fixture(generated_at: datetime | None = None) -> dict:
-    """11 Nov hours from the frozen CSV. 12–17 Nov from the committed Open-Meteo snapshot.
+def hours_from_all_days(hourly_path: Path, daily_path: Path) -> list[list[dict]]:
+    """Seven days from the frozen hourly file. Sunrise and sunset come from the daily CSV."""
+    sunsets: dict[str, tuple[datetime, datetime]] = {}
+    for row in csv.DictReader(daily_path.open()):
+        sunsets[row["date"]] = (
+            datetime.fromisoformat(row["sunrise"]).replace(tzinfo=CR),
+            datetime.fromisoformat(row["sunset"]).replace(tzinfo=CR),
+        )
+    by_day: dict[str, list[dict]] = {}
+    for row in csv.DictReader(hourly_path.open()):
+        date = row["date"]
+        sunrise, sunset = sunsets[date]
+        when = datetime.fromisoformat(row["time"]).replace(tzinfo=CR)
+        by_day.setdefault(date, []).append({
+            "time": when,
+            "sunrise": sunrise,
+            "sunset": sunset,
+            "temp_c": float(row["temp_c"]),
+            "rh_pct": float(row["rh_pct"]),
+            "wind_ms": float(row["wind_speed_10m_ms"]),
+            "shortwave_wm2": float(row["shortwave_wm2"]),
+            "pressure_hpa": float(row["surface_pressure_hpa"]),
+            "cloud_pct": float(row["total_cloud_pct"]),
+            "precip_mm": float(row["precip_mm"]),
+            "uv": None,
+            "swell_m": float(row["swell_wave_height_m"]),
+            "swell_period_s": float(row["swell_wave_period_s"]),
+            "energy_offshore_kj": float(row["energy_kj"]),
+            "wbgt_sun_c": float(row["wbgt_sun_c"]),
+            "wbgt_shade_c": float(row["wbgt_shade_c"]),
+            "data_kind": "frozen-hourly-all-days",
+        })
+    return [by_day[date] for date in sorted(by_day)]
 
-    Week quartiles and the calm threshold stay pinned to the published fixture,
-    because the snapshot is not the 11 Nov 15:00 PT model run (that hourly file
-    was not in the bundle).
-    """
-    forecast = json.loads((ROOT / "data" / "snapshot-forecast.json").read_text())
-    marine = json.loads((ROOT / "data" / "snapshot-marine.json").read_text())
-    by_day = hours_from_open_meteo(forecast, marine, "snapshot-2026-11-12")
-    nov11 = hours_from_csv(
-        ROOT / "data" / "this-week-hourly-nov11.csv",
-        datetime.fromisoformat(forecast["daily"]["sunrise"][0]).replace(tzinfo=CR),
-        datetime.fromisoformat(forecast["daily"]["sunset"][0]).replace(tzinfo=CR),
+
+def build_fixture(generated_at: datetime | None = None) -> dict:
+    """All seven days from data/hourly-all-days.csv. Quartiles are computed from those hours."""
+    days = hours_from_all_days(
+        ROOT / "data" / "hourly-all-days.csv",
+        ROOT / "data" / "this-week-daily.csv",
     )
-    by_day["2026-11-11"] = nov11
-    order = sorted(by_day)
-    days = [by_day[d] for d in order if d >= "2026-11-11" and d <= "2026-11-17"]
     noaa = json.loads((ROOT / "data" / "noaa_hilo_fixture.json").read_text())
     extrema = extrema_from_noaa([
         {"t": row["t"], "ft": float(row["v"]), "type": row["type"]}
@@ -454,7 +477,7 @@ def build_fixture(generated_at: datetime | None = None) -> dict:
         "imn": {"as_of": stamp(as_of), "ok": True, "source": "IMN CAP RSS"},
         "tides": {"as_of": stamp(as_of), "ok": True, "source": "NOAA CO-OPS 9684403"},
     }
-    return assemble(days, extrema, [], feeds, as_of, pinned_week=PINNED_WEEK)
+    return assemble(days, extrema, [], feeds, as_of, pinned_week=None)
 
 
 def write_document(path: Path, document: dict) -> None:

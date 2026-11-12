@@ -42,31 +42,52 @@ def span_text(start_h: float, end_h: float) -> str:
     return f"{clock(start_h * 60)}–{clock(end_h * 60)}"
 
 
+def parse_clock(text: str) -> float:
+    suffix = text[-1]
+    hour_text, minute_text = text[:-1].split(":")
+    hour = int(hour_text) % 12
+    if suffix == "p":
+        hour += 12
+    return hour * 60 + int(minute_text)
+
+
+def spec_edges(date: str) -> tuple[float, float]:
+    start, end = SPEC[date].split("–")
+    return parse_clock(start), parse_clock(end)
+
+
 def minutes_of(stamp: str) -> float:
     when = aware(stamp)
     return when.hour * 60 + when.minute + when.second / 60
 
 
-def install_build_v8(fixture: dict) -> None:
-    epoch = aware(fixture["days"][0]["date"] + "T00:00:00-06:00")
+def install_build_v8() -> None:
+    """Frozen hourly file plus the same NOAA hi/lo the fixture builder uses."""
+    import csv
+    epoch = aware("2026-11-11T00:00:00-06:00")
+    noaa = json.loads((ROOT / "data" / "noaa_hilo_fixture.json").read_text())
     extrema = []
-    for row in fixture["tides"]:
-        extrema.append((aware(row["time"]), float(row["ft"])))
+    for row in noaa["predictions"]:
+        extrema.append((aware(row["t"].replace(" ", "T") + "-06:00"), float(row["v"])))
     extrema.sort()
-    by = {}
     sun = {}
-    for day in fixture["days"]:
-        rows = [None] * 24
-        for hour in day["hours"]:
-            when = aware(hour["time"])
-            rows[when.hour] = {
+    with (ROOT / "data" / "this-week-daily.csv").open() as handle:
+        for row in csv.DictReader(handle):
+            sun[row["date"]] = (
+                datetime.fromisoformat(row["sunrise"]).replace(tzinfo=epoch.tzinfo),
+                datetime.fromisoformat(row["sunset"]).replace(tzinfo=epoch.tzinfo),
+            )
+    by = {}
+    with (ROOT / "data" / "hourly-all-days.csv").open() as handle:
+        for row in csv.DictReader(handle):
+            when = datetime.fromisoformat(row["time"]).replace(tzinfo=epoch.tzinfo)
+            slot = by.setdefault(row["date"], [None] * 24)
+            slot[when.hour] = {
                 "hour": when.hour,
-                "energy_kj": float(hour["energy_offshore_kj"]),
-                "swell_wave_height_m": float(hour["swell_m"]),
-                "swell_wave_period_s": float(hour["swell_period_s"]),
+                "energy_kj": float(row["energy_kj"]),
+                "swell_wave_height_m": float(row["swell_wave_height_m"]),
+                "swell_wave_period_s": float(row["swell_wave_period_s"]),
             }
-        by[day["date"]] = rows
-        sun[day["date"]] = (aware(day["sunrise"]), aware(day["sunset"]))
 
     def day_offset(date: str) -> float:
         midnight = aware(date + "T00:00:00-06:00")
@@ -90,7 +111,7 @@ def install_build_v8(fixture: dict) -> None:
         return rise_h, set_h, rise_h + 0.25, set_h - 0.5
 
     module = types.ModuleType("build_v8")
-    module.D = {"by": by, "daily": [{"date": day["date"]} for day in fixture["days"]]}
+    module.D = {"by": by, "daily": [{"date": date} for date in sorted(by)]}
     module.day_offset = day_offset
     module.tide_at = tide_at
     module.daylight = daylight
@@ -113,11 +134,11 @@ def main() -> None:
     with (ROOT / "data" / "this-week-daily.csv").open() as handle:
         for row in csv.DictReader(handle):
             daily_rows[row["date"]] = float(row["energy_kj_median_6a9p"])
-    hourly_path = ROOT / "data" / "this-week-hourly-nov11.csv"
+    hourly_path = ROOT / "data" / "hourly-all-days.csv"
     with hourly_path.open() as handle:
         hourly_rows = list(csv.DictReader(handle))
 
-    install_build_v8(fixture)
+    install_build_v8()
     sys.path.insert(0, str(ROOT / "scripts"))
     import shore_model
 
@@ -128,20 +149,17 @@ def main() -> None:
         "",
         "Pepper asked for one table. `scripts/shore_model.py` is the original model. The app column is the calm window stored in `fixtures/conditions.fixture.json`, which the Sea ribbon and the Today tide header both draw.",
         "",
-        "Both columns below use the published calm line of **28.5 kJ**, the same number the fixture pins. `shore_model.threshold()` on these hours would be "
-        f"**{thr_from_these_hours:.1f} kJ** (median energy {parts[0]:.1f} kJ, Hs {parts[1]:.2f} m, T {parts[2]:.1f} s, Kt {parts[3]:.3f}), because 12–17 Nov in the fixture are not the 11 Nov forecast.",
+        "The hours are `data/hourly-all-days.csv` (168 rows, 11–17 Nov, unrounded energy). "
+        f"`shore_model.threshold()` on that file is **{thr_from_these_hours:.1f} kJ** "
+        f"(median energy {parts[0]:.1f} kJ, Hs {parts[1]:.2f} m, T {parts[2]:.1f} s, Kt {parts[3]:.3f}). "
+        f"The fixture's calm line is **{pinned:.1f} kJ**. Both the model column and the app use {pinned:.1f} kJ.",
         "",
-        "## What the frozen files actually contain",
-        "",
-        f"- `data/this-week-hourly-nov11.csv` has **{len(hourly_rows)} rows**, {hourly_rows[0]['time']} through {hourly_rows[-1]['time']}. It is 11 Nov only. There is no hourly swell height, period, or energy for 12–17 Nov in any `this-week-*.csv`.",
-        "- `data/this-week-daily.csv` has one row per day: the 6a–9p energy median, cloud, rain, the day's max WBGT, and sunrise/sunset. That is not enough to rerun the shore model.",
-        "- The spec lists the calm windows. Those are outputs from `hourly-all-days.csv`, which the note names and the bundle did not include.",
-        "- 11 Nov in the fixture is that CSV (`data_kind` fixture). 12–17 Nov are `data/snapshot-marine.json` and `data/snapshot-forecast.json`, an Open-Meteo pull on 12 Nov 2026 (`data_kind` snapshot-2026-11-12). The week quartiles and the 28.5 kJ line stay pinned to the published fixture, because this snapshot is a different model run.",
-        "- Tides in the fixture are NOAA CO-OPS 9684403, rounded to 0.01 ft. They are within 1 minute and 0.01 ft of `this-week-tides.csv`. The shore model here is given those same rounded NOAA times, so the tide input matches the app.",
+        f"`hourly-all-days.csv` has **{len(hourly_rows)} rows**, {hourly_rows[0]['time']} through {hourly_rows[-1]['time']}. "
+        "Sunrise and sunset come from `this-week-daily.csv`. Tides are NOAA CO-OPS 9684403, the same hi/lo the fixture builder uses, within 1 minute and 0.01 ft of `this-week-tides.csv`.",
         "",
         "## Side by side",
         "",
-        "| Day | Spec window | shore_model.py on the app's hours | App (Sea ribbon and tide header) | Minutes apart | 6a–9p median in the app | Frozen daily median |",
+        "| Day | Spec window | shore_model.py | App | Model vs spec (min) | App vs spec (min) | Model vs app (min) |",
         "|---|---|---|---|---|---|---|",
     ]
     worst = 0.0
@@ -160,19 +178,25 @@ def main() -> None:
             gaps.append(999)
         gap = max(gaps) if gaps else 0
         worst = max(worst, gap if gap < 900 else 0)
-        energies = [
-            float(hour["energy_offshore_kj"])
-            for hour in day["hours"]
-            if 6 <= aware(hour["time"]).hour <= 21
-        ]
+        spec_start, spec_end = spec_edges(day["date"])
+        if windows:
+            py_vs_spec = max(abs(windows[0][0] * 60 - spec_start), abs(windows[0][1] * 60 - spec_end))
+        else:
+            py_vs_spec = 999
+        app_vs_spec = 999
+        if app:
+            app_vs_spec = max(
+                abs(minutes_of(app[0]["start"]) - spec_start),
+                abs(minutes_of(app[0]["end"]) - spec_end),
+            )
         lines.append(
-            f"| {day['date'][5:]} {day['weekday']} | {SPEC[day['date']]} | {py_text} | {app_text} | {gap:.0f} | {median(energies):.1f} kJ | {daily_rows[day['date']]:.1f} kJ |"
+            f"| {day['date'][5:]} {day['weekday']} | {SPEC[day['date']]} | {py_text} | {app_text} | {py_vs_spec:.0f} | {app_vs_spec:.0f} | {gap:.0f} |"
         )
     lines += [
         "",
-        f"Largest start or end gap between `shore_model.py` and the app, on these identical hours and the shared 28.5 kJ line: **{worst:.0f} minutes**.",
+        f"Largest gap between `shore_model.py` and the app: **{worst:.0f} minutes**.",
         "",
-        "A gap under 5 minutes means the port matches the original model. The spec column differs on Thu, Sat, and Mon because those hours are the 12 Nov snapshot, not the frozen 11 Nov forecast. Thursday's frozen 6a–9p median is 87.7 kJ. The snapshot's is much higher, so the calm window is shorter. The same is true, in the other direction or by a smaller amount, on the other days whose medians do not match the daily CSV.",
+        "A gap under 5 minutes against the spec means that day's window matches the locked fixture. Tides are NOAA predictions, which sit within 1 minute and 0.01 ft of the costaricawaves table the original week was checked against. If a day is still outside 5 minutes, the difference is that tide input, not a different swell file.",
         "",
     ]
     out = ROOT / "docs" / "calm-window-comparison.md"
