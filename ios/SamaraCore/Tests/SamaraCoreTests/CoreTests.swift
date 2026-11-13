@@ -144,8 +144,8 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(TemperatureScale.celsius.whole(27.88), "28°")
         XCTAssertEqual(TemperatureScale.fahrenheit.threshold(32.3), "90.1 °F")
         let plan = ActivityWindows.plan(hours: day.hours, activity: .beach, sunsetHour: CareDay.hour(day.sunset), rulesDay: day.sunrise)
-        XCTAssertEqual(plan.runs.map(\.start), plan.runs.map(\.start))
-        XCTAssertNotNil(plan.minutesKey)
+        XCTAssertEqual(plan.minutesKey, "20/40 · ≤1 h")
+        XCTAssertNotEqual(TemperatureScale.fahrenheit.whole(27.88), TemperatureScale.celsius.whole(27.88))
     }
 
     func testPillsStayInsideTheBand() {

@@ -237,8 +237,12 @@ struct WeekPages: View {
             let x0 = axis.x(run.start, width: size.width)
             let x1 = axis.x(run.end, width: size.width)
             let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0 + 0.5), height: 16)
-            let fill = run.zone == .stop ? Palette.zone(.minutes(20)) : Palette.zone(run.zone)
-            context.fill(Path(rect), with: .color(muted ? fill.opacity(0.45) : fill))
+            if run.zone == .stop {
+                context.fill(Path(rect), with: .color(muted ? Palette.hatch.opacity(0.45) : Palette.hatch))
+                hatch(in: rect, context: context, gap: 4)
+            } else {
+                context.fill(Path(rect), with: .color(muted ? Palette.zone(run.zone).opacity(0.45) : Palette.zone(run.zone)))
+            }
         }
         let sunsetX = axis.x(day.sunset, width: size.width)
         var hair = Path()

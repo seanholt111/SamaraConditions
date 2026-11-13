@@ -254,3 +254,11 @@ Grade C+. The rules match. These are the row fixes. Not uploaded.
 6. A 5-minute Avoid on Saturday stays labelled.
 7. Avoid hours are hatched, and the legend shows that hatch only when the plot does.
 8. The Kids line is the approved sentence about 15-minute and 13-minute bouts.
+
+## Hatch regression, Pepper's review of 38502b8, not signed off
+
+Grade B. The eight row fixes pass. These are the follow-ups. Not uploaded.
+
+1. Hours at 32.3 °C and above fill with the locked hatch again, in the Day plot and the Week strips. The Avoid dim and hatch stay on top of that.
+2. The Avoid hatch is clipped under the sun line. The dim still covers the full column, so the word Avoid sits on dimmed sky.
+3. The temperature test no longer compares a plan with itself.

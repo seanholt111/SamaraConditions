@@ -374,10 +374,31 @@ struct DayScreen: View {
             let x1 = axis.x(CareDay.date(hour: run.end, on: day.sunrise), width: size.width)
             let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: size.height)
             context.fill(Path(rect), with: .color(.black.opacity(0.28)))
-            hatch(in: rect, context: context, gap: 5)
+            var under = Path()
+            var peak = size.height
+            var forward: [CGPoint] = []
+            var back: [CGPoint] = []
+            var cursor = run.start
+            while cursor <= run.end + 1e-6 {
+                let hour = min(run.end, cursor)
+                let x = axis.x(CareDay.date(hour: hour, on: day.sunrise), width: size.width)
+                let sunY = heatY(ActivityWindows.interpolate(sun, hour), size)
+                let shadeY = heatY(ActivityWindows.interpolate(shade, hour), size)
+                forward.append(CGPoint(x: x, y: sunY))
+                back.append(CGPoint(x: x, y: shadeY))
+                peak = min(peak, sunY)
+                cursor += 5.0 / 60
+            }
+            if let first = forward.first {
+                under.move(to: first)
+                forward.dropFirst().forEach { under.addLine(to: $0) }
+                back.reversed().forEach { under.addLine(to: $0) }
+                under.closeSubpath()
+            }
+            hatch(in: rect, context: context, gap: 5, clip: under)
             context.draw(
                 Text("Avoid").font(.system(size: 13, weight: .bold)).foregroundColor(.white),
-                at: CGPoint(x: (x0 + x1) / 2, y: 26)
+                at: CGPoint(x: (x0 + x1) / 2, y: max(14, peak - 14))
             )
         }
     }
@@ -396,10 +417,12 @@ struct DayScreen: View {
             cursor = cursor.addingTimeInterval(5 * 60)
         }
         func paint(_ zone: HeatMinutes, _ path: Path) {
-            let color: Color
-            if case .stop = zone { color = Palette.zone(.minutes(20)) }
-            else { color = Palette.zone(zone) }
-            context.fill(path, with: .color(color))
+            if zone == .stop {
+                context.fill(path, with: .color(Palette.hatch))
+                hatch(in: path.boundingRect, context: context, gap: 5, clip: path)
+            } else {
+                context.fill(path, with: .color(Palette.zone(zone)))
+            }
         }
         func runs(_ key: KeyPath<Sample, HeatMinutes>) -> [Range<Int>] {
             var result: [Range<Int>] = []
