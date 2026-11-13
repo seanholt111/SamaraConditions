@@ -89,6 +89,32 @@ public struct HourSpan: Equatable, Sendable {
     }
 }
 
+public struct PlayRun: Equatable, Sendable {
+    public var start: Double
+    public var end: Double
+    public var verdict: HeatVerdict
+    public init(start: Double, end: Double, verdict: HeatVerdict) {
+        self.start = start
+        self.end = end
+        self.verdict = verdict
+    }
+}
+
+public struct ActivityPlan: Equatable, Sendable {
+    public var runs: [PlayRun]
+    public var darkNote: String?
+    public var uvNote: String?
+    public var minutesKey: String
+    public var okHoursText: String
+    public init(runs: [PlayRun], darkNote: String?, uvNote: String?, minutesKey: String, okHoursText: String) {
+        self.runs = runs
+        self.darkNote = darkNote
+        self.uvNote = uvNote
+        self.minutesKey = minutesKey
+        self.okHoursText = okHoursText
+    }
+}
+
 public enum ActivityWindows {
     /// 1-minute samples over 6a–9p, rounded inward to 5 minutes. Edges within 5 minutes of 6a or 9p snap to that edge.
     public static func below(series: [Double], cut: Double) -> [HourSpan] {
@@ -157,6 +183,115 @@ public enum ActivityWindows {
             return applyingSunCutoff(combined, sunsetHour: sunsetHour)
         }
         return combined
+    }
+
+    /// Chad v1.1 over 6a–9p. Heat is not clipped at sunrise or sunset.
+    public static func plan(
+        hours: [HourPoint],
+        activity: ActivityKind,
+        sunsetHour: Double,
+        rulesDay: Date,
+        lowTide: Bool = false,
+        lowHours: [Double] = [],
+        offshore: [Double] = [],
+        upperQuartile: Double = .greatestFiniteMagnitude
+    ) -> ActivityPlan {
+        let sun = hourly(hours) { $0.wbgtSunC }
+        let shade = hourly(hours) { $0.wbgtShadeC }
+        let solar = hourly(hours) { $0.shortwaveWm2 }
+        let leans = lowTide && activity == .beach
+            ? lowTideLeans(lowHours: lowHours, offshore: offshore, upperQuartile: upperQuartile)
+            : []
+        var samples: [(Double, HeatVerdict)] = []
+        var cursor = CareDay.startHour
+        while cursor <= CareDay.endHour + 1e-6 {
+            let hour = min(CareDay.endHour, cursor)
+            let darkSun = interpolate(solar, hour) <= 0
+            let wbgt = interpolate(darkSun || activity.heatUsesShade ? shade : sun, hour)
+            var verdict: HeatVerdict
+            if activity == .pool {
+                verdict = wbgt >= 32.3 ? .calmPlay : .ok(play: 50, rest: 10)
+            } else {
+                verdict = HeatScale.verdict(wbgt: wbgt, on: rulesDay)
+            }
+            if activity == .beach && lowTide && !leans.contains(where: { hour >= $0.start && hour < $0.end }) {
+                verdict = .avoid
+            }
+            samples.append((hour, verdict))
+            cursor += 1.0 / 60
+        }
+        var runs = snapped(samples)
+        if activity == .beach && lowTide && leans.isEmpty { runs = [PlayRun(start: CareDay.startHour, end: CareDay.endHour, verdict: .avoid)] }
+        let key = runs.max { $0.verdict.rank < $1.verdict.rank }?.verdict.keyLine ?? "50/10"
+        return ActivityPlan(
+            runs: runs,
+            darkNote: darkNote(activity, sunsetHour: sunsetHour),
+            uvNote: uvNote(hours),
+            minutesKey: key,
+            okHoursText: okText(runs, activity: activity, sunsetHour: sunsetHour)
+        )
+    }
+
+    private static func snapped(_ samples: [(Double, HeatVerdict)]) -> [PlayRun] {
+        var raw: [PlayRun] = []
+        var open = samples.first
+        var previous = samples.first?.0 ?? CareDay.startHour
+        for sample in samples.dropFirst() {
+            if sample.1 != open?.1, let began = open {
+                raw.append(PlayRun(start: began.0, end: previous, verdict: began.1))
+                open = sample
+            }
+            previous = sample.0
+        }
+        if let began = open { raw.append(PlayRun(start: began.0, end: CareDay.endHour, verdict: began.1)) }
+        let rounded = raw.compactMap { run -> PlayRun? in
+            var start = (run.start * 12).rounded() / 12
+            var end = (run.end * 12).rounded() / 12
+            start = min(CareDay.endHour, max(CareDay.startHour, start))
+            end = min(CareDay.endHour, max(CareDay.startHour, end))
+            guard end - start >= 5.0 / 60 - 1e-6 else { return nil }
+            return PlayRun(start: start, end: end, verdict: run.verdict)
+        }
+        var merged: [PlayRun] = []
+        for run in rounded {
+            if let last = merged.last, last.verdict == run.verdict, abs(last.end - run.start) < 1e-6 {
+                merged[merged.count - 1].end = run.end
+            } else {
+                merged.append(run)
+            }
+        }
+        return merged
+    }
+
+    private static func darkNote(_ activity: ActivityKind, sunsetHour: Double) -> String? {
+        let clock = WindowWords.clock(sunsetHour)
+        switch activity {
+        case .beach: return "Dark from \(clock) · no ocean after dark"
+        case .jungle: return "Dark from \(clock) · trails: daylight only"
+        case .soccerSun, .soccerShade, .pool: return nil
+        }
+    }
+
+    private static func uvNote(_ hours: [HourPoint]) -> String? {
+        let hot = hours.filter { ($0.uv ?? 0) >= 8 && (6..<21).contains(CostaRica.calendar.component(.hour, from: $0.time)) }
+        guard let peak = hot.max(by: { ($0.uv ?? 0) < ($1.uv ?? 0) }), let uv = peak.uv else { return nil }
+        let when = WindowWords.clock(CareDay.hour(peak.time))
+        let index = Int(uv.rounded())
+        if uv >= 11 { return "UV \(index) at \(when) · Shirt, hat, sunscreen · Midday: shade or fully covered" }
+        return "UV \(index) at \(when) · Shirt, hat, sunscreen"
+    }
+
+    private static func okText(_ runs: [PlayRun], activity: ActivityKind, sunsetHour: Double) -> String {
+        let limit = activity == .jungle ? sunsetHour : CareDay.endHour
+        let hours = runs.filter { $0.verdict.isOk }.reduce(0.0) { sum, run in
+            sum + max(0, min(run.end, limit) - run.start)
+        }
+        let full = activity == .jungle ? max(0, sunsetHour - CareDay.startHour) : 15.0
+        if hours >= full - 0.15 { return "All day" }
+        let halves = Int((hours * 2).rounded())
+        let whole = halves / 2
+        if halves % 2 == 1 { return whole == 0 ? "✓ ½ h" : "✓ \(whole)½ h" }
+        return "✓ \(whole) h"
     }
 
     public static func interpolate(_ series: [Double], _ hour: Double) -> Double {

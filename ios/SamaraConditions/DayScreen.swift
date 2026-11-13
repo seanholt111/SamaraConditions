@@ -27,18 +27,14 @@ struct DayScreen: View {
         VStack(alignment: .leading, spacing: 8) {
             readout
             chart
-            axisTicks
-            WindowRibbon(
-                spans: windowSpans,
-                axis: axis,
-                emptyText: "No window",
-                height: 40,
-                largeSize: 22 * model.typeScale,
-                words: { span in
-                    WindowWords.label(start: CareDay.hour(span.start), end: CareDay.hour(span.end))
-                }
-            )
-            MinutesKey(showStop: day.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) })
+            SlimTimeRow(runs: play.runs, axis: axis, day: day.sunrise, minutes: play.minutesKey)
+            if let note = play.darkNote {
+                Text(note).font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.muted)
+            }
+            if let note = play.uvNote {
+                Text(note).font(.system(size: 12, weight: .medium)).foregroundStyle(Palette.muted)
+            }
+            MinutesKey(showStop: play.runs.contains { $0.verdict == .avoid })
         }
         .accessibilityElement(children: .combine)
         .safeAreaInset(edge: .bottom, spacing: 8) {
@@ -51,6 +47,8 @@ struct DayScreen: View {
             .background(Palette.night)
         }
     }
+
+    private var play: ActivityPlan { model.activityPlan(model.activity, day: day, file: file) }
 
     private var windowSpans: [TimeSpan] {
         let lows = extrema.filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) }
@@ -163,7 +161,7 @@ struct DayScreen: View {
     private var zoneLabel: String {
         let value = ActivityWindows.interpolate(model.activity.heatUsesShade ? shade : sun, CareDay.hour(shown))
         switch HeatScale.minutes(wbgt: value, on: day.sunrise) {
-        case .stop: return "Stop"
+        case .stop: return "Avoid"
         case .minutes(let n): return "\(n) min/hr"
         }
     }
@@ -324,6 +322,7 @@ struct DayScreen: View {
         ZStack(alignment: .topLeading) {
             Canvas { context, size in
                 drawHeat(context, size)
+                drawAvoid(context, size)
                 sunsetLine(context, size, from: 16)
                 let labelX = min(size.width - 40, axis.x(day.sunset, width: size.width) + 34)
                 context.draw(
@@ -386,6 +385,18 @@ struct DayScreen: View {
         line.move(to: CGPoint(x: x, y: from))
         line.addLine(to: CGPoint(x: x, y: size.height))
         context.stroke(line, with: .color(.white.opacity(dragging ? 0.8 : 0.55)), lineWidth: 1)
+    }
+
+    private func drawAvoid(_ context: GraphicsContext, _ size: CGSize) {
+        for run in play.runs where run.verdict == .avoid {
+            let x0 = axis.x(CareDay.date(hour: run.start, on: day.sunrise), width: size.width)
+            let x1 = axis.x(CareDay.date(hour: run.end, on: day.sunrise), width: size.width)
+            context.fill(Path(CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: size.height)), with: .color(.black.opacity(0.42)))
+            context.draw(
+                Text("Avoid").font(.system(size: 13, weight: .bold)).foregroundColor(.white),
+                at: CGPoint(x: (x0 + x1) / 2, y: 26)
+            )
+        }
     }
 
     private func drawHeat(_ context: GraphicsContext, _ size: CGSize) {

@@ -87,32 +87,42 @@ final class CoreTests: XCTestCase {
         XCTAssertEqual(HeatScale.minutes(wbgt: 30.1, on: december), .stop)
         XCTAssertFalse(HeatScale.acclimating(november))
         XCTAssertTrue(HeatScale.acclimating(december))
+        let last = try date("2026-12-25T12:00:00-06:00")
+        let firstCool = try date("2026-12-26T12:00:00-06:00")
+        XCTAssertTrue(HeatScale.acclimating(last))
+        XCTAssertFalse(HeatScale.acclimating(firstCool))
         let after = try date("2026-12-27T12:00:00-06:00")
         XCTAssertFalse(HeatScale.acclimating(after))
+        XCTAssertEqual(HeatScale.verdict(wbgt: 26.0, on: november), .ok(play: 40, rest: 20))
+        XCTAssertEqual(HeatScale.verdict(wbgt: 26.0, on: december), .capped(play: 30, rest: 30, outing: "<2 h"))
+        XCTAssertEqual(HeatScale.verdict(wbgt: 32.3, on: november), .avoid)
     }
 
     func testWednesdayWindowsUseCareHoursAndOptionB() throws {
         let file = try ConditionsFile.decode(Data(contentsOf: fixtureURL()))
         let day = try XCTUnwrap(file.days.first)
-        let sun = ActivityWindows.hourly(day.hours) { $0.wbgtSunC }
-        let shade = ActivityWindows.hourly(day.hours) { $0.wbgtShadeC }
         let sunset = CareDay.hour(day.sunset)
-        func labels(_ activity: ActivityKind, low: Bool = false) -> [String] {
-            ActivityWindows.spans(
-                sun: sun, shade: shade, activity: activity, sunsetHour: sunset,
+        func built(_ activity: ActivityKind, low: Bool = false, rulesDay: Date? = nil) -> ActivityPlan {
+            ActivityWindows.plan(
+                hours: day.hours, activity: activity, sunsetHour: sunset, rulesDay: rulesDay ?? day.sunrise,
                 lowTide: low,
                 lowHours: file.extrema().filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) },
                 offshore: ActivityWindows.hourly(day.hours) { $0.energyOffshoreKj },
                 upperQuartile: file.week.energyQ3Kj
-            ).map { WindowWords.label(start: $0.start, end: $0.end) }
+            )
         }
-        XCTAssertEqual(labels(.beach), ["Until 7:30a", "5:00–5:45p"])
-        XCTAssertEqual(labels(.soccerSun), ["Until 6:40a"])
-        XCTAssertEqual(labels(.jungle), ["All day"])
-        XCTAssertEqual(labels(.pool), ["All day"])
-        XCTAssertEqual(labels(.beach, low: true), [])
-        let fahrenheit = labels(.beach)
-        XCTAssertEqual(fahrenheit, labels(.beach))
+        let beach = built(.beach)
+        XCTAssertEqual(beach.okHoursText, "✓ 5½ h")
+        XCTAssertTrue(beach.runs.contains { $0.verdict.isOk && $0.start == 6 })
+        XCTAssertEqual(beach.darkNote, "Dark from 5:17p · no ocean after dark")
+        XCTAssertNil(built(.soccerSun).darkNote)
+        XCTAssertNil(built(.pool).darkNote)
+        XCTAssertEqual(built(.jungle).darkNote, "Dark from 5:17p · trails: daylight only")
+        XCTAssertEqual(built(.soccerShade).okHoursText, "All day")
+        let december = try date("2026-12-10T12:00:00-06:00")
+        XCTAssertTrue(built(.beach, rulesDay: december).runs.contains { $0.verdict == .avoid })
+        XCTAssertFalse(built(.pool, rulesDay: december).runs.contains { $0.verdict == .avoid })
+        XCTAssertEqual(built(.beach), built(.beach))
     }
 
     func testFahrenheitDoesNotMoveWindows() throws {

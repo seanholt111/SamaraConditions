@@ -18,7 +18,9 @@ struct RootView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .sheet(isPresented: $model.showSources) {
-            if ProcessInfo.processInfo.arguments.contains("-open-sources") {
+            if ProcessInfo.processInfo.arguments.contains("-open-heat-rules") {
+                HeatRulesView()
+            } else if ProcessInfo.processInfo.arguments.contains("-open-sources") {
                 SourcesSheet()
             } else {
                 InfoSheet()

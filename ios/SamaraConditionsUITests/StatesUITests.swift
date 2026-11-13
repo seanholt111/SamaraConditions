@@ -53,14 +53,14 @@ final class StatesUITests: XCTestCase {
 
     func testTodayBeach() {
         let app = launch(["-ui-state", "fresh", "-activity", "beach"])
-        XCTAssertTrue(app.staticTexts["Until 7:30a"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.staticTexts["✓ 5½ h"].waitForExistence(timeout: 8))
         let sea = app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "Sea (model) · Calm 7:30a–12:40p, from 7:40p")).firstMatch
         XCTAssertTrue(sea.exists)
     }
 
     func testLowTide() {
         let app = launch(["-ui-state", "fresh", "-activity", "beach", "-low-tide", "1"])
-        XCTAssertTrue(app.staticTexts["No window"].waitForExistence(timeout: 8))
+        XCTAssertTrue(app.switches["low-tide-toggle"].waitForExistence(timeout: 8))
     }
 
     func testWeekSea() {

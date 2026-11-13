@@ -50,11 +50,16 @@ struct ActivityChips: View {
             if model.activity != kind { model.setActivity(kind) }
             if kind != .beach { model.lowTideOnly = false }
         } label: {
-            Text(kind.title)
-                .font(.system(size: 13 * model.typeScale * scale, weight: .semibold))
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-                .fixedSize()
+                VStack(spacing: 0) {
+                    Text(kind.title)
+                    if let hours = okHours(kind) {
+                        Text(hours).font(.system(size: 11 * model.typeScale * scale, weight: .bold))
+                    }
+                }
+                    .font(.system(size: 13 * model.typeScale * scale, weight: .semibold))
+                    .lineLimit(3)
+                    .multilineTextAlignment(.center)
+                    .fixedSize()
                 .foregroundStyle(model.activity == kind ? Palette.text : Palette.muted)
                 .padding(.horizontal, max(8, 12 * scale))
                 .padding(.vertical, 7)
@@ -63,6 +68,11 @@ struct ActivityChips: View {
         }
         .fixedSize()
         .accessibilityIdentifier("chip-\(kind.rawValue)")
+    }
+
+    private func okHours(_ kind: ActivityKind) -> String? {
+        guard let file = model.file, let day = model.today(file) else { return nil }
+        return model.activityPlan(kind, day: day, file: file).okHoursText
     }
 }
 
@@ -135,7 +145,7 @@ struct MinutesKey: View {
             if showStop {
                 HStack(spacing: 6) {
                     HatchSwatch()
-                    Text("Stop")
+                    Text("Avoid")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(Palette.muted)
                 }
@@ -282,6 +292,148 @@ struct PlotAxis {
         guard width > 0 else { return start }
         let fraction = min(1, max(0, Double(x / width)))
         return start.addingTimeInterval(end.timeIntervalSince(start) * fraction)
+    }
+}
+
+struct SlimTimeRow: View {
+    var runs: [PlayRun]
+    var axis: PlotAxis
+    var day: Date
+    var minutes: String
+
+    private let ink = Color(red: 0.949, green: 0.949, blue: 0.941)
+    private let grey = Color(red: 0.804, green: 0.820, blue: 0.843)
+    private let faint = Color(red: 0.376, green: 0.400, blue: 0.435)
+
+    var body: some View {
+        GeometryReader { geo in
+            let marks = laidOut(width: geo.size.width)
+            let minutesWidth = CGFloat(minutes.count) * 5.6 + 24
+            let right = marks.filter { !$0.faint }.map { $0.x + CGFloat($0.text.count) * 3.3 }.max() ?? 0
+            let stacked = right + 8 + minutesWidth > geo.size.width
+            VStack(alignment: .trailing, spacing: 1) {
+                ZStack(alignment: .topLeading) {
+                    Canvas { context, size in
+                        drawRuns(context, size)
+                    }
+                    ForEach(Array(marks.enumerated()), id: \.offset) { _, mark in
+                        Text(mark.text)
+                            .font(.system(size: mark.faint ? 10 : 11, weight: mark.faint ? .medium : .semibold))
+                            .foregroundStyle(mark.faint ? faint : ink)
+                            .fixedSize()
+                            .position(x: mark.x, y: 20)
+                    }
+                    if !stacked {
+                        key.position(x: geo.size.width - minutesWidth / 2, y: 20)
+                    }
+                }
+                .frame(height: 32)
+                if stacked { key }
+            }
+        }
+        .frame(height: 48)
+        .accessibilityIdentifier("slim-row")
+    }
+
+    private var key: some View {
+        HStack(spacing: 5) {
+            HStack(spacing: 3) {
+                ForEach(0..<3, id: \.self) { _ in
+                    Circle().fill(grey).frame(width: 3.5, height: 3.5)
+                }
+            }
+            Text(minutes)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(grey)
+                .lineLimit(1)
+        }
+    }
+
+    private struct Mark {
+        var text: String
+        var x: CGFloat
+        var faint: Bool
+    }
+
+    private func x(_ hour: Double, _ width: CGFloat) -> CGFloat {
+        axis.x(CareDay.date(hour: hour, on: day), width: width)
+    }
+
+    private func drawRuns(_ context: GraphicsContext, _ size: CGSize) {
+        for run in runs {
+            let x0 = x(run.start, size.width)
+            let x1 = x(run.end, size.width)
+            guard x1 - x0 > 0.5 else { continue }
+            if run.verdict.isOk {
+                context.fill(Path(CGRect(x: x0, y: 0, width: x1 - x0, height: 3)), with: .color(.white))
+            } else if run.verdict.isLimited {
+                var step = CGFloat(3.2)
+                let span = x1 - x0
+                let count = max(1, Int(((span - 1.6) / step).rounded()))
+                if count > 1 { step = (span - 1.6) / CGFloat(count - 1) }
+                for index in 0..<count {
+                    let origin = x0 + CGFloat(index) * step
+                    context.fill(Path(ellipseIn: CGRect(x: origin, y: 0.7, width: 1.6, height: 1.6)), with: .color(grey))
+                }
+            }
+        }
+    }
+
+    private func laidOut(width: CGFloat) -> [Mark] {
+        var ranged = Set<Int>()
+        for (index, run) in runs.enumerated() {
+            let pixels = x(run.end, width) - x(run.start, width)
+            if run.verdict == .avoid || (run.verdict.isLimited && pixels < 78) {
+                ranged.insert(index)
+            }
+        }
+        var raw: [(hour: Double, text: String)] = []
+        for (index, run) in runs.enumerated() {
+            if ranged.contains(index) {
+                raw.append(((run.start + run.end) / 2, WindowWords.range(run.start, run.end)))
+                continue
+            }
+            if run.start > CareDay.startHour + 0.02, index == 0 || !ranged.contains(index - 1) {
+                raw.append((run.start, WindowWords.clock(run.start)))
+            }
+        }
+        for index in raw.indices where index + 1 < raw.count {
+            let next = raw[index + 1].text
+            if let last = raw[index].text.last, last == next.last, last == "a" || last == "p", !raw[index].text.contains("–") {
+                raw[index].text.removeLast()
+            }
+        }
+        func halfWidth(_ text: String, faint: Bool) -> CGFloat {
+            CGFloat(text.count) * (faint ? 2.7 : 3.4)
+        }
+        var kept: [Mark] = []
+        for item in raw.sorted(by: { $0.hour < $1.hour }) {
+            let mark = Mark(text: item.text, x: x(item.hour, width), faint: false)
+            if let last = kept.last {
+                let gap = (mark.x - halfWidth(mark.text, faint: false)) - (last.x + halfWidth(last.text, faint: false))
+                if gap < 6 {
+                    if mark.text.contains("–"), !last.text.contains("–") { kept[kept.count - 1] = mark }
+                    continue
+                }
+            }
+            kept.append(mark)
+        }
+        let minutesWidth = CGFloat(minutes.count) * 5.6 + 24
+        let right = kept.map { $0.x + halfWidth($0.text, faint: false) }.max() ?? 0
+        let minutesBlock = right + 8 + minutesWidth <= width
+        for hour in [6.0, 12.0, 21.0] {
+            let text = hour == 12 ? "12p" : (hour == 6 ? "6a" : "9p")
+            let half = halfWidth(text, faint: true)
+            var center = x(hour, width)
+            if hour == 6 { center = half }
+            if hour == 21 { center = width - half }
+            if minutesBlock && center + halfWidth(text, faint: true) > width - minutesWidth - 6 { continue }
+            let blocked = kept.contains {
+                abs($0.x - center) < halfWidth(text, faint: true) + halfWidth($0.text, faint: $0.faint) + 6
+            }
+            if !blocked { kept.append(Mark(text: text, x: center, faint: true)) }
+        }
+        return kept
     }
 }
 

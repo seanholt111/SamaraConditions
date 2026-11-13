@@ -25,6 +25,7 @@ final class AppModel: ObservableObject {
     @Published var dayOffset = 0
     @Published var useFahrenheit = true
     @Published var typeScale = 1.0
+    var forceAcclimating = false
 
     let pagesURL = URL(string: "https://seanholt111.github.io/SamaraConditions/conditions.json")!
     let log: AppLog
@@ -144,6 +145,32 @@ final class AppModel: ObservableObject {
 
     var viewingToday: Bool { dayOffset == 0 }
 
+    func rulesDate(for day: DayConditions) -> Date {
+        guard forceAcclimating else { return day.sunrise }
+        var parts = DateComponents()
+        parts.calendar = CostaRica.calendar
+        parts.timeZone = CostaRica.zone
+        parts.year = 2026
+        parts.month = 12
+        parts.day = 10
+        parts.hour = 12
+        return CostaRica.calendar.date(from: parts) ?? day.sunrise
+    }
+
+    func activityPlan(_ kind: ActivityKind, day: DayConditions, file: ConditionsFile) -> ActivityPlan {
+        let lows = extrema(for: file).filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) }
+        return ActivityWindows.plan(
+            hours: day.hours,
+            activity: kind,
+            sunsetHour: CareDay.hour(day.sunset),
+            rulesDay: rulesDate(for: day),
+            lowTide: lowTideOnly && kind == .beach,
+            lowHours: lows,
+            offshore: ActivityWindows.hourly(day.hours) { $0.energyOffshoreKj },
+            upperQuartile: file.week.energyQ3Kj
+        )
+    }
+
     func setFahrenheit(_ fahrenheit: Bool) {
         useFahrenheit = fahrenheit
         UserDefaults.standard.set(fahrenheit, forKey: "temperatureUnitF")
@@ -186,6 +213,8 @@ final class AppModel: ObservableObject {
         if let raw = value("-tab"), let section = Section(rawValue: raw) { self.section = section }
         if let raw = value("-week"), let tab = WeekTab(rawValue: raw) { weekTab = tab }
         if value("-show-sources") == "1" { showSources = true }
+        if args.contains("-acclimate") { forceAcclimating = true }
+        if args.contains("-open-heat-rules") { showSources = true }
         if let raw = value("-day-offset"), let offset = Int(raw) { dayOffset = offset }
         if value("-unit") == "C" { useFahrenheit = false }
         if value("-unit") == "F" { useFahrenheit = true }

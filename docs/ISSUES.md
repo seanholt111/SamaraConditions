@@ -227,3 +227,17 @@ Pepper signed off d7eb1c6 at A−. Sean authorized that build for TestFlight. Bu
 
 1. Week Heat’s pinned chip bar has a 1 pt white 12% hairline on its top edge, so a row sliding under it reads as a scroll.
 2. The Week Sea footer breaks after “offshore ·”, so “calm line” is not left alone on its own line at 375 pt.
+
+## Activity windows, approved 12 Nov 2026, 7:54pm PT
+
+Sean approved E1. Pepper's go is `GO-ACTIVITY-WINDOWS.md`, then `BARS-PROPOSAL-4.md`, then `PROPOSAL.md`. Chad v1.1 is the heat rule. Not uploaded until Pepper signs off. No VoiceOver work. The word "safe" is not used.
+
+1. Windows are computed on the phone from 6a to 9p. Each activity reads its own sun or shade line. There is no sunrise or sunset clip on the heat verdict. Where the sun is off, the sun line uses the shade value.
+2. Dec 5–25 inclusive is one zone hotter. Dec 26 is the first acclimatized day.
+3. Ocean entry and jungle trails end at sunset. Soccer and the pool are lit and run to 9p, with no dark line.
+4. Pool calm play is OK through every zone, and "Calm play only" at 32.3 °C and above. The December shift applies only to active pool games, which the sheet describes. The plot shows calm play.
+5. UV copy appears only when the hour is UV 8 or more, and UV 11 adds the midday line. UV never closes a window.
+6. The server stops writing `windows`. Calm windows stay.
+7. The pills and the hour axis are gone. Avoid hours are dimmed on the plot and labelled Avoid. The slim row is a white 3 pt OK run, a dotted grey cap, and a gap for Avoid. Times sit on each change. The minutes sit once at the right.
+8. Chips show the day's OK hours, such as "✓ 5½ h" or "All day", and no mini bar.
+9. The i sheet gains a Heat rules section: the zone table in the selected unit, both date columns, Chad's paragraph, and the light, kids, dark, and UV lines.

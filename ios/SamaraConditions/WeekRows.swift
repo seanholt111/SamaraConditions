@@ -131,6 +131,12 @@ struct WeekPages: View {
             }
             .frame(height: 18)
             strip(offset, day).frame(height: stripHeight)
+            if model.weekTab == .heat, let day {
+                let plan = model.activityPlan(model.activity, day: day, file: file)
+                let axis = PlotAxis(start: CareDay.start(on: day.sunrise), end: CareDay.end(on: day.sunrise))
+                SlimTimeRow(runs: plan.runs, axis: axis, day: day.sunrise, minutes: plan.minutesKey)
+                    .padding(.top, 4)
+            }
         }
     }
 
@@ -138,7 +144,7 @@ struct WeekPages: View {
     private var stripHeight: CGFloat {
         switch model.weekTab {
         case .sea: return 48
-        case .heat: return 43
+        case .heat: return 16
         case .rain, .cloud: return 54
         }
     }
@@ -242,17 +248,11 @@ struct WeekPages: View {
         hair.move(to: CGPoint(x: sunsetX, y: -2))
         hair.addLine(to: CGPoint(x: sunsetX, y: 18))
         context.stroke(hair, with: .color(Palette.muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
-        for span in care(day) {
-            let label = WindowWords.label(start: CareDay.hour(span.start), end: CareDay.hour(span.end))
-            let text = context.resolve(Text(label).font(.system(size: 17, weight: .bold)).foregroundColor(Palette.night))
-            let textWidth = text.measure(in: CGSize(width: 600, height: 40)).width + 12
-            let x0 = axis.x(span.start, width: size.width)
-            let window = max(8, axis.x(span.end, width: size.width) - x0)
-            let pill = min(size.width, max(window, textWidth))
-            let origin = min(max(0, x0), max(0, size.width - pill))
-            let rect = CGRect(x: origin, y: 19, width: pill, height: 24)
-            context.fill(Path(roundedRect: rect, cornerRadius: 6), with: .color(muted ? Color(red: 0.784, green: 0.784, blue: 0.784) : .white))
-            context.draw(text, at: CGPoint(x: rect.midX, y: rect.midY))
+        let plan = model.activityPlan(model.activity, day: day, file: file)
+        for run in plan.runs where run.verdict == .avoid {
+            let x0 = axis.x(CareDay.date(hour: run.start, on: day.sunrise), width: size.width)
+            let x1 = axis.x(CareDay.date(hour: run.end, on: day.sunrise), width: size.width)
+            context.fill(Path(CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: 16)), with: .color(.black.opacity(0.42)))
         }
     }
 
