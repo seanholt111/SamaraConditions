@@ -104,9 +104,9 @@ public struct ActivityPlan: Equatable, Sendable {
     public var runs: [PlayRun]
     public var darkNote: String?
     public var uvNote: String?
-    public var minutesKey: String
+    public var minutesKey: String?
     public var okHoursText: String
-    public init(runs: [PlayRun], darkNote: String?, uvNote: String?, minutesKey: String, okHoursText: String) {
+    public init(runs: [PlayRun], darkNote: String?, uvNote: String?, minutesKey: String?, okHoursText: String) {
         self.runs = runs
         self.darkNote = darkNote
         self.uvNote = uvNote
@@ -137,52 +137,6 @@ public enum ActivityWindows {
 
     public static func pool() -> [HourSpan] {
         [HourSpan(start: CareDay.startHour, end: CareDay.endHour)]
-    }
-
-    /// Sunset + 30 minutes, rounded down to 5 minutes.
-    public static func sunCutoff(sunsetHour: Double) -> Double {
-        floor((sunsetHour + 0.5) * 12) / 12
-    }
-
-    public static func applyingSunCutoff(_ spans: [HourSpan], sunsetHour: Double) -> [HourSpan] {
-        let limit = sunCutoff(sunsetHour: sunsetHour)
-        return spans.compactMap { span in
-            guard span.start < limit - 5.0 / 60 else { return nil }
-            return HourSpan(start: span.start, end: min(span.end, limit))
-        }
-    }
-
-    public static func spans(
-        sun: [Double],
-        shade: [Double],
-        activity: ActivityKind,
-        sunsetHour: Double,
-        lowTide: Bool = false,
-        lowHours: [Double] = [],
-        offshore: [Double] = [],
-        upperQuartile: Double = .greatestFiniteMagnitude
-    ) -> [HourSpan] {
-        let base: [HourSpan]
-        switch activity {
-        case .pool:
-            base = pool()
-        case .beach:
-            base = below(series: sun, cut: 27.9)
-        case .soccerSun:
-            base = below(series: sun, cut: 25.7)
-        case .soccerShade, .jungle:
-            base = below(series: shade, cut: 27.9)
-        }
-        let combined: [HourSpan]
-        if activity == .beach && lowTide {
-            combined = intersect(base, lowTideLeans(lowHours: lowHours, offshore: offshore, upperQuartile: upperQuartile))
-        } else {
-            combined = base
-        }
-        if activity == .beach || activity == .soccerSun {
-            return applyingSunCutoff(combined, sunsetHour: sunsetHour)
-        }
-        return combined
     }
 
     /// Chad v1.1 over 6a–9p. Heat is not clipped at sunrise or sunset.
@@ -222,7 +176,7 @@ public enum ActivityWindows {
         }
         var runs = snapped(samples)
         if activity == .beach && lowTide && leans.isEmpty { runs = [PlayRun(start: CareDay.startHour, end: CareDay.endHour, verdict: .avoid)] }
-        let key = runs.max { $0.verdict.rank < $1.verdict.rank }?.verdict.keyLine ?? "50/10"
+        let key = samples.map(\.1).filter(\.isLimited).max { $0.rank < $1.rank }?.keyLine
         return ActivityPlan(
             runs: runs,
             darkNote: darkNote(activity, sunsetHour: sunsetHour),
@@ -232,35 +186,37 @@ public enum ActivityWindows {
         )
     }
 
+    /// OK, limited (capped or calm play) and Avoid. Neighbouring stretches of one kind are one run.
+    private static func kind(_ verdict: HeatVerdict) -> Int {
+        if verdict.isOk { return 0 }
+        if verdict == .avoid { return 2 }
+        return 1
+    }
+
+    /// Each boundary is rounded to 5 minutes once and shared by both stretches.
     private static func snapped(_ samples: [(Double, HeatVerdict)]) -> [PlayRun] {
-        var raw: [PlayRun] = []
-        var open = samples.first
-        var previous = samples.first?.0 ?? CareDay.startHour
-        for sample in samples.dropFirst() {
-            if sample.1 != open?.1, let began = open {
-                raw.append(PlayRun(start: began.0, end: previous, verdict: began.1))
-                open = sample
-            }
-            previous = sample.0
+        guard let first = samples.first else { return [] }
+        var groups: [(start: Double, verdict: HeatVerdict)] = [(first.0, first.1)]
+        for sample in samples.dropFirst() where kind(sample.1) != kind(groups[groups.count - 1].verdict) {
+            groups.append((sample.0, sample.1))
         }
-        if let began = open { raw.append(PlayRun(start: began.0, end: CareDay.endHour, verdict: began.1)) }
-        let rounded = raw.compactMap { run -> PlayRun? in
-            var start = (run.start * 12).rounded() / 12
-            var end = (run.end * 12).rounded() / 12
-            start = min(CareDay.endHour, max(CareDay.startHour, start))
-            end = min(CareDay.endHour, max(CareDay.startHour, end))
-            guard end - start >= 5.0 / 60 - 1e-6 else { return nil }
-            return PlayRun(start: start, end: end, verdict: run.verdict)
+        var bounds = groups.map(\.start) + [CareDay.endHour]
+        bounds[0] = CareDay.startHour
+        bounds[bounds.count - 1] = CareDay.endHour
+        for index in 1..<(bounds.count - 1) {
+            bounds[index] = min(CareDay.endHour, max(CareDay.startHour, (bounds[index] * 12).rounded() / 12))
         }
-        var merged: [PlayRun] = []
-        for run in rounded {
-            if let last = merged.last, last.verdict == run.verdict, abs(last.end - run.start) < 1e-6 {
-                merged[merged.count - 1].end = run.end
-            } else {
-                merged.append(run)
-            }
+        for index in 1..<bounds.count where bounds[index] < bounds[index - 1] {
+            bounds[index] = bounds[index - 1]
         }
-        return merged
+        var runs: [PlayRun] = []
+        for (index, group) in groups.enumerated() {
+            let start = bounds[index]
+            let end = bounds[index + 1]
+            guard end - start > 1e-6 else { continue }
+            runs.append(PlayRun(start: start, end: end, verdict: group.verdict))
+        }
+        return runs
     }
 
     private static func darkNote(_ activity: ActivityKind, sunsetHour: Double) -> String? {

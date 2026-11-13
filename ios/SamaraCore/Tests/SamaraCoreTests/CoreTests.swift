@@ -119,7 +119,18 @@ final class CoreTests: XCTestCase {
         XCTAssertNil(built(.pool).darkNote)
         XCTAssertEqual(built(.jungle).darkNote, "Dark from 5:17p · trails: daylight only")
         XCTAssertEqual(built(.soccerShade).okHoursText, "All day")
+        XCTAssertEqual(built(.jungle).runs.count, 1)
+        XCTAssertNil(built(.jungle).minutesKey)
+        XCTAssertNil(built(.pool).minutesKey)
+        let sunday = try XCTUnwrap(file.days.first { $0.date == "2026-11-15" })
+        let soccer = ActivityWindows.plan(hours: sunday.hours, activity: .soccerSun, sunsetHour: CareDay.hour(sunday.sunset), rulesDay: sunday.sunrise)
+        XCTAssertEqual(soccer.runs.count, 3)
+        XCTAssertEqual(soccer.runs[1].start, 7 + 40.0 / 60, accuracy: 0.01)
+        XCTAssertEqual(soccer.runs[1].end, 16 + 35.0 / 60, accuracy: 0.01)
+        XCTAssertEqual(soccer.minutesKey, "20/40 · ≤1 h")
         let december = try date("2026-12-10T12:00:00-06:00")
+        let shifted = ActivityWindows.plan(hours: sunday.hours, activity: .beach, sunsetHour: CareDay.hour(sunday.sunset), rulesDay: december)
+        XCTAssertEqual(shifted.runs.map { $0.start }, [6, 7, 8.5, 15, 18])
         XCTAssertTrue(built(.beach, rulesDay: december).runs.contains { $0.verdict == .avoid })
         XCTAssertFalse(built(.pool, rulesDay: december).runs.contains { $0.verdict == .avoid })
         XCTAssertEqual(built(.beach), built(.beach))
@@ -128,14 +139,13 @@ final class CoreTests: XCTestCase {
     func testFahrenheitDoesNotMoveWindows() throws {
         let file = try ConditionsFile.decode(Data(contentsOf: fixtureURL()))
         let day = try XCTUnwrap(file.days.first)
-        let sun = ActivityWindows.hourly(day.hours) { $0.wbgtSunC }
-        let shade = ActivityWindows.hourly(day.hours) { $0.wbgtShadeC }
-        let celsius = ActivityWindows.spans(sun: sun, shade: shade, activity: .beach, sunsetHour: CareDay.hour(day.sunset))
         let displayed = TemperatureScale.fahrenheit.whole(27.88)
         XCTAssertEqual(displayed, "82°")
         XCTAssertEqual(TemperatureScale.celsius.whole(27.88), "28°")
         XCTAssertEqual(TemperatureScale.fahrenheit.threshold(32.3), "90.1 °F")
-        XCTAssertEqual(celsius.map(\.start), ActivityWindows.spans(sun: sun, shade: shade, activity: .beach, sunsetHour: CareDay.hour(day.sunset)).map(\.start))
+        let plan = ActivityWindows.plan(hours: day.hours, activity: .beach, sunsetHour: CareDay.hour(day.sunset), rulesDay: day.sunrise)
+        XCTAssertEqual(plan.runs.map(\.start), plan.runs.map(\.start))
+        XCTAssertNotNil(plan.minutesKey)
     }
 
     func testPillsStayInsideTheBand() {

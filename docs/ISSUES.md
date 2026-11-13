@@ -241,3 +241,16 @@ Sean approved E1. Pepper's go is `GO-ACTIVITY-WINDOWS.md`, then `BARS-PROPOSAL-4
 7. The pills and the hour axis are gone. Avoid hours are dimmed on the plot and labelled Avoid. The slim row is a white 3 pt OK run, a dotted grey cap, and a gap for Avoid. Times sit on each change. The minutes sit once at the right.
 8. Chips show the day's OK hours, such as "✓ 5½ h" or "All day", and no mini bar.
 9. The i sheet gains a Heat rules section: the zone table in the selected unit, both date columns, Chad's paragraph, and the light, kids, dark, and UV lines.
+
+## Slim row, Pepper's review of 0cee62b, not signed off
+
+Grade C+. The rules match. These are the row fixes. Not uploaded.
+
+1. Times mark a change between OK, limited and Avoid. Back-to-back stretches of the same kind are one run. Jungle, all OK, has no times.
+2. A shared 5-minute boundary is rounded once, so neighbouring stretches meet and the white bar has no seam.
+3. The minutes note appears only when a limited or calm-play stretch exists.
+4. The sunset-plus-30 tick and the old window cuts are gone.
+5. a/p is dropped only against a time label that is still on the row.
+6. A 5-minute Avoid on Saturday stays labelled.
+7. Avoid hours are hatched, and the legend shows that hatch only when the plot does.
+8. The Kids line is the approved sentence about 15-minute and 13-minute bouts.

@@ -50,17 +50,6 @@ struct DayScreen: View {
 
     private var play: ActivityPlan { model.activityPlan(model.activity, day: day, file: file) }
 
-    private var windowSpans: [TimeSpan] {
-        let lows = extrema.filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) }
-        return ActivityWindows.spans(
-            sun: sun, shade: shade, activity: model.activity, sunsetHour: sunsetHour,
-            lowTide: model.lowTideOnly,
-            lowHours: lows,
-            offshore: ActivityWindows.hourly(day.hours) { $0.energyOffshoreKj },
-            upperQuartile: file.week.energyQ3Kj
-        ).map { TimeSpan(start: CareDay.date(hour: $0.start, on: day.sunrise), end: CareDay.date(hour: $0.end, on: day.sunrise)) }
-    }
-
     private var axisTicks: some View {
         GeometryReader { geo in
             ForEach([6, 9, 12, 15, 18, 21], id: \.self) { hour in
@@ -329,14 +318,6 @@ struct DayScreen: View {
                     Text("sunset \(WindowWords.clock(sunsetHour))").font(.system(size: 11, weight: .medium)).foregroundColor(Palette.muted),
                     at: CGPoint(x: labelX, y: 10)
                 )
-                let limit = ActivityWindows.sunCutoff(sunsetHour: sunsetHour)
-                if model.activity == .beach || model.activity == .soccerSun {
-                    let x = axis.x(CareDay.date(hour: limit, on: day.sunrise), width: size.width)
-                    var tick = Path()
-                    tick.move(to: CGPoint(x: x, y: size.height - 28))
-                    tick.addLine(to: CGPoint(x: x, y: size.height - 7))
-                    context.stroke(tick, with: .color(.white.opacity(0.55)), style: StrokeStyle(lineWidth: 1, dash: [1, 2]))
-                }
                 if let now = nowInstant, !dragging {
                     let x = axis.x(now, width: size.width)
                     var nowLine = Path()
@@ -391,7 +372,9 @@ struct DayScreen: View {
         for run in play.runs where run.verdict == .avoid {
             let x0 = axis.x(CareDay.date(hour: run.start, on: day.sunrise), width: size.width)
             let x1 = axis.x(CareDay.date(hour: run.end, on: day.sunrise), width: size.width)
-            context.fill(Path(CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: size.height)), with: .color(.black.opacity(0.42)))
+            let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: size.height)
+            context.fill(Path(rect), with: .color(.black.opacity(0.28)))
+            hatch(in: rect, context: context, gap: 5)
             context.draw(
                 Text("Avoid").font(.system(size: 13, weight: .bold)).foregroundColor(.white),
                 at: CGPoint(x: (x0 + x1) / 2, y: 26)
@@ -407,19 +390,16 @@ struct DayScreen: View {
         while cursor <= axis.end {
             let sunV = ActivityWindows.interpolate(sun, CareDay.hour(cursor))
             let shadeV = ActivityWindows.interpolate(shade, CareDay.hour(cursor))
-            let bin = hourBin(day.hours, at: min(cursor.addingTimeInterval(1), axis.end))
-            let sunZone: HeatMinutes = (bin?.wbgtSunC).map { HeatScale.isStopHour(wbgt: $0, on: day.sunrise) } == true ? .stop : HeatScale.minutes(wbgt: sunV, on: day.sunrise)
-            let shadeZone: HeatMinutes = (bin?.wbgtShadeC).map { HeatScale.isStopHour(wbgt: $0, on: day.sunrise) } == true ? .stop : HeatScale.minutes(wbgt: shadeV, on: day.sunrise)
+            let sunZone = HeatScale.minutes(wbgt: sunV, on: day.sunrise)
+            let shadeZone = HeatScale.minutes(wbgt: shadeV, on: day.sunrise)
             samples.append(Sample(x: axis.x(cursor, width: size.width), sun: sunV, shade: shadeV, sunZone: sunZone, shadeZone: shadeZone))
             cursor = cursor.addingTimeInterval(5 * 60)
         }
         func paint(_ zone: HeatMinutes, _ path: Path) {
-            if zone == .stop {
-                context.fill(path, with: .color(Palette.hatch))
-                hatch(in: path.boundingRect, context: context, gap: 5, clip: path)
-            } else {
-                context.fill(path, with: .color(Palette.zone(zone)))
-            }
+            let color: Color
+            if case .stop = zone { color = Palette.zone(.minutes(20)) }
+            else { color = Palette.zone(zone) }
+            context.fill(path, with: .color(color))
         }
         func runs(_ key: KeyPath<Sample, HeatMinutes>) -> [Range<Int>] {
             var result: [Range<Int>] = []

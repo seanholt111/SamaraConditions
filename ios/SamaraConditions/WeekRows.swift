@@ -25,10 +25,7 @@ struct WeekPages: View {
                         axis
                         MinutesKey(showStop: days.contains { item in
                             guard let day = item.day else { return false }
-                            return day.hours.contains {
-                                let value = model.activity.heatUsesShade ? $0.wbgtShadeC : $0.wbgtSunC
-                                return HeatScale.isStopHour(wbgt: value, on: day.sunrise)
-                            }
+                            return model.activityPlan(model.activity, day: day, file: file).runs.contains { $0.verdict == .avoid }
                         })
                     }
                 }
@@ -166,7 +163,7 @@ struct WeekPages: View {
         case .cloud:
             return "\(day.cloudDaylightMeanPct)%"
         case .heat:
-            return care(day).isEmpty ? "no window" : ""
+            return ""
         case .sea:
             return ""
         }
@@ -240,8 +237,8 @@ struct WeekPages: View {
             let x0 = axis.x(run.start, width: size.width)
             let x1 = axis.x(run.end, width: size.width)
             let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0 + 0.5), height: 16)
-            context.fill(Path(rect), with: .color(muted ? Palette.zone(run.zone).opacity(0.45) : Palette.zone(run.zone)))
-            if run.zone == .stop { hatch(in: rect, context: context, gap: 4) }
+            let fill = run.zone == .stop ? Palette.zone(.minutes(20)) : Palette.zone(run.zone)
+            context.fill(Path(rect), with: .color(muted ? fill.opacity(0.45) : fill))
         }
         let sunsetX = axis.x(day.sunset, width: size.width)
         var hair = Path()
@@ -252,7 +249,9 @@ struct WeekPages: View {
         for run in plan.runs where run.verdict == .avoid {
             let x0 = axis.x(CareDay.date(hour: run.start, on: day.sunrise), width: size.width)
             let x1 = axis.x(CareDay.date(hour: run.end, on: day.sunrise), width: size.width)
-            context.fill(Path(CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: 16)), with: .color(.black.opacity(0.42)))
+            let rect = CGRect(x: x0, y: 0, width: max(1, x1 - x0), height: 16)
+            context.fill(Path(rect), with: .color(.black.opacity(0.28)))
+            hatch(in: rect, context: context, gap: 4)
         }
     }
 
@@ -300,13 +299,4 @@ struct WeekPages: View {
         }
     }
 
-    private func care(_ day: DayConditions) -> [TimeSpan] {
-        ActivityWindows.spans(
-            sun: ActivityWindows.hourly(day.hours) { $0.wbgtSunC },
-            shade: ActivityWindows.hourly(day.hours) { $0.wbgtShadeC },
-            activity: model.activity,
-            sunsetHour: CareDay.hour(day.sunset),
-            lowTide: model.lowTideOnly && model.activity == .beach
-        ).map { TimeSpan(start: CareDay.date(hour: $0.start, on: day.sunrise), end: CareDay.date(hour: $0.end, on: day.sunrise)) }
-    }
 }

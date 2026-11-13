@@ -128,7 +128,7 @@ struct HeatRulesView: View {
                     .font(.system(size: 15))
                     .foregroundStyle(Palette.text)
                 Text("Light play. Wading, sandcastles and calm pool time do not use the minutes cap. Races, tag and other active games do. The December shift applies only to those active games.")
-                Text("Kids. Shorter bouts, about 15 and 13 minutes, and a drink in the shade every 20 minutes.")
+                Text("Kids. Same minutes, in about 15-minute bouts (50/10) or 13-minute bouts (40/20), with a shade drink about every 20 minutes.")
                 Text("Dark. Ocean entry and jungle trails end at sunset. Soccer is on a lit field and the pool is lit, so both run to 9 p.m.")
                 Text("UV. At UV 8 or more: shirt, hat, sunscreen. At UV 11 or more, midday means shade or fully covered. UV never closes a window.")
                 Text("Sources. ACSM 2023 Table 7 · TB MED 507 (2022) · AAP 2011 · EPA UV Index.")

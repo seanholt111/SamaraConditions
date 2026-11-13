@@ -563,14 +563,6 @@ struct WeekHeat: View {
         }
     }
 
-    private func careSpans(_ day: DayConditions, activity: ActivityKind, lowTideOnly: Bool) -> [TimeSpan] {
-        let sun = ActivityWindows.hourly(day.hours) { $0.wbgtSunC }
-        let shade = ActivityWindows.hourly(day.hours) { $0.wbgtShadeC }
-        return ActivityWindows.spans(
-            sun: sun, shade: shade, activity: activity, sunsetHour: CareDay.hour(day.sunset), lowTide: lowTideOnly
-        ).map { TimeSpan(start: CareDay.date(hour: $0.start, on: day.sunrise), end: CareDay.date(hour: $0.end, on: day.sunrise)) }
-    }
-
     private func heatRow(_ offset: Int, _ day: DayConditions?) -> some View {
         return Button { onSelect(offset) } label: { HStack(alignment: .center, spacing: 8) {
             Text(day.map { "\($0.weekday) \(String($0.date.suffix(2)))" } ?? "—")
@@ -614,17 +606,6 @@ struct WeekHeat: View {
                 .frame(height: 18)
                 .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
                 .opacity(offset >= 3 ? 0.45 : 1)
-                if let day {
-                    WindowRibbon(
-                        spans: careSpans(day, activity: activity, lowTideOnly: lowTideOnly),
-                        axis: PlotAxis(start: CareDay.start(on: day.sunrise), end: CareDay.end(on: day.sunrise)),
-                        emptyText: "no window",
-                        height: 22,
-                        words: { span in
-                            WindowWords.label(start: CareDay.hour(span.start), end: CareDay.hour(span.end), lowercase: true)
-                        }
-                    )
-                }
             }
         }
         .buttonStyle(.plain)

@@ -299,7 +299,7 @@ struct SlimTimeRow: View {
     var runs: [PlayRun]
     var axis: PlotAxis
     var day: Date
-    var minutes: String
+    var minutes: String?
 
     private let ink = Color(red: 0.949, green: 0.949, blue: 0.941)
     private let grey = Color(red: 0.804, green: 0.820, blue: 0.843)
@@ -308,9 +308,9 @@ struct SlimTimeRow: View {
     var body: some View {
         GeometryReader { geo in
             let marks = laidOut(width: geo.size.width)
-            let minutesWidth = CGFloat(minutes.count) * 5.6 + 24
+            let minutesWidth = CGFloat(minutes?.count ?? 0) * 5.6 + (minutes == nil ? 0 : 24)
             let right = marks.filter { !$0.faint }.map { $0.x + CGFloat($0.text.count) * 3.3 }.max() ?? 0
-            let stacked = right + 8 + minutesWidth > geo.size.width
+            let stacked = minutes != nil && right + 8 + minutesWidth > geo.size.width
             VStack(alignment: .trailing, spacing: 1) {
                 ZStack(alignment: .topLeading) {
                     Canvas { context, size in
@@ -323,7 +323,7 @@ struct SlimTimeRow: View {
                             .fixedSize()
                             .position(x: mark.x, y: 20)
                     }
-                    if !stacked {
+                    if !stacked, minutes != nil {
                         key.position(x: geo.size.width - minutesWidth / 2, y: 20)
                     }
                 }
@@ -342,7 +342,7 @@ struct SlimTimeRow: View {
                     Circle().fill(grey).frame(width: 3.5, height: 3.5)
                 }
             }
-            Text(minutes)
+            Text(minutes ?? "")
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(grey)
                 .lineLimit(1)
@@ -383,7 +383,9 @@ struct SlimTimeRow: View {
         var ranged = Set<Int>()
         for (index, run) in runs.enumerated() {
             let pixels = x(run.end, width) - x(run.start, width)
-            if run.verdict == .avoid || (run.verdict.isLimited && pixels < 78) {
+            let besideAvoid = (index > 0 && runs[index - 1].verdict == .avoid)
+                || (index + 1 < runs.count && runs[index + 1].verdict == .avoid)
+            if run.verdict == .avoid || (run.verdict.isLimited && pixels < 78 && !besideAvoid) {
                 ranged.insert(index)
             }
         }
@@ -395,12 +397,6 @@ struct SlimTimeRow: View {
             }
             if run.start > CareDay.startHour + 0.02, index == 0 || !ranged.contains(index - 1) {
                 raw.append((run.start, WindowWords.clock(run.start)))
-            }
-        }
-        for index in raw.indices where index + 1 < raw.count {
-            let next = raw[index + 1].text
-            if let last = raw[index].text.last, last == next.last, last == "a" || last == "p", !raw[index].text.contains("–") {
-                raw[index].text.removeLast()
             }
         }
         func halfWidth(_ text: String, faint: Bool) -> CGFloat {
@@ -418,7 +414,14 @@ struct SlimTimeRow: View {
             }
             kept.append(mark)
         }
-        let minutesWidth = CGFloat(minutes.count) * 5.6 + 24
+        let times = kept.indices.filter { !kept[$0].text.contains("–") }
+        for (offset, index) in times.enumerated() where offset + 1 < times.count {
+            let next = kept[times[offset + 1]].text
+            if let last = kept[index].text.last, last == next.last, last == "a" || last == "p" {
+                kept[index].text.removeLast()
+            }
+        }
+        let minutesWidth = CGFloat(minutes?.count ?? 0) * 5.6 + (minutes == nil ? 0 : 24)
         let right = kept.map { $0.x + halfWidth($0.text, faint: false) }.max() ?? 0
         let minutesBlock = right + 8 + minutesWidth <= width
         for hour in [6.0, 12.0, 21.0] {
@@ -427,7 +430,7 @@ struct SlimTimeRow: View {
             var center = x(hour, width)
             if hour == 6 { center = half }
             if hour == 21 { center = width - half }
-            if minutesBlock && center + halfWidth(text, faint: true) > width - minutesWidth - 6 { continue }
+            if minutes != nil && minutesBlock && center + halfWidth(text, faint: true) > width - minutesWidth - 6 { continue }
             let blocked = kept.contains {
                 abs($0.x - center) < halfWidth(text, faint: true) + halfWidth($0.text, faint: $0.faint) + 6
             }
