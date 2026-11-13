@@ -16,7 +16,7 @@ from samara.energy import energy_kj
 from samara.shore import calm_threshold, energy_shore
 from samara.tides import Extremum, height_at, reef_shelters
 from samara.wbgt import sun_and_shade
-from samara.windows import calm_windows, heat_windows, intersect, lean_spans, pool_window
+from samara.windows import calm_windows
 
 CR = ZoneInfo("America/Costa_Rica")
 ROOT = Path(__file__).resolve().parents[3]
@@ -131,9 +131,9 @@ def build_day(
         return day + timedelta(hours=t_hours)
 
     samples: list[tuple[datetime, float, float]] = []
-    # Chart series and the calm grid share the model. Calm uses the daylight 5-min grid.
-    lo = sunrise + timedelta(minutes=15)
-    hi = sunset - timedelta(minutes=30)
+    # Chart series and the calm grid share the model. Calm uses the 6:00–21:00 care hours.
+    lo = day.replace(hour=6)
+    hi = day.replace(hour=21)
     m0 = math.ceil(_hours_since(day, lo) * 12 - 1e-9)
     m1 = math.floor(_hours_since(day, hi) * 12 + 1e-9)
     calm_samples: list[tuple[datetime, float]] = []
@@ -150,7 +150,7 @@ def build_day(
         calm_samples.append((at_hour_float(t_hours), e_sh))
 
     sea: list[dict] = []
-    for minute in range(6 * 60, 17 * 60 + 1, 5):
+    for minute in range(6 * 60, 21 * 60 + 1, 5):
         t_hours = minute / 60
         when = at_hour_float(t_hours)
         e_off = _lerp(by_hour, t_hours, "energy_offshore_kj")
@@ -165,18 +165,6 @@ def build_day(
             "energy_shore_kj": round(energy_shore(e_off, hs, period, tide), 2),
         })
         samples.append((when, e_off, energy_shore(e_off, hs, period, tide)))
-
-    sun_pts = [(h["time"], h["wbgt_sun_c"]) for h in hours]
-    shade_pts = [(h["time"], h["wbgt_shade_c"]) for h in hours]
-    beach = heat_windows(sun_pts, 27.9, sunrise, sunset)
-    soccer_sun = heat_windows(sun_pts, 25.7, sunrise, sunset)
-    soccer_shade = heat_windows(shade_pts, 27.9, sunrise, sunset)
-    jungle = heat_windows(shade_pts, 27.9, sunrise, sunset)
-    pool = pool_window(sunrise, sunset)
-    energy_pts = [(h["time"], h["energy_offshore_kj"]) for h in hours]
-    lows = [e.time for e in extrema if e.kind == "L"]
-    lean = lean_spans(lows, energy_pts, q3, sunrise, sunset)
-    beach_low = intersect(beach, lean, day)
 
     daylight_hours = [
         h for h in hours
@@ -231,15 +219,7 @@ def build_day(
             for e in sorted(extrema, key=lambda e: e.time)
             if day_start(e.time) == day or (e.time >= day - timedelta(hours=6) and e.time < day + timedelta(days=1, hours=6))
         ],
-        "windows": {
-            "beach": _iso_pair(beach),
-            "soccer_sun": _iso_pair(soccer_sun),
-            "soccer_shade": _iso_pair(soccer_shade),
-            "pool": _iso_pair(pool),
-            "jungle": _iso_pair(jungle),
-            "beach_low": _iso_pair(beach_low),
-        },
-        "calm_windows": _iso_pair(calm_windows(calm_samples, threshold, sunrise, sunset)),
+        "calm_windows": _iso_pair(calm_windows(calm_samples, threshold, sunrise, sunset, bounds=(lo, hi))),
         "sea": sea,
         "hours": out_hours,
     }
@@ -307,7 +287,7 @@ def assemble(
         sunset = parse_stamp(day_doc["sunset"])
         day_doc["reef_shelters"] = _iso_pair(reef_shelters(nearby, sunrise, sunset))
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": stamp(generated_at),
         "timezone": "America/Costa_Rica",
         "location": {

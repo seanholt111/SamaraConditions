@@ -10,8 +10,10 @@ CUT_HARD = 25.7
 FIVE = 5
 
 
-def daylight(sunrise: datetime, sunset: datetime) -> tuple[datetime, datetime]:
-    return sunrise + timedelta(minutes=15), sunset - timedelta(minutes=30)
+def _care(anchor: datetime) -> tuple[datetime, datetime]:
+    """6:00a–9:00p on the anchor's calendar day. Heat windows are computed on the phone."""
+    day = anchor.replace(hour=0, minute=0, second=0, microsecond=0)
+    return day + timedelta(hours=6), day + timedelta(hours=21)
 
 
 def _ceil5(minutes: float) -> int:
@@ -76,23 +78,6 @@ def clip_round(
     return kept
 
 
-def heat_windows(
-    hours: list[tuple[datetime, float]],
-    cut: float,
-    sunrise: datetime,
-    sunset: datetime,
-) -> list[tuple[datetime, datetime]]:
-    day = sunrise.replace(hour=0, minute=0, second=0, microsecond=0)
-    lo, hi = daylight(sunrise, sunset)
-    return clip_round(intervals_below(hours, cut), lo, hi, day)
-
-
-def pool_window(sunrise: datetime, sunset: datetime) -> list[tuple[datetime, datetime]]:
-    day = sunrise.replace(hour=0, minute=0, second=0, microsecond=0)
-    lo, hi = daylight(sunrise, sunset)
-    return clip_round([(lo, hi)], lo, hi, day)
-
-
 def intersect(
     left: list[tuple[datetime, datetime]],
     right: list[tuple[datetime, datetime]],
@@ -118,7 +103,7 @@ def lean_spans(
     sunset: datetime,
 ) -> list[tuple[datetime, datetime]]:
     """[low − 2 h, low + 1 h], drop a span whose hourly offshore energy exceeds Q3, clip to daylight."""
-    lo, hi = daylight(sunrise, sunset)
+    lo, hi = _care(sunrise)
     day = sunrise.replace(hour=0, minute=0, second=0, microsecond=0)
     raw: list[tuple[datetime, datetime]] = []
     for low in lows:
@@ -135,9 +120,10 @@ def calm_windows(
     threshold: float,
     sunrise: datetime,
     sunset: datetime,
+    bounds: tuple[datetime, datetime] | None = None,
 ) -> list[tuple[datetime, datetime]]:
-    """samples are on a 5-minute grid. Keep runs of at least 15 minutes inside daylight."""
-    lo, hi = daylight(sunrise, sunset)
+    """samples are on a 5-minute grid. Keep runs of at least 15 minutes inside the bounds."""
+    lo, hi = bounds if bounds is not None else _care(sunrise)
     day = sunrise.replace(hour=0, minute=0, second=0, microsecond=0)
     inside = [(t, v) for t, v in samples if lo <= t <= hi]
     if not inside:

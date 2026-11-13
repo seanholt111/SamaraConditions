@@ -22,8 +22,13 @@ final class AppModel: ObservableObject {
     @Published var selectedAlert: OfficialAlert?
     @Published var scrub: Date?
     @Published var now = Date()
+    @Published var dayOffset = 0
+    @Published var useFahrenheit = true
+    @Published var typeScale = 1.0
+    var forceAcclimating = false
 
     let pagesURL = URL(string: "https://seanholt111.github.io/SamaraConditions/conditions.json")!
+    let log: AppLog
     private let cacheDirectory: URL
     private var uiTesting = false
     private var bundled: [TideExtremum] = []
@@ -32,7 +37,37 @@ final class AppModel: ObservableObject {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.temporaryDirectory
         cacheDirectory = base.appendingPathComponent("SamaraConditions", isDirectory: true)
+        log = AppLog(directory: cacheDirectory.appendingPathComponent("logs", isDirectory: true))
+        if UserDefaults.standard.object(forKey: "temperatureUnitF") != nil {
+            useFahrenheit = UserDefaults.standard.bool(forKey: "temperatureUnitF")
+        }
         applyLaunchArguments()
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        log.append("launch version \(version) build \(build) chip \(activity.rawValue)")
+        log.append("data-state \(dataStateLabel())")
+    }
+
+    func setActivity(_ kind: ActivityKind) {
+        activity = kind
+        if kind != .beach { lowTideOnly = false }
+        log.append("chip \(kind.rawValue)")
+    }
+
+    func prepareLogExport() throws -> URL {
+        try log.exportFile()
+    }
+
+    func dataStateLabel() -> String {
+        switch phase {
+        case .loading: return "loading"
+        case .failed: return "error"
+        case .loaded(let file):
+            if offline { return "offline" }
+            if fileIsStale(file) { return "stale" }
+            return "fresh"
+        }
     }
 
     var file: ConditionsFile? {
@@ -45,30 +80,54 @@ final class AppModel: ObservableObject {
         if let cached = ConditionsCache.load(from: cacheDirectory),
            let file = try? ConditionsFile.decode(cached) {
             phase = .loaded(file)
+            log.append("cache used generated_at=\(Self.logStamp(file.generatedAt)) schema_version=\(file.schemaVersion)")
         } else {
             phase = .loading
+            log.append("cache miss")
         }
+        log.append("data-state \(dataStateLabel())")
         await refresh()
     }
 
     func refresh() async {
         if uiTesting { return }
+        let urlString = pagesURL.absoluteString
+        var loggedFetch = false
         do {
             var request = URLRequest(url: pagesURL, timeoutInterval: 20)
             request.cachePolicy = .reloadIgnoringLocalCacheData
             let (data, response) = try await URLSession.shared.data(for: request)
-            guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            let status = (response as? HTTPURLResponse)?.statusCode ?? -1
+            guard (200..<300).contains(status) else {
+                loggedFetch = true
+                log.append("fetch url=\(urlString) status=\(status) bytes=\(data.count)")
+                log.append("error bad response \(status)")
                 throw URLError(.badServerResponse)
             }
-            let decoded = try ConditionsFile.decode(data)
+            let decoded: ConditionsFile
+            do {
+                decoded = try ConditionsFile.decode(data)
+            } catch {
+                loggedFetch = true
+                log.append("fetch url=\(urlString) status=\(status) bytes=\(data.count)")
+                log.append("decode error \(error)")
+                throw error
+            }
+            log.append("fetch url=\(urlString) status=\(status) bytes=\(data.count) generated_at=\(Self.logStamp(decoded.generatedAt)) schema_version=\(decoded.schemaVersion)")
             try ConditionsCache.save(data, to: cacheDirectory)
             phase = .loaded(decoded)
             offline = false
+            log.append("source fresh")
+            log.append("data-state \(dataStateLabel())")
         } catch {
+            if !loggedFetch {
+                log.append("fetch url=\(urlString) error \(error)")
+            }
             offline = true
             if file == nil {
                 phase = .failed
             }
+            log.append("data-state \(dataStateLabel())")
         }
     }
 
@@ -80,7 +139,41 @@ final class AppModel: ObservableObject {
     }
 
     func today(_ file: ConditionsFile) -> DayConditions? {
-        file.day(on: now) ?? file.days.first
+        let date = CostaRica.dayOffset(dayOffset, from: now)
+        return file.day(on: date) ?? file.day(on: now) ?? file.days.first
+    }
+
+    var viewingToday: Bool { dayOffset == 0 }
+
+    func rulesDate(for day: DayConditions) -> Date {
+        guard forceAcclimating else { return day.sunrise }
+        var parts = DateComponents()
+        parts.calendar = CostaRica.calendar
+        parts.timeZone = CostaRica.zone
+        parts.year = 2026
+        parts.month = 12
+        parts.day = 10
+        parts.hour = 12
+        return CostaRica.calendar.date(from: parts) ?? day.sunrise
+    }
+
+    func activityPlan(_ kind: ActivityKind, day: DayConditions, file: ConditionsFile) -> ActivityPlan {
+        let lows = extrema(for: file).filter { !$0.isHigh && CostaRica.isSameDay($0.time, day.sunrise) }.map { CareDay.hour($0.time) }
+        return ActivityWindows.plan(
+            hours: day.hours,
+            activity: kind,
+            sunsetHour: CareDay.hour(day.sunset),
+            rulesDay: rulesDate(for: day),
+            lowTide: lowTideOnly && kind == .beach,
+            lowHours: lows,
+            offshore: ActivityWindows.hourly(day.hours) { $0.energyOffshoreKj },
+            upperQuartile: file.week.energyQ3Kj
+        )
+    }
+
+    func setFahrenheit(_ fahrenheit: Bool) {
+        useFahrenheit = fahrenheit
+        UserDefaults.standard.set(fahrenheit, forKey: "temperatureUnitF")
     }
 
     func orderedDays(_ file: ConditionsFile) -> [(offset: Int, day: DayConditions?)] {
@@ -120,11 +213,22 @@ final class AppModel: ObservableObject {
         if let raw = value("-tab"), let section = Section(rawValue: raw) { self.section = section }
         if let raw = value("-week"), let tab = WeekTab(rawValue: raw) { weekTab = tab }
         if value("-show-sources") == "1" { showSources = true }
+        if args.contains("-acclimate") { forceAcclimating = true }
+        if args.contains("-open-heat-rules") { showSources = true }
+        if let raw = value("-day-offset"), let offset = Int(raw) { dayOffset = offset }
+        if value("-unit") == "C" { useFahrenheit = false }
+        if value("-unit") == "F" { useFahrenheit = true }
+        if value("-dynamic-type") == "xxxLarge" { typeScale = 1.53 }
+        if let raw = value("-scrub"), let date = ISO8601DateFormatter.internet.date(from: raw) {
+            scrub = date
+        }
         let state = value("-ui-state")
         let useFixture = args.contains("-use-fixture") || state != nil
-        guard useFixture, let url = Bundle.main.url(forResource: "conditions.fixture", withExtension: "json"),
+        let fixtureName = value("-fixture") ?? "conditions.fixture"
+        guard useFixture, let url = Bundle.main.url(forResource: fixtureName, withExtension: "json"),
               let data = try? Data(contentsOf: url),
               var decoded = try? ConditionsFile.decode(data) else { return }
+        log.append("fixture \(fixtureName) generated_at=\(Self.logStamp(decoded.generatedAt)) schema_version=\(decoded.schemaVersion)")
         uiTesting = true
         switch state ?? "fresh" {
         case "loading":
@@ -170,6 +274,10 @@ final class AppModel: ObservableObject {
               let data = try? Data(contentsOf: url),
               let bundle = try? JSONDecoder().decode(TideBundleFile.self, from: data) else { return [] }
         return bundle.extrema()
+    }
+
+    private static func logStamp(_ date: Date) -> String {
+        AppLog.stamp(date)
     }
 }
 
