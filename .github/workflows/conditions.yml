@@ -2,9 +2,12 @@ name: Morning conditions
 
 on:
   schedule:
-    # 04:17 and 05:17 America/Costa_Rica (UTC−6, no daylight saving).
-    - cron: "17 10 * * *"
-    - cron: "17 11 * * *"
+    # 04:17 and 05:17 America/Costa_Rica. Costa Rica has no daylight saving,
+    # so these are the same instants as 10:17 and 11:17 UTC.
+    - cron: "17 4 * * *"
+      timezone: America/Costa_Rica
+    - cron: "17 5 * * *"
+      timezone: America/Costa_Rica
   workflow_dispatch:
 
 permissions:
