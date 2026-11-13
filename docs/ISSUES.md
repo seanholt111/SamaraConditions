@@ -209,3 +209,14 @@ Grade B−. Eleven of the fifteen build-6 fixes pass. These are the ones that do
 10. Week Rain and Cloud have the track, the top hairline, and values over 1 mm/hr printed on the bar.
 11. Sun and Shade labels move to 10:30a when the now or drag line is within 24 pt of 1:30p.
 12. The Sun label sits 12 pt above the highest point of the sun line across the label, and Shade sits 14 pt below the lowest point of the shade line.
+
+## Build 8, Pepper's review of build 7 (f2cc7b4), not signed off
+
+Grade B. Eleven of the twelve build-7 fixes pass. These are layout fixes, not new UX. Do not upload until she signs off.
+
+1. The page does not ignore the top safe area, and it does not add a fixed top offset. The Day/Week header starts 8 pt below the safe-area top, on 402, 393 and 375.
+2. Week Sea rows are about 74 pt: an 18 pt label, a 40 pt strip, and a 15 pt ribbon that overlaps the strip by 7 pt, with an 8 pt gap. The hour axis and the "model, not measured" footer stay pinned. The rows can scroll if they do not fit.
+3. Week Heat rows stay at 72 pt or under. The rows and the colour key scroll. The chips and Low tide only stay pinned.
+4. Day uses that same pinned bottom bar, so the Low tide toggle stays at least 8 pt above the bottom on iPhone SE.
+
+VoiceOver, from the controls rather than a spoken pass: Day and Week are buttons, the i button is named Sources, the chips are buttons, Low tide only is a switch, and each Week row is a button. The day chart is one combined element, so its lines are not separate items.

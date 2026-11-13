@@ -10,11 +10,9 @@ struct WeekView: View {
             if let file = model.file, let alert = file.alerts.first {
                 IMNBanner(alert: alert) { model.selectedAlert = alert }
             }
-            ScrollView {
-                if let file = model.file {
-                    let rows = model.orderedDays(file)
-                    WeekPages(file: file, days: rows)
-                }
+            if let file = model.file {
+                WeekPages(file: file, days: model.orderedDays(file))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
         }
     }

@@ -39,10 +39,17 @@ struct DayScreen: View {
                 }
             )
             MinutesKey(showStop: day.hours.contains { HeatScale.isStopHour(wbgt: $0.wbgtSunC, on: day.sunrise) })
-            ActivityChips()
-            LowTideToggle()
         }
         .accessibilityElement(children: .combine)
+        .safeAreaInset(edge: .bottom, spacing: 8) {
+            VStack(alignment: .leading, spacing: 8) {
+                ActivityChips()
+                LowTideToggle()
+            }
+            .padding(.bottom, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.night)
+        }
     }
 
     private var windowSpans: [TimeSpan] {

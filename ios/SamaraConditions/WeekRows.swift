@@ -9,36 +9,72 @@ struct WeekPages: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             headline
-            ForEach(days, id: \.offset) { item in
-                Button {
-                    model.dayOffset = item.offset
-                    model.section = .today
-                } label: {
-                    row(item.offset, item.day)
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("week-row-\(item.offset)")
-            }
-            axis
-            if model.weekTab == .sea {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("fill = energy at the shore · dotted = offshore · dashes = calm line")
-                    Text("model, not measured · reef size and gaps guessed")
-                }
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(Palette.muted)
-            }
-            if model.weekTab == .heat {
-                MinutesKey(showStop: days.contains { item in
-                    guard let day = item.day else { return false }
-                    return day.hours.contains {
-                        let value = model.activity.heatUsesShade ? $0.wbgtShadeC : $0.wbgtSunC
-                        return HeatScale.isStopHour(wbgt: value, on: day.sunrise)
+            ScrollView {
+                VStack(alignment: .leading, spacing: rowSpacing) {
+                    ForEach(days, id: \.offset) { item in
+                        Button {
+                            model.dayOffset = item.offset
+                            model.section = .today
+                        } label: {
+                            row(item.offset, item.day)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("week-row-\(item.offset)")
                     }
-                })
+                    if model.weekTab == .heat {
+                        axis
+                        MinutesKey(showStop: days.contains { item in
+                            guard let day = item.day else { return false }
+                            return day.hours.contains {
+                                let value = model.activity.heatUsesShade ? $0.wbgtShadeC : $0.wbgtSunC
+                                return HeatScale.isStopHour(wbgt: value, on: day.sunrise)
+                            }
+                        })
+                    }
+                }
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            bottomBar
+        }
+    }
+
+    @ViewBuilder
+    private var bottomBar: some View {
+        switch model.weekTab {
+        case .sea:
+            VStack(alignment: .leading, spacing: 2) {
+                axis
+                Text("fill = energy at the shore · dotted = offshore · dashes = calm line")
+                Text("model, not measured · reef size and gaps guessed")
+            }
+            .font(.system(size: 11, weight: .medium))
+            .foregroundStyle(Palette.muted)
+            .padding(.bottom, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.night)
+        case .heat:
+            VStack(alignment: .leading, spacing: 8) {
                 ActivityChips()
                 LowTideToggle()
             }
+            .padding(.bottom, 8)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Palette.night)
+        case .rain, .cloud:
+            axis
+                .padding(.bottom, 8)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Palette.night)
+        }
+    }
+
+    /// Sea is 74 pt: label 18, strip 40, ribbon overhang 8, gap 8. Heat is 72 pt.
+    private var rowSpacing: CGFloat {
+        switch model.weekTab {
+        case .sea: return 8
+        case .heat: return 11
+        case .rain, .cloud: return 6
         }
     }
 
@@ -75,7 +111,7 @@ struct WeekPages: View {
 
     private func row(_ offset: Int, _ day: DayConditions?) -> some View {
         let muted = offset >= 3
-        return VStack(alignment: .leading, spacing: 3) {
+        return VStack(alignment: .leading, spacing: model.weekTab == .rain || model.weekTab == .cloud ? 3 : 0) {
             HStack(spacing: 6) {
                 Text(day.map { "\($0.weekday) \(String($0.date.suffix(2)))" } ?? "—")
                     .font(.system(size: 14, weight: .semibold))
@@ -88,7 +124,16 @@ struct WeekPages: View {
                 Text("›").font(.system(size: 17, weight: .medium)).foregroundStyle(Palette.muted)
             }
             .frame(height: 18)
-            strip(offset, day).frame(height: model.weekTab == .sea ? 70 : (model.weekTab == .heat ? 52 : 54))
+            strip(offset, day).frame(height: stripHeight)
+        }
+    }
+
+    /// Sea canvas is the 40 pt strip plus the 8 pt ribbon overhang. Heat is bar 16, gap 3, pill 24.
+    private var stripHeight: CGFloat {
+        switch model.weekTab {
+        case .sea: return 48
+        case .heat: return 43
+        case .rain, .cloud: return 54
         }
     }
 
@@ -132,7 +177,7 @@ struct WeekPages: View {
                 let x = axis.x(day.sunset, width: size.width)
                 var line = Path()
                 line.move(to: CGPoint(x: x, y: 0))
-                line.addLine(to: CGPoint(x: x, y: size.height - (model.weekTab == .sea ? 18 : 0)))
+                line.addLine(to: CGPoint(x: x, y: model.weekTab == .sea ? 33 : size.height))
                 context.stroke(line, with: .color(Palette.muted.opacity(0.6)), style: StrokeStyle(lineWidth: 1, dash: [2, 2]))
             }
         }
@@ -199,7 +244,7 @@ struct WeekPages: View {
             let window = max(8, axis.x(span.end, width: size.width) - x0)
             let pill = min(size.width, max(window, textWidth))
             let origin = min(max(0, x0), max(0, size.width - pill))
-            let rect = CGRect(x: origin, y: 20, width: pill, height: 28)
+            let rect = CGRect(x: origin, y: 19, width: pill, height: 24)
             context.fill(Path(roundedRect: rect, cornerRadius: 6), with: .color(muted ? Color(red: 0.784, green: 0.784, blue: 0.784) : .white))
             context.draw(text, at: CGPoint(x: rect.midX, y: rect.midY))
         }
@@ -207,8 +252,10 @@ struct WeekPages: View {
 
     private func sea(_ context: GraphicsContext, _ size: CGSize, day: DayConditions, axis: PlotAxis, muted: Bool) {
         let samples = SeaSeries.points(hours: day.hours, extrema: model.extrema(for: file), day: day.sunrise)
+        let plot: CGFloat = 40
         func y(_ energy: Double) -> CGFloat {
-            size.height - 8 - CGFloat(min(210, max(0, energy)) / 210) * (size.height - 12)
+            let fraction = CGFloat(min(210, max(0, energy)) / 210)
+            return plot - 8 - fraction * (plot - 12)
         }
         var shore = Path()
         var off = Path()
@@ -220,8 +267,8 @@ struct WeekPages: View {
         }
         var fill = shore
         if let last = samples.last, let first = samples.first {
-            fill.addLine(to: CGPoint(x: axis.x(CareDay.date(hour: last.hour, on: day.sunrise), width: size.width), y: size.height))
-            fill.addLine(to: CGPoint(x: axis.x(CareDay.date(hour: first.hour, on: day.sunrise), width: size.width), y: size.height))
+            fill.addLine(to: CGPoint(x: axis.x(CareDay.date(hour: last.hour, on: day.sunrise), width: size.width), y: plot))
+            fill.addLine(to: CGPoint(x: axis.x(CareDay.date(hour: first.hour, on: day.sunrise), width: size.width), y: plot))
             fill.closeSubpath()
         }
         context.fill(fill, with: .color(muted ? Palette.ocean.opacity(0.45) : Palette.ocean))
@@ -241,7 +288,7 @@ struct WeekPages: View {
             let x1 = axis.x(CareDay.date(hour: span.end, on: day.sunrise), width: size.width)
             let pill = min(size.width, max(max(8, x1 - x0), textWidth))
             let origin = min(max(0, x0), max(0, size.width - pill))
-            let rect = CGRect(x: origin, y: size.height - 16, width: pill, height: 15)
+            let rect = CGRect(x: origin, y: plot - 7, width: pill, height: 15)
             context.fill(Path(roundedRect: rect, cornerRadius: 4), with: .color(.white))
             context.draw(text, at: CGPoint(x: rect.midX, y: rect.midY))
         }

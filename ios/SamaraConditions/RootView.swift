@@ -7,19 +7,15 @@ struct RootView: View {
     var body: some View {
         ZStack {
             Palette.night.ignoresSafeArea()
-            GeometryReader { proxy in
-                VStack(spacing: 10) {
-                    header
-                    dateRow
-                    statusBlock
-                    content
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, max(proxy.safeAreaInsets.top, 20) + 4)
-                .padding(.bottom, proxy.safeAreaInsets.bottom)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            VStack(spacing: 10) {
+                header
+                dateRow
+                statusBlock
+                content
             }
-            .ignoresSafeArea(edges: .top)
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .sheet(isPresented: $model.showSources) {
             if ProcessInfo.processInfo.arguments.contains("-open-sources") {
@@ -189,6 +185,7 @@ struct RootView: View {
                     WeekView()
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .refreshable { await model.refresh() }
         }
     }
