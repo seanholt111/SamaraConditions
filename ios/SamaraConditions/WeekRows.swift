@@ -45,7 +45,10 @@ struct WeekPages: View {
         case .sea:
             VStack(alignment: .leading, spacing: 2) {
                 axis
-                Text("fill = energy at the shore · dotted = offshore · dashes = calm line")
+                Text("fill = energy at the shore · dotted = offshore ·")
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
+                Text("dashes = calm line")
                 Text("model, not measured · reef size and gaps guessed")
             }
             .font(.system(size: 11, weight: .medium))
@@ -61,6 +64,9 @@ struct WeekPages: View {
             .padding(.bottom, 8)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Palette.night)
+            .overlay(alignment: .top) {
+                Rectangle().fill(Color.white.opacity(0.12)).frame(height: 1)
+            }
         case .rain, .cloud:
             axis
                 .padding(.bottom, 8)

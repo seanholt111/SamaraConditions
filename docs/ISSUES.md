@@ -220,3 +220,10 @@ Grade B. Eleven of the twelve build-7 fixes pass. These are layout fixes, not ne
 4. Day uses that same pinned bottom bar, so the Low tide toggle stays at least 8 pt above the bottom on iPhone SE.
 
 VoiceOver, from the controls rather than a spoken pass: Day and Week are buttons, the i button is named Sources, the chips are buttons, Low tide only is a switch, and each Week row is a button. The day chart is one combined element, so its lines are not separate items.
+
+## After build 8, signed off
+
+Pepper signed off d7eb1c6 at A−. Sean authorized that build for TestFlight. Build 6 is that UI. The notes below are optional and are not uploaded.
+
+1. Week Heat’s pinned chip bar has a 1 pt white 12% hairline on its top edge, so a row sliding under it reads as a scroll.
+2. The Week Sea footer breaks after “offshore ·”, so “calm line” is not left alone on its own line at 375 pt.
