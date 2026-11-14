@@ -69,6 +69,6 @@ The app reads `https://seanholt111.github.io/SamaraConditions/conditions.json`, 
 
 ## Morning job
 
-The workflow is `.github/workflows/conditions.yml` (the same text is kept at `docs/github-actions-conditions.yml`). It runs at 04:17 and 05:17 America/Costa_Rica (`17 4` and `17 5` with that timezone, the same instants as 10:17 and 11:17 UTC) and on workflow_dispatch. It runs the tests, then writes `docs/conditions.json` with `--previous` pointed at that same file, and commits the file with `heartbeat.txt` so the schedule is not turned off for inactivity. A failed fetch or a failed validation leaves the last good file in place.
+The workflow is `.github/workflows/conditions.yml` (the same text is kept at `docs/github-actions-conditions.yml`). It runs at 10:17 and 11:17 UTC (04:17 and 05:17 in Costa Rica) and on workflow_dispatch. It runs the tests, then writes `docs/conditions.json` with `--previous` pointed at that same file, and commits the file with `heartbeat.txt` so the schedule is not turned off for inactivity. A failed fetch or a failed validation leaves the last good file in place.
 
 GitHub Pages already serves the `docs/` folder from `main`, so that commit is the publish. The job does not upload a Pages artifact or use a `github-pages` environment, and the repository Pages setting stays as it is.
