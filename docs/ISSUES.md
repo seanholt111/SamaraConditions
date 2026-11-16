@@ -128,3 +128,137 @@ Logged after she signed off rc3. Do not build these in v1.
 
 1. Tide headroom. Keep at least 16 pt of empty track above the crest on high-tide days. On the rc3 Today screen the crest still comes close to the right end of the header.
 2. Week Heat ribbon. Use a slimmer ribbon when a window is 8 hours or longer.
+
+## Phone, build 3, 12 Nov 2026, as of 10:53a
+
+Evidence is `docs/screenshots/phone-b3/samara-phone-bug-hatch.png`. Sean, live data, Soccer sun. The file is `data/fixture-live-2026-11-12.json`.
+
+### A. Stop hatch escapes the heat curve
+
+**What happened.** The pink Stop hatch is drawn as diagonal strokes across the axis-aligned bounding rectangle of the stop band. The fill of that band already follows the curve between the shade line and the sun line. The strokes do not. Each line runs the full height of the rectangle and starts a full height to the left of it, so the hatch climbs above the Sun line, with a slanted top, and hangs in the hours before the stop run. On 12 Nov the sun hours that reach Stop (32.3 °C) are 9a, 10a, and 1p. Shade does not reach Stop.
+
+**Fix.** Clip the hatch strokes to the same path that is filled. The hours stay the hours whose WBGT is Stop. Do not change the band geometry.
+
+**Check.** Live fixture, Today, Soccer sun and Beach. The hatch stays inside the painted band.
+
+### B. Export log
+
+**Behaviour.** A rotating log in Application Support, about 1 MB, keeping the current file and one previous file. It records the version and build, launches, each fetch (URL, HTTP status, bytes, generated_at, schema_version, and decode errors verbatim), whether the screen used the cache or a fresh file, the data state (fresh, stale, offline, error), chip changes, and caught errors. No personal data.
+
+The existing i sheet gains one plain text row at the bottom, "Export log". It opens the iOS share sheet with the .txt file.
+
+**Check.** The row is on the i sheet. A unit test rotates the file and keeps two copies.
+
+## Build 4 UX, approved by Sean 12 Nov 2026, 1:40pm PT
+
+Sean said "Nice, send it." `docs/design/build4/` is the graded spec. His calls override anything the spec still marks open:
+
+1. On Day, the shore-energy plot replaces the tide band. Tide height is a readout only. There is no tide line.
+2. The heat readout stays in the top row. There is no heat pill on the line.
+3. Option B: Beach, Low-tide Beach and Soccer sun end at sunset plus 30 minutes, rounded down to 5 minutes, with a dotted tick at that cutoff. Soccer shade, Jungle and Pool run to 9p.
+4. The top toggle says Day, not Today. The first date cell still says Today.
+5. Week Sea uses the same full-width rows as the other Week pages. The shore-energy drawing itself is unchanged.
+
+The morning file must carry shore and offshore energy every 5 minutes from 6:00a through 9:00p. The job runs `python -m samara live`, which builds that file.
+
+**Care hours.** Day and Week use 6:00a–9:00p. Ticks are 6a, 9a, 12p, 3p, 6p, 9p. A dashed sunset hairline crosses Clouds, Sea and Heat, with "sunset 5:17p" at the top of Heat. After sunset the ground is `#0E121A`. Cloud bars after sunset are `#70757E`. Rain, heat and sea run to 9p. The Stop hatch stays clipped to the band under the Sun line.
+
+**Windows.** Computed over 6:00a–9:00p, then option B, then the Low-tide toggle. Wording: "All day", "Until …", "From …", a range, or "No window". Week uses the same words in lowercase. The Sea header uses them too: "Sea (model) · Calm … · Waves …".
+
+**Temperature.** The i sheet order is Sources & method, Temperature °F | °C, Export log. Default is °F. Colours, windows, feet and millimetres stay in their own units. Whole degrees on screen. Sources thresholds keep one decimal.
+
+**Tracer.** Dragging the chart snaps to 5 minutes. A white line runs through the three plots and skips the header lanes. Cloud, rain, sea and tide readouts are pills in those lanes. The time sits in the top readout row.
+
+**Day and Week.** A 7-day strip picks the day. A Week row opens that day. The Heat / Tide / Rain / Sources row is gone. Chips, and the Low-tide toggle on Beach, are the bottom of the screen.
+
+**Check.** SamaraCore tests cover the Wednesday labels, option B, °F not moving a window, pill placement on the 402/393/375 sweep, and calm through 9p. Screenshots match the round-9 list.
+
+## Build 6, Pepper's review of build 5 (a49f991), not signed off
+
+Grade C+. These are fixes against the approved spec, not new UX. Pepper decided item 15. Do not upload until she signs off.
+
+1. Put the 6a 9a 12p 3p 6p 9p ticks back under Day Heat. First tick leading, last trailing.
+2. Put a white window bar on the axis for each window, with its label under the bar. "All day" is a full-width ribbon.
+3. Rebuild Rain, Cloud, Heat and Sea as full-width rows: day name, value, ›, a sunset hairline, and one 6a–9p axis. Rain adds "· X overnight" only when 40% or more falls outside 6a–9p. Cloud bars after sunset are `#5A5E66`, and the head line says the percent is the daylight average. Heat pills capitalise Until and From, and days 4–7 are muted. "no window" sits on the label line.
+4. Week Sea uses the same 6a–9p sea series as Day, so Wednesday shows "From 7:40p" and Thursday "From 7:50p".
+5. Day Sea draws the 4 pt lagoon calm bars under the band, and "offshore" where the gap is widest between 1p and 4:30p if it is over 16 pt.
+6. Heat labels "Sun" and "Shade" at 1:30p, and now dots on both lines.
+7. While dragging, dots mark the cloud bar, the rain bar when it is raining, and the shore-energy crest.
+8. When the sun and shade degrees match, the readout is a solid swatch, the degrees, and "sun = shade".
+9. The time pill is pinned to the trailing edge of the readout row.
+10. xxxLarge is about 1.53×. The Sea lane grows, Sea pills stack when they do not fit, and the readout, date strip, headers and chips scale too.
+11. The now line uses Costa Rica time, is drawn through Clouds, Sea and Heat, and is omitted when now is outside 6a–9p on the day being shown.
+12. Heat has no dark panel after sunset. Only the hairline marks it.
+13. The Wednesday Sea header is 12 pt semibold. Dropping "· Waves normal" is acceptable if the full line does not fit.
+14. "No window" is 15 pt semibold, muted, and leading-aligned.
+15. While dragging, the "calm line" and "offshore" labels fade. They return when the drag ends.
+
+## Build 7, Pepper's review of build 6 (763e8da), not signed off
+
+Grade B−. Eleven of the fifteen build-6 fixes pass. These are the ones that do not.
+
+1. Week Heat pills are at least as wide as their text and stay on screen. Days 4–7 use a solid grey pill. The heat bar has no hairline seams.
+2. The Week Heat label line shows the day and ›, and "no window" only when there is no window. The sunset line stays on the bar.
+3. Week Sea puts the calm times back in white ribbons under each strip, including "From 7:40p" and "From 7:50p". The label line does not repeat them.
+4. Hour labels sit on their hours. On Day the order is the plot, then the hours, then the window bars.
+5. The drag line in Heat starts below the label row, so it does not cut "sunset 5:17p".
+6. The now line and both dots are drawn when Costa Rica time is between 6a and 9p today.
+7. At xxxLarge, "20 min/hr" and the time stay on one line each. Chips scroll instead of truncating.
+8. The top of the screen follows the safe area, including on iPhone SE. Chips fit a 375 pt width.
+9. The Sources windows paragraph says 6a–9p, and that Beach, low-tide Beach and Soccer sun end 30 minutes after sunset. Stop follows °F/°C.
+10. Week Rain and Cloud have the track, the top hairline, and values over 1 mm/hr printed on the bar.
+11. Sun and Shade labels move to 10:30a when the now or drag line is within 24 pt of 1:30p.
+12. The Sun label sits 12 pt above the highest point of the sun line across the label, and Shade sits 14 pt below the lowest point of the shade line.
+
+## Build 8, Pepper's review of build 7 (f2cc7b4), not signed off
+
+Grade B. Eleven of the twelve build-7 fixes pass. These are layout fixes, not new UX. Do not upload until she signs off.
+
+1. The page does not ignore the top safe area, and it does not add a fixed top offset. The Day/Week header starts 8 pt below the safe-area top, on 402, 393 and 375.
+2. Week Sea rows are about 74 pt: an 18 pt label, a 40 pt strip, and a 15 pt ribbon that overlaps the strip by 7 pt, with an 8 pt gap. The hour axis and the "model, not measured" footer stay pinned. The rows can scroll if they do not fit.
+3. Week Heat rows stay at 72 pt or under. The rows and the colour key scroll. The chips and Low tide only stay pinned.
+4. Day uses that same pinned bottom bar, so the Low tide toggle stays at least 8 pt above the bottom on iPhone SE.
+
+VoiceOver, from the controls rather than a spoken pass: Day and Week are buttons, the i button is named Sources, the chips are buttons, Low tide only is a switch, and each Week row is a button. The day chart is one combined element, so its lines are not separate items.
+
+## After build 8, signed off
+
+Pepper signed off d7eb1c6 at A−. Sean authorized that build for TestFlight. Build 6 is that UI. The notes below are optional and are not uploaded.
+
+1. Week Heat’s pinned chip bar has a 1 pt white 12% hairline on its top edge, so a row sliding under it reads as a scroll.
+2. The Week Sea footer breaks after “offshore ·”, so “calm line” is not left alone on its own line at 375 pt.
+
+## Activity windows, approved 12 Nov 2026, 7:54pm PT
+
+Sean approved E1. Pepper's go is `GO-ACTIVITY-WINDOWS.md`, then `BARS-PROPOSAL-4.md`, then `PROPOSAL.md`. Chad v1.1 is the heat rule. Not uploaded until Pepper signs off. No VoiceOver work. The word "safe" is not used.
+
+1. Windows are computed on the phone from 6a to 9p. Each activity reads its own sun or shade line. There is no sunrise or sunset clip on the heat verdict. Where the sun is off, the sun line uses the shade value.
+2. Dec 5–25 inclusive is one zone hotter. Dec 26 is the first acclimatized day.
+3. Ocean entry and jungle trails end at sunset. Soccer and the pool are lit and run to 9p, with no dark line.
+4. Pool calm play is OK through every zone, and "Calm play only" at 32.3 °C and above. The December shift applies only to active pool games, which the sheet describes. The plot shows calm play.
+5. UV copy appears only when the hour is UV 8 or more, and UV 11 adds the midday line. UV never closes a window.
+6. The server stops writing `windows`. Calm windows stay.
+7. The pills and the hour axis are gone. Avoid hours are dimmed on the plot and labelled Avoid. The slim row is a white 3 pt OK run, a dotted grey cap, and a gap for Avoid. Times sit on each change. The minutes sit once at the right.
+8. Chips show the day's OK hours, such as "✓ 5½ h" or "All day", and no mini bar.
+9. The i sheet gains a Heat rules section: the zone table in the selected unit, both date columns, Chad's paragraph, and the light, kids, dark, and UV lines.
+
+## Slim row, Pepper's review of 0cee62b, not signed off
+
+Grade C+. The rules match. These are the row fixes. Not uploaded.
+
+1. Times mark a change between OK, limited and Avoid. Back-to-back stretches of the same kind are one run. Jungle, all OK, has no times.
+2. A shared 5-minute boundary is rounded once, so neighbouring stretches meet and the white bar has no seam.
+3. The minutes note appears only when a limited or calm-play stretch exists.
+4. The sunset-plus-30 tick and the old window cuts are gone.
+5. a/p is dropped only against a time label that is still on the row.
+6. A 5-minute Avoid on Saturday stays labelled.
+7. Avoid hours are hatched, and the legend shows that hatch only when the plot does.
+8. The Kids line is the approved sentence about 15-minute and 13-minute bouts.
+
+## Hatch regression, Pepper's review of 38502b8, not signed off
+
+Grade B. The eight row fixes pass. These are the follow-ups. Not uploaded.
+
+1. Hours at 32.3 °C and above fill with the locked hatch again, in the Day plot and the Week strips. The Avoid dim and hatch stay on top of that.
+2. The Avoid hatch is clipped under the sun line. The dim still covers the full column, so the word Avoid sits on dimmed sky.
+3. The temperature test no longer compares a plan with itself.

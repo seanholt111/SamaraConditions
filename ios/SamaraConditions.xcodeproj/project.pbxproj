@@ -7,8 +7,18 @@
 
 		AA0001 /* SamaraConditions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				AA0003 /* Exceptions for "SamaraConditions" folder in "SamaraConditions" target */,
+			);
 			path = SamaraConditions;
 			sourceTree = "<group>";
+		};
+		AA0003 /* Exceptions for "SamaraConditions" folder in "SamaraConditions" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = AA0600 /* SamaraConditions */;
 		};
 		AA0002 /* SamaraConditionsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -234,11 +244,14 @@
 		AA1102 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_FILE = SamaraConditions/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -258,11 +271,14 @@
 		AA1103 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 7;
 				DEVELOPMENT_TEAM = YNBKM85UNU;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Sámara Conditions";
+				INFOPLIST_FILE = SamaraConditions/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sámara";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

@@ -206,7 +206,7 @@ struct TodayChart: View {
             func paint(_ zone: HeatMinutes, _ path: Path) {
                 if zone == .stop {
                     context.fill(path, with: .color(Palette.hatch))
-                    hatch(in: path.boundingRect, context: context, gap: 5)
+                    hatch(in: path.boundingRect, context: context, gap: 5, clip: path)
                 } else {
                     context.fill(path, with: .color(Palette.zone(zone)))
                 }
@@ -414,8 +414,8 @@ struct WeekBars: View {
             hair.addLine(to: CGPoint(x: size.width, y: 4))
             context.stroke(hair, with: .color(.white.opacity(0.12)), lineWidth: 1)
             guard let day else { return }
-            let start = CostaRica.calendar.date(bySettingHour: 6, minute: 0, second: 0, of: day.sunrise) ?? day.sunrise
-            let end = CostaRica.calendar.date(bySettingHour: 17, minute: 0, second: 0, of: day.sunrise) ?? day.sunset
+            let start = CareDay.start(on: day.sunrise)
+            let end = CareDay.end(on: day.sunrise)
             let axis = PlotAxis(start: start, end: end)
             for hour in day.hours where hour.time >= start && hour.time < end {
                 let x = axis.x(hour.time, width: size.width)
@@ -440,9 +440,9 @@ struct WeekBars: View {
         HStack {
             Color.clear.frame(width: 132)
             HStack {
-                ForEach(["6a", "9a", "12p", "3p", "5p"], id: \.self) { tick in
+                ForEach(["6a", "9a", "12p", "3p", "6p", "9p"], id: \.self) { tick in
                     Text(tick).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted)
-                    if tick != "5p" { Spacer() }
+                    if tick != "9p" { Spacer() }
                 }
             }
         }
@@ -464,9 +464,9 @@ struct WeekSea: View {
             HStack {
                 Color.clear.frame(width: 58)
                 HStack {
-                    ForEach(["6a", "9a", "12p", "3p", "5p"], id: \.self) { tick in
+                    ForEach(["6a", "9a", "12p", "3p", "6p", "9p"], id: \.self) { tick in
                         Text(tick).font(.system(size: 11, weight: .medium)).foregroundStyle(Palette.muted)
-                        if tick != "5p" { Spacer() }
+                        if tick != "9p" { Spacer() }
                     }
                 }
             }
@@ -494,7 +494,7 @@ struct WeekSea: View {
                     let rect = CGRect(origin: .zero, size: size)
                     context.fill(Path(roundedRect: rect, cornerRadius: 4), with: .color(Palette.track))
                     guard let day, !day.sea.isEmpty else { return }
-                    let axis = PlotAxis(start: day.sea.first!.time, end: day.sea.last!.time)
+                    let axis = PlotAxis(start: CareDay.start(on: day.sunrise), end: CareDay.end(on: day.sunrise))
                     func y(_ value: Double) -> CGFloat {
                         size.height - CGFloat(min(210, max(0, value)) / 210) * (size.height - 2) - 1
                     }
@@ -553,6 +553,7 @@ struct WeekHeat: View {
     let days: [(offset: Int, day: DayConditions?)]
     let activity: ActivityKind
     let lowTideOnly: Bool
+    var onSelect: (Int) -> Void = { _ in }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -563,7 +564,7 @@ struct WeekHeat: View {
     }
 
     private func heatRow(_ offset: Int, _ day: DayConditions?) -> some View {
-        return HStack(alignment: .center, spacing: 8) {
+        return Button { onSelect(offset) } label: { HStack(alignment: .center, spacing: 8) {
             Text(day.map { "\($0.weekday) \(String($0.date.suffix(2)))" } ?? "—")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(Palette.text)
@@ -572,13 +573,14 @@ struct WeekHeat: View {
             VStack(spacing: 3) {
                 Canvas { context, size in
                     guard let day else { return }
-                    let axis = PlotAxis(start: day.sunrise, end: day.sunset)
+                    let axis = PlotAxis(start: CareDay.start(on: day.sunrise), end: CareDay.end(on: day.sunrise))
                     let shade = activity.heatUsesShade
                     var runs: [(start: Date, end: Date, zone: HeatMinutes)] = []
                     let step = 5.0 * 60
-                    var cursor = day.sunrise
-                    while cursor < day.sunset {
-                        let next = min(day.sunset, cursor.addingTimeInterval(step))
+                    var cursor = CareDay.start(on: day.sunrise)
+                    let end = CareDay.end(on: day.sunrise)
+                    while cursor < end {
+                        let next = min(end, cursor.addingTimeInterval(step))
                         let bin = hourBin(day.hours, at: cursor.addingTimeInterval(1))
                         let value = shade ? (bin?.wbgtShadeC ?? 25) : (bin?.wbgtSunC ?? 25)
                         let zone = HeatScale.minutes(wbgt: value, on: day.sunrise)
@@ -604,15 +606,9 @@ struct WeekHeat: View {
                 .frame(height: 18)
                 .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
                 .opacity(offset >= 3 ? 0.45 : 1)
-                if let day {
-                    WindowRibbon(
-                        spans: day.spans(for: activity, lowTideOnly: lowTideOnly),
-                        axis: PlotAxis(start: day.sunrise, end: day.sunset),
-                        emptyText: "no window",
-                        height: 22
-                    )
-                }
             }
+        }
+        .buttonStyle(.plain)
         }
     }
 }

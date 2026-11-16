@@ -14,9 +14,19 @@ struct RootView: View {
                 content
             }
             .padding(.horizontal, 16)
-            .padding(.top, 4)
+            .padding(.top, 8)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .sheet(isPresented: $model.showSources) { SourcesSheet() }
+        .sheet(isPresented: $model.showSources) {
+            if ProcessInfo.processInfo.arguments.contains("-open-heat-rules") {
+                HeatRulesView()
+            } else if ProcessInfo.processInfo.arguments.contains("-open-sources") {
+                SourcesSheet()
+            } else {
+                InfoSheet()
+            }
+        }
+        .dynamicTypeSize(model.typeScale > 1.2 ? .xxxLarge : .large)
         .sheet(item: $model.selectedAlert) { alert in
             AlertSheet(alert: alert)
         }
@@ -25,7 +35,7 @@ struct RootView: View {
     private var header: some View {
         HStack(spacing: 12) {
             HStack(spacing: 0) {
-                sectionButton("Today", .today)
+                sectionButton("Day", .today)
                 sectionButton("Week", .week)
             }
             .padding(3)
@@ -47,7 +57,7 @@ struct RootView: View {
     private func sectionButton(_ title: String, _ section: AppModel.Section) -> some View {
         Button { model.section = section } label: {
             Text(title)
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16 * model.typeScale, weight: .semibold))
                 .foregroundStyle(model.section == section ? Palette.text : Palette.muted)
                 .frame(width: 78, height: 34)
                 .background(model.section == section ? Palette.chipFill : Color.clear, in: Capsule())
@@ -56,23 +66,62 @@ struct RootView: View {
     }
 
     private var dateRow: some View {
-        HStack {
-            Text(dateChip)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Palette.muted)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(Palette.track, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .accessibilityIdentifier("date-chip")
-            Spacer()
+        Group {
+            if model.section == .today, let file = model.file {
+                HStack(spacing: 4) {
+                    ForEach(0..<7, id: \.self) { offset in
+                        let date = CostaRica.dayOffset(offset, from: model.now)
+                        let selected = model.dayOffset == offset
+                        Button {
+                            model.dayOffset = offset
+                        } label: {
+                            VStack(spacing: 1) {
+                                Text(offset == 0 ? "Today" : weekday(date))
+                                    .font(.system(size: 11 * model.typeScale, weight: selected ? .bold : .medium))
+                                Text(dayNumber(date))
+                                    .font(.system(size: 12 * model.typeScale, weight: selected ? .bold : .medium))
+                            }
+                            .foregroundStyle(offset >= 3 ? Palette.muted : Palette.text)
+                            .frame(maxWidth: .infinity, minHeight: 44)
+                            .background(selected ? Palette.chipFill : Color.clear, in: RoundedRectangle(cornerRadius: 8))
+                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(selected ? Palette.chipEdge : Color.clear, lineWidth: 1))
+                        }
+                        .accessibilityIdentifier("day-\(offset)")
+                    }
+                }
+            } else {
+                HStack {
+                    Text(dateChip)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(Palette.muted)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(Palette.track, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        .accessibilityIdentifier("date-chip")
+                    Spacer()
+                }
+            }
         }
+    }
+
+    private func weekday(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.calendar = CostaRica.calendar
+        formatter.timeZone = CostaRica.zone
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "EEE"
+        return formatter.string(from: date)
+    }
+
+    private func dayNumber(_ date: Date) -> String {
+        String(CostaRica.calendar.component(.day, from: date))
     }
 
     private var dateChip: String {
         if model.section == .week, let file = model.file, let first = file.days.first, let last = file.days.last {
             return CostaRica.rangeChip(from: first.sunrise, to: last.sunrise)
         }
-        return CostaRica.dayChip(model.now)
+        return ""
     }
 
     @ViewBuilder
@@ -103,7 +152,7 @@ struct RootView: View {
             } else {
                 let line = Freshness.line(asOf: file.generatedAt, now: model.now)
                 HStack {
-                    Text(line.text)
+                    Text(line.text + (model.viewingToday ? "" : " · forecast"))
                         .font(.system(size: 14, weight: .medium))
                         .foregroundStyle(line.stale ? Palette.amber : Palette.muted)
                     Spacer()
@@ -138,6 +187,7 @@ struct RootView: View {
                     WeekView()
                 }
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .refreshable { await model.refresh() }
         }
     }

@@ -3,6 +3,8 @@ import SwiftUI
 
 enum Palette {
     static let night = Color(red: 0.039, green: 0.055, blue: 0.078)
+    static let nightSky = Color(red: 14.0 / 255, green: 18.0 / 255, blue: 26.0 / 255)
+    static let cloudNight = Color(red: 112.0 / 255, green: 117.0 / 255, blue: 126.0 / 255)
     static let track = Color(red: 0.086, green: 0.110, blue: 0.145)
     static let text = Color(red: 0.949, green: 0.949, blue: 0.941)
     static let muted = Color(red: 0.604, green: 0.620, blue: 0.651)

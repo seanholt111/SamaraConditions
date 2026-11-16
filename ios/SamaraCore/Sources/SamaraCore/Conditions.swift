@@ -78,6 +78,10 @@ public struct TimeSpan: Codable, Equatable, Sendable {
     public var start: Date
     public var end: Date
     public var duration: TimeInterval { end.timeIntervalSince(start) }
+    public init(start: Date, end: Date) {
+        self.start = start
+        self.end = end
+    }
 }
 
 public struct Windows: Codable, Equatable, Sendable {

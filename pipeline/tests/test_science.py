@@ -13,7 +13,7 @@ from samara.energy import energy_kj
 from samara.shore import calm_threshold
 from samara.tides import Extremum, reef_shelters
 from samara.wbgt import sun_and_shade
-from samara.windows import heat_windows, pool_window
+from samara.windows import calm_windows
 
 CR = ZoneInfo("America/Costa_Rica")
 DATA = ROOT / "data"
@@ -95,20 +95,6 @@ def test_wednesday_windows_and_reef():
     sun = [(h["time"], h["wbgt_sun_c"]) for h in hours]
     shade = [(h["time"], h["wbgt_shade_c"]) for h in hours]
     sunrise, sunset = hours[0]["sunrise"], hours[0]["sunset"]
-    beach = heat_windows(sun, 27.9, sunrise, sunset)
-    soccer = heat_windows(sun, 25.7, sunrise, sunset)
-    jungle = heat_windows(shade, 27.9, sunrise, sunset)
-    pool = pool_window(sunrise, sunset)
-
-    def hm(when: datetime) -> str:
-        local = when.astimezone(CR)
-        return f"{local.hour:02d}:{local.minute:02d}"
-
-    assert [(hm(a), hm(b)) for a, b in beach] == [("05:50", "07:30")]
-    assert [(hm(a), hm(b)) for a, b in soccer] == [("05:50", "06:40")]
-    assert [(hm(a), hm(b)) for a, b in jungle] == [("05:50", "16:45")]
-    assert [(hm(a), hm(b)) for a, b in pool] == [("05:50", "16:45")]
-
     shelters = reef_shelters(_extrema(), sunrise, sunset)
     assert shelters, "expected a daytime reef span"
     start, end = shelters[0]
@@ -120,16 +106,18 @@ def test_wednesday_calm_window_is_7_30_to_12_40():
     hours = _nov11_hours()
     day = build_day(hours, _extrema(), PINNED_WEEK["energy_q1_kj"], PINNED_WEEK["energy_q3_kj"], PINNED_WEEK["calm_threshold_kj"])
     windows = day["calm_windows"]
-    assert len(windows) == 1
+    assert windows, "expected a calm window"
     start = datetime.fromisoformat(windows[0]["start"])
     end = datetime.fromisoformat(windows[0]["end"])
     assert abs((start - _dt("2026-11-11T07:30:00")).total_seconds()) <= 5 * 60
     assert abs((end - _dt("2026-11-11T12:40:00")).total_seconds()) <= 5 * 60
+    last_sea = datetime.fromisoformat(day["sea"][-1]["time"])
+    assert last_sea.hour == 21 and last_sea.minute == 0
     assert day["wave_word"] == "normal"
     assert day["cloud_daylight_mean_pct"] == 33
     assert day["precip_mm"] == 0.7
     assert day["precip_off_axis_mm"] == 0.6
-    assert day["windows"]["beach_low"] == []
+    assert "windows" not in day
 
 
 def test_quartile_method_on_the_nov11_daylight_pool():
