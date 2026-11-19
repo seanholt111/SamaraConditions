@@ -13,7 +13,7 @@
   "feeds": {
     "forecast": {
       "as_of": "2026-11-18T13:25:59-06:00",
-      "ok": true,
+      "ok": false,
       "source": "Open-Meteo Forecast"
     },
     "marine": {
@@ -22,7 +22,7 @@
       "source": "Open-Meteo Marine"
     },
     "imn": {
-      "as_of": "2026-11-18T13:25:59-06:00",
+      "as_of": "2026-11-19T13:00:49-06:00",
       "ok": true,
       "source": "IMN CAP RSS"
     },
