@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-26T13:38:40-06:00",
+  "generated_at": "2026-11-26T14:13:25-06:00",
   "timezone": "America/Costa_Rica",
   "location": {
     "name": "Sámara",
@@ -12,22 +12,22 @@
   },
   "feeds": {
     "forecast": {
-      "as_of": "2026-11-26T13:38:40-06:00",
+      "as_of": "2026-11-26T14:13:25-06:00",
       "ok": true,
       "source": "Open-Meteo Forecast"
     },
     "marine": {
-      "as_of": "2026-11-26T13:38:40-06:00",
+      "as_of": "2026-11-26T14:13:25-06:00",
       "ok": true,
       "source": "Open-Meteo Marine"
     },
     "imn": {
-      "as_of": "2026-11-26T13:38:40-06:00",
+      "as_of": "2026-11-26T14:13:25-06:00",
       "ok": true,
       "source": "IMN CAP RSS"
     },
     "tides": {
-      "as_of": "2026-11-26T13:38:40-06:00",
+      "as_of": "2026-11-26T14:13:25-06:00",
       "ok": true,
       "source": "NOAA CO-OPS 9684403"
     }
